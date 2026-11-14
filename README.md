@@ -1,145 +1,170 @@
-# 🇵🇭 Tara Gala
+# Tara Gala
 
-**Walang iwanan, puro gala lang!**
+**Tara Gala** is your Road Trip & Overlanding Planner para sa mga mahilig bumiyahe, mag-explore, at mag-overland — including routes na may RORO ferry crossings!
 
-Planning your next road trip or overlanding adventure? **Tara, biyahe tayo!**
+Add each drive or ferry crossing as a trip leg, and let the app calculate your distance, travel time, estimated arrival, and trip expenses. Less hassle sa planning, more time sa adventure!
 
-**Tara Gala** is a Road Trip & Overlanding Planner para sa mga mahilig mag-road trip, mag-overland, at mag-explore — kasama na ang mga biyahe na may RORO ferry crossings.
+It's a simple, single-file `index.html` app. No build step, no backend, and no account needed. Your trip data stays in your browser.
 
-I-add lang ang bawat drive, ferry crossing, o transfer bilang isang trip leg. Si Tara Gala na ang bahala sa pag-compute ng distance, travel time, estimated arrival, at travel expenses mo.
+## Features
 
-It's a simple, single-file web app (`index.html`) with no build step, no backend, and no account needed. **Lahat ng trip data mo, nasa browser mo lang.**
+### Trip planning
 
-## ✨ Features: Ano'ng meron?
+- **Trip legs:** I-log ang bawat drive, ferry crossing, or major transfer. Add a route name, date, departure time, starting point, and destination.
+- **Route names:** Give each leg a highlighted label (e.g. "Manila to Baguio") na makikita sa itinerary.
+- **Editable trip title:** Name your adventure right from the page header. New trips start with "San Tayo?" and a prompt to give your gala a name. Mawawala ang prompt once you rename it.
+- **Smart defaults:** Ang starting point ng bagong leg ay automatic na previous leg's destination. It also inherits the previous leg's arrival date and time. Editable pa rin lahat!
+- **No lost work:** Kapag nag-click ka outside the leg form or pinindot ang Esc, the app asks whether to save or discard your changes.
+- **Route itinerary:** Automatically sorted by date and departure time. Makikita mo ang distance, duration, estimated arrival, and cost for each leg. May accommodation details din, including check-in and check-out times, kapag may inilagay kang accommodation note.
+- **View mode:** Open a leg to review all its details without accidentally changing anything. Choose Edit when you're ready to make changes.
+- **Trip summary line:** See your travel dates, total days, and number of planned legs right in the header. Example: "Dec 14 to Dec 19, 2026 (6 days) • 6 legs planned".
+- **Trip summary:** Check your total expenses, distance, travel time, and number of legs at a glance.
 
-### 🚙 Planuhin ang biyahe
+### Google Maps integration
 
-- **Trip legs:** I-record bawat drive, ferry crossing, o major transfer. Lagyan ng route name, travel date, departure time, starting point, at destination.
-- **Route names:** Bigyan ng sariling label ang bawat trip leg (halimbawa, "Manila to Baguio"). Lalabas ito sa itinerary para mas madaling makita at ma-identify ang bawat part ng journey.
-- **Name your adventure:** Palitan ang trip title diretso sa page header. New trips start with **"San Tayo?"** — pangalanan ang gala mo kapag ready ka na. Mawawala ang prompt once you've renamed it.
-- **Smart defaults:** Ang bagong trip leg ay automatic na magsisimula sa destination ng previous leg, gamit ang arrival date at time nito. Puwede mo pa ring baguhin ang starting point, date, at time anytime.
-- **No lost work:** Kapag nag-click ka sa labas ng trip leg form o pinindot ang Esc, tatanungin ka muna kung gusto mong i-save o i-discard ang changes.
-- **Route itinerary:** Automatic na naka-sort ang trip legs ayon sa date at departure time. Makikita mo ang distance, duration, estimated arrival, at cost ng bawat leg. Kung may accommodation note, makikita rin kung saan kayo mag-stay kasama ang check-in at check-out times.
-- **View mode:** Buksan ang isang trip leg para makita ang complete details in read-only mode. Puwede kang pumili ng Edit o isara lang ito.
-- **Trip summary line:** Makikita sa header ang date range, total number of days, at bilang ng planned legs. Example: "Dec 14 to Dec 19, 2026 (6 days) • 6 legs planned".
-- **Trip summary:** Kita agad ang total expenses, total distance, total travel time, at bilang ng trip legs.
+- **Place suggestions:** Search for your starting point and destination using autocomplete, limited to the Philippines by default.
+- **Pick on map:** Drop or drag a pin on a dark map instead of typing a place name.
+- **Use my location:** Set your starting point using your device's current location.
+- **Automatic distance and travel time:** Automatically calculate distance in kilometers and estimated driving time based on your selected places. You can still edit both manually.
+- **Estimated arrival:** Calculate arrival time using the departure date, time, and travel duration — even kapag tatawid ng midnight ang biyahe.
+- **Start trip in Google Maps:** Open your route in Google Maps with one click, either from the leg form or itinerary. On your phone, it can launch turn-by-turn navigation.
 
-### 🗺️ Hanapin ang ruta, let's go!
+### Expense estimates
 
-Powered by Google Maps integration (optional).
+- **Automatic fuel estimate:** Calculate fuel costs using this formula:
 
-- **Place suggestions:** Mag-search ng starting point at destination gamit ang autocomplete. Philippines ang default search coverage.
-- **Pick on map:** Hindi mahanap ang exact location? Drop or drag a pin sa dark map para piliin ang lugar.
-- **Use my location:** Gamitin ang current location ng device mo bilang starting point.
-- **Automatic distance and travel time:** Automatically kinukuha ang estimated distance (km) at driving time mula sa selected places. Editable pa rin kung may gusto kang i-adjust.
-- **Estimated arrival:** Kinukuwenta ang arrival time based sa departure date, time, at travel duration — kahit tumawid pa ng midnight ang biyahe.
-- **Start trip in Google Maps:** Isang click lang para buksan ang route sa Google Maps, either from the trip leg form or itinerary. Sa phone, puwede itong mag-launch ng turn-by-turn navigation.
+  `Distance ÷ Vehicle consumption (km/L) × Fuel price (₱ per liter)`
 
-### 💸 Bantay gastos!
+- **Inherited fuel values:** Fuel price and vehicle consumption carry over from the previous leg unless you change them.
+- **Expense categories:** Track fuel, food and dining, accommodation, RORO ferry and terminal fees, and miscellaneous expenses.
+- **Accommodation:** Add where you're staying — campsite, hotel, or resort — together with check-in and check-out times and the accommodation price.
+- **Expense breakdown:** See how much each category contributes to your overall trip budget. Bantay gastos habang gala!
 
-Para alam mo kung magkano ang kailangang budget sa bawat adventure.
+### Data and settings
 
-- **Automatic fuel estimate:** Distance ÷ vehicle consumption (km/L) × fuel price (₱ per liter).
-- **Inherited fuel values:** Ang fuel price at km/L ay automatic na kino-carry over mula sa previous trip leg, unless baguhin mo.
-- **Cost categories:** I-record ang fuel, food and dining, accommodation, RORO ferry and terminal fees, at miscellaneous expenses.
-- **Accommodation details:** I-note kung saan kayo mag-stay — campsite, hotel, resort, o kahit saan pa. Isama ang check-in at check-out times, kasama ang accommodation price.
-- **Expense breakdown:** Makikita mo kung magkano at ilang porsiyento ang share ng bawat expense category sa total trip budget.
+- **Settings page:** Manage your trip data and Google Maps connection in one place.
+- **Export to CSV:** Download your itinerary and expenses for spreadsheets and further analysis.
+- **Backup and restore:** Save your entire trip as a JSON file named after your trip title (e.g. `Gala-nelos-Overland-Trip-2026-backup.json`). You can restore it on another device or browser.
+- **Local storage:** Your trip data is saved in your browser. Nothing gets uploaded to an external server.
 
-### 📦 Lahat ng data, nasa iyo
+### Design
 
-- **Settings page:** Manage your trip data, appearance, at Google Maps connection in one place.
-- **Export to CSV:** I-download ang itinerary at expenses para madaling buksan sa spreadsheets.
-- **Backup and restore:** I-save ang buong trip as a JSON file. Automatic na ginagamit ang trip title sa filename (halimbawa: `Gala-nelos-Overland-Trip-2026-backup.json`). Puwede mo ring i-restore sa ibang device o browser.
-- **Local storage:** Nasa browser mo lang ang trip data. Walang account, walang backend, at walang ina-upload na trip information.
+- **Dark and light modes:** A low-glare dark interface by default, with a light mode available in Settings.
+- **Color combinations:** Choose from five additional color combinations in each mode, or reset to the default colors.
+- **Responsive layout:** Designed for desktop, tablet, and mobile. On phones, the itinerary switches to cards and forms open as bottom sheets.
 
-### 🎨 Your app, your style!
+## Getting started
 
-- **Dark and light modes:** Choose between the default low-glare dark theme and a light theme. Change your preference anytime in Settings.
-- **Color combinations:** Pumili mula sa five additional color combinations in each mode, or reset to the default colors.
-- **Responsive layout:** Works on desktop, tablet, at mobile.
-- **Mobile-friendly itinerary:** Sa phone, cards ang display ng itinerary at bottom sheets naman ang forms para mas madaling gamitin. Each itinerary card also displays its leg number at the top for easier navigation.
+Tara, let's plan your next adventure!
 
----
+1. Open `index.html` in your browser, or host the repository using GitHub Pages (instructions below).
+2. Click **Add trip leg** and fill in your route details.
+3. Optional: Set up Google Maps integration to use place suggestions, map pins, and automatic distance calculations.
 
-## 🚀 Paano magsimula?
+**No Google Maps API key? No problem!** The app still works. You can manually enter places, distance, and travel time.
 
-1. Buksan ang `index.html` sa browser mo, or i-host ang repository gamit ang GitHub Pages.
-2. Click **Add trip leg** at ilagay ang route details.
-3. Optional: I-enable ang Google Maps integration para sa autocomplete, map pins, at automatic distance and travel time.
+## Setting up Google Maps
 
-**Good news:** Gumagana ang Tara Gala kahit walang Google Maps API key. Puwede mong manual na ilagay ang places, distance, at travel time.
+Google Maps integration requires an API key for place suggestions, map pins, current-location names, and automatic distance calculations.
 
-## 🗺️ Google Maps setup
+### 1. Create an API key
 
-Gusto mo ng place suggestions, map pins, current-location names, at automatic distance? Kailangan mo ng Google Maps API key.
+1. Open [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a project or select an existing one.
+3. Create an API key under APIs & Services → Credentials.
 
-1. Pumunta sa [Google Cloud Console](https://console.cloud.google.com/) at gumawa ng project at API key.
-2. I-enable ang mga sumusunod na APIs:
-   - Maps JavaScript API
-   - Places API (New)
-   - Routes API
-   - Geocoding API (optional — para ma-display ang pinned at current locations bilang addresses)
-3. I-restrict ang API key:
-   - **Application restrictions:** Piliin ang Websites at idagdag ang website address mo. Example: `https://your-username.github.io/*`.
-   - **API restrictions:** Piliin ang Restrict key at i-allow lang ang Google Maps APIs na ginagamit ng Tara Gala.
-4. Sa app, pumunta sa **Settings → Google Maps**, i-paste ang API key, at click **Save key**.
+### 2. Enable the required APIs
 
-### 🔐 API key security
+Enable these APIs for your Google Cloud project:
 
-Tara Gala uses a browser-based Google Maps integration, so your API key is loaded by the browser and may be visible to users who inspect the app or its network requests.
+- Maps JavaScript API
+- Places API (New)
+- Routes API
+- Geocoding API (optional — helps display pinned and current locations as addresses)
 
-This is expected for Google Maps JavaScript API applications. The key is not a private password, but it must be properly restricted to prevent unauthorized use.
+### 3. Restrict your API key
 
-For security:
+For security, configure the API key restrictions before using it publicly.
 
-- **Restrict websites:** Allow only your GitHub Pages domain and any custom domain you use.
-- **Restrict APIs:** Allow only the Google Maps APIs required by Tara Gala.
-- **Monitor usage:** Regularly check your Google Cloud API usage and billing.
-- **Control costs:** Configure API quotas where supported and set billing notifications.
+**Application restrictions:**
+- Select **Websites**.
+- Add your GitHub Pages address, for example: `https://your-username.github.io/*`.
+- If you're using a custom domain, add that domain too.
+- If testing locally through a local server, add the appropriate localhost referrer.
 
-The key is stored in your browser and is not committed to the source code or GitHub repository. However, browser storage does not make it secret.
+**API restrictions:**
+- Select **Restrict key**.
+- Allow only the Google Maps APIs that your app actually uses.
 
-**Never use an unrestricted API key in a publicly accessible app.**
+Also consider monitoring API usage, setting available quotas, and configuring billing alerts.
 
-Keys restricted to a website address don't work when `index.html` is opened directly from your computer, so use a hosted page or a local server. If testing locally, configure an appropriate localhost website restriction as well.
+### 4. Connect the key to Tara Gala
 
-## 🌐 Deploy with GitHub Pages
+1. Open the app.
+2. Go to **Settings → Google Maps**.
+3. Paste your API key.
+4. Click **Save key**.
 
-Gustong i-share ang Tara Gala online? Sundan lang ang steps na ito:
+The key is stored in your browser and is not written into the app's source code or repository.
 
-1. Ilagay ang `index.html` sa root folder ng GitHub repository mo, under the `main` branch.
-2. Pumunta sa **Settings → Pages**.
-3. Sa **Build and deployment**, piliin ang **Deploy from a branch**.
-4. Piliin ang `main` branch at `/ (root)`, then save.
-5. After a minute or two, available na ang app mo sa:
+**Important security note:** A browser-based Google Maps API key is visible to visitors who inspect the website or its network requests. Storing it in browser storage does not make it secret. Website and API restrictions are essential when publishing the app. Never use an unrestricted API key in a public repository or website.
 
-   `https://<your-username>.github.io/<repository-name>/`
+Website-restricted keys generally won't work when you open `index.html` directly from your computer using a `file://` address. Use GitHub Pages or a local development server instead.
 
-Tara na, ready na ang next adventure mo!
+Google Maps services may incur charges depending on usage. Check Google's current pricing, free usage limits, and billing requirements before enabling the integration.
 
-## ⚠️ Bago bumiyahe, tandaan!
+## Deploying with GitHub Pages
 
-- **RORO travel time:** Ang Google Maps driving estimate ay maaaring hindi kasama ang RORO crossing, terminal waiting time, at rest stops. I-adjust ang travel time manually para mas realistic ang estimated arrival.
-- **Accommodation details:** I-check ang check-in at check-out times para maiwasan ang scheduling conflicts sa itinerary.
-- **Backup your data:** Nasa browser local storage ang trip data. Kapag nag-clear ka ng site data, mabubura rin ito. Regular na mag-click ng **Save backup**.
-- **Current location:** Kailangan ng secure HTTPS connection para ma-access ng browser ang location mo. Kaya mas reliable ang **Use my location** sa GitHub Pages kaysa sa locally opened file.
-- **Google Maps billing:** May charges ang Google Maps services depende sa usage. I-check ang latest pricing at free usage limits ng Google Cloud account mo. Remember to monitor your usage and configure API restrictions.
+Want to access Tara Gala anywhere? You can host it for free using GitHub Pages.
 
-## 🛠️ Built with
+### 1. Create a GitHub repository
 
-- Plain HTML
-- CSS
-- JavaScript
-- Google Maps JavaScript API (Places, Routes, Geocoding, and Maps libraries — optional)
+Create a new repository and upload `index.html` to its root directory.
 
-No frameworks. No build tools. Just one `index.html` file.
+### 2. Enable GitHub Pages
 
-## 📌 Version history
+1. Open your repository.
+2. Go to **Settings → Pages**.
+3. Under **Build and deployment**, select **Deploy from a branch**.
+4. Choose the `main` branch and `/ (root)` folder.
+5. Click **Save**.
 
-The current app version is displayed in the app footer and on the Settings page.
+### 3. Open your app
+
+After GitHub Pages finishes deploying, your app will be available at:
+
+`https://<your-username>.github.io/<repository-name>/`
+
+That's it! Tara Gala is now online. Tara na!
+
+## Things to know
+
+- **RORO travel time:** Google's driving estimates may not include ferry crossings, terminal waiting time, boarding, or rest stops. Add these manually to your travel duration for a more realistic arrival estimate.
+- **Browser storage:** Trip data is stored in your browser's local storage. Clearing browser or website data can delete your trips, so use **Save backup** regularly.
+- **Location access:** Browsers generally require a secure HTTPS connection to share your current location. The feature works on GitHub Pages but may not work when opening the app directly from a local file.
+- **Google Maps billing:** Google Maps services may be subject to usage-based billing. Check the current pricing and free usage limits for your account.
+- **API key security:** Browser-based API keys are visible to website visitors. Always apply website and API restrictions before publishing your app.
+
+## Tech
+
+Built using plain HTML, CSS, and JavaScript in a single `index.html` file.
+
+Google Maps JavaScript API libraries used when an API key is provided:
+
+- Maps JavaScript API
+- Places API
+- Routes API
+- Geocoding API
+
+No build tools, backend, or database required.
+
+## Version history
+
+The current app version is displayed in the footer and on the Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.1.0** | "Estimated costs" renamed to "Expenses". Food & dining, RORO ferry & terminal, and Miscellaneous amounts are shown in the itinerary (₱0 in the table, hidden on cards when empty). Cards replace the table at 1400 px and below, and the expenses panel sits below the itinerary. |
 | **3.0.3** | The leg number is shown at the top of each itinerary card on tablets and phones. |
 | **3.0.2** | Route name placeholder changed to "e.g. Manila to Baguio". |
 | **3.0.1** | The "Staying at" strip is hidden in the itinerary for legs with no accommodation note. |
@@ -161,20 +186,10 @@ The current app version is displayed in the app footer and on the Settings page.
 
 ### Versioning guide
 
-Every update gets a new version number:
+Every update gets a version number:
 
-- **Patch (`x.y.1`)** — Bug fixes and small improvements.
-- **Minor (`x.1.0`)** — New features and functionality.
-- **Major (`3.0.0`)** — Major redesigns or significant changes.
+- **Patch (x.y.1):** Bug fixes and minor corrections.
+- **Minor (x.1.0):** New features and improvements.
+- **Major (2.0.0):** Major redesigns or significant changes.
 
-Remember to update `APP_VERSION` near the top of the script in `index.html` and add a new row to the version history.
-
----
-
-## ❤️ Tara na!
-
-Planuhin ang biyahe. Bantayan ang gastos. Sulitin ang bawat gala.
-
-**Less hassle sa planning, more time sa adventure!**
-
-**Tara Gala — Bawat biyahe, may kuwento.** 🇵🇭
+When releasing an update, remember to change `APP_VERSION` near the top of the script in `index.html` and add a new entry to the version history.

@@ -398,6 +398,7 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
       <div class="grid">
         <div class="field"><label for="date">Date</label><input id="date" type="date"></div>
         <div class="field"><label for="departureTime">Departure time</label><input id="departureTime" type="time"></div>
+        <p class="note" id="dateNote" hidden></p>
 
         <div class="field full">
           <div class="label-row"><label for="from">Starting point</label>
@@ -469,7 +470,7 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "2.6.1";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "2.7.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -733,11 +734,34 @@ function computeFuel() {
   updateFormTotal();
 }
 
+/* A new leg starts when the previous leg arrives */
+function defaultStartFromPrevious() {
+  const prev = sortedActive().filter(l => arrivalDate(l.date, l.departureTime, l.duration)).at(-1);
+  if (!prev) return null;
+  const d = arrivalDate(prev.date, prev.departureTime, prev.duration);
+  const pad = n => String(n).padStart(2, "0");
+  return {
+    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+    time: `${pad(d.getHours())}:${pad(d.getMinutes())}`,
+    label: `${prev.from || "Unspecified"} → ${prev.to || "Unspecified"}`,
+  };
+}
+
 function openDialog(leg) {
   form.reset();
   $("editId").value = leg?.id || "";
   $("dialogTitle").textContent = leg ? "Edit trip leg" : "Add trip leg";
   [...TEXT_FIELDS, ...NUM_FIELDS].forEach(k => { $(k).value = leg?.[k] || (isCost(k) ? 0 : ""); });
+  $("dateNote").hidden = true;
+  if (!leg) {
+    const next = defaultStartFromPrevious();
+    if (next) {
+      $("date").value = next.date;
+      $("departureTime").value = next.time;
+      $("dateNote").textContent = `Date and time start when the previous leg (${next.label}) arrives. Change them any time.`;
+      $("dateNote").hidden = false;
+    }
+  }
   inherit.fuelPrice = !(num(leg?.fuelPrice) > 0);   // blank values follow the previous leg
   inherit.kmPerL = !(num(leg?.kmPerL) > 0);
   applyInherited(false);
@@ -757,7 +781,7 @@ const closeDialog = () => dialog.close();
 form.addEventListener("input", e => {
   const id = e.target.id;
   if (id === "fuelPrice" || id === "kmPerL") { inherit[id] = false; applyInherited(false); }   // user took control
-  if (id === "date" || id === "departureTime") applyInherited(true);   // a new date can change which leg is "previous"
+  if (id === "date" || id === "departureTime") { $("dateNote").hidden = true; applyInherited(true); }   // a new date can change which leg is "previous"
   if (["distance", "fuelPrice", "kmPerL"].includes(id)) computeFuel();
   updateFormTotal();
   renderNote();

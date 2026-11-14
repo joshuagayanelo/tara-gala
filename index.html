@@ -55,6 +55,10 @@ a{color:inherit}
   border-radius:8px;padding:0;transition:background .15s,color .15s}
 .icon-btn:hover{background:var(--raised);color:var(--text)}
 .icon-btn.danger:hover{color:var(--danger)}
+a.icon-btn{text-decoration:none}
+.icon-btn.go:hover{color:var(--accent)}
+.route-actions{grid-column:1/-1}
+.route-actions .btn{width:100%}
 
 /* ---------- Top bar ---------- */
 .topbar{position:sticky;top:0;z-index:10;background:rgba(15,21,24,.92);backdrop-filter:blur(10px);
@@ -241,6 +245,7 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></symbol>
   <symbol id="i-rig" viewBox="0 0 24 24"><path d="M4.5 6.6h9M6 6.6v2M12 6.6v2"/><path d="M3 17V8.6h12l2.4 3.2 3.6 1V17"/><path d="M3 17h2M10 17h4M19 17h2"/><circle cx="7.5" cy="17" r="2.5"/><circle cx="16.5" cy="17" r="2.5"/><path d="M6 10.8h8"/></symbol>
+  <symbol id="i-navigate" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></symbol>
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
@@ -397,6 +402,9 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
         <div class="field"><label for="duration">Travel time (hours)</label><input id="duration" type="number" min="0" step=".25" inputmode="decimal" placeholder="e.g. 8"></div>
         <div class="field full"><label for="arrival">Estimated arrival</label><input id="arrival" readonly tabindex="-1" placeholder="Needs date, departure and travel time"></div>
         <p class="note" id="routeNote" aria-live="polite"></p>
+        <div class="route-actions" id="routeActions" hidden>
+          <a class="btn primary" id="startTrip" target="_blank" rel="noopener"><svg class="ic" aria-hidden="true"><use href="#i-navigate"/></svg>Open in Google Maps and start trip</a>
+        </div>
       </div>
     </fieldset>
     <fieldset>
@@ -582,6 +590,9 @@ function renderLegs(active) {
       <td data-label="Distance" class="num">${num(l.distance) ? esc(fmtKm(l.distance)) : "—"}</td>
       <td class="cost num right">${peso(legCost(l))}</td>
       <td class="act"><div class="actions">
+        ${(l.from || l.fromLoc) && (l.to || l.toLoc)
+          ? `<a class="icon-btn go" href="${esc(mapsDirUrl(l.from, l.to, l.fromLoc, l.toLoc))}" target="_blank" rel="noopener" aria-label="Start leg ${i + 1} in Google Maps" title="Start trip in Google Maps">${icon("navigate")}</a>`
+          : ""}
         <button class="icon-btn" type="button" data-action="edit" data-id="${esc(l.id)}" aria-label="Edit leg ${i + 1}" title="Edit">${icon("edit")}</button>
         <button class="icon-btn danger" type="button" data-action="delete" data-id="${esc(l.id)}" aria-label="Delete leg ${i + 1}" title="Delete">${icon("trash")}</button>
       </div></td>
@@ -794,14 +805,23 @@ function renderMapsStatus() {
   $("clearKey").hidden = !stored;
 }
 
+/* Google Maps directions link. dir_action=navigate starts turn-by-turn navigation on phones. */
+function mapsDirUrl(from, to, fromLoc, toLoc) {
+  const point = (text, loc) => loc ? `${loc.lat},${loc.lng}` : text;   // exact pins beat place names
+  return "https://www.google.com/maps/dir/?api=1"
+    + `&origin=${encodeURIComponent(point(from, fromLoc))}`
+    + `&destination=${encodeURIComponent(point(to, toLoc))}`
+    + "&travelmode=driving&dir_action=navigate";
+}
+
 function setNote(msg) { routeMsg = msg; renderNote(); }
 function renderNote() {
   const from = $("from").value.trim(), to = $("to").value.trim();
   const recalc = route.fromLoc && route.toLoc ? `<button type="button" class="linkbtn" data-action="recalc">Recalculate</button>` : "";
-  const link = from && to
-    ? `<a href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(from)}&destination=${encodeURIComponent(to)}&travelmode=driving" target="_blank" rel="noopener">View route in Google Maps</a>`
-    : "";
-  $("routeNote").innerHTML = esc(routeMsg) + recalc + link;
+  $("routeNote").innerHTML = esc(routeMsg) + recalc;
+  const ready = Boolean(from && to);   // both places filled in: offer to start the trip
+  $("routeActions").hidden = !ready;
+  if (ready) $("startTrip").href = mapsDirUrl(from, to, route.fromLoc, route.toLoc);
 }
 
 const fmtMinutes = ms => {

@@ -77,7 +77,9 @@ a.icon-btn{text-decoration:none}
 /* ---------- Page ---------- */
 .page{max-width:1280px;margin:auto;padding:28px 24px 12px}
 .intro{margin-bottom:22px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
 .title-row{display:flex;align-items:center;gap:6px}
+.intro p.title-hint{color:var(--text);opacity:.8;font-size:14px}
 .intro h1{font-size:clamp(26px,4.2vw,40px);line-height:1.1;letter-spacing:-.025em;font-weight:800;overflow-wrap:anywhere}
 .title-form{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .title-form input{flex:1;min-width:200px;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--bg);
@@ -278,6 +280,7 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
   <!-- ===== Trip view ===== -->
   <div id="tripView">
     <header class="intro">
+      <div class="eyebrow">Your next adventure</div>
       <div class="title-row" id="titleRow">
         <h1 id="tripTitle"></h1>
         <button class="icon-btn" type="button" data-action="editTitle" aria-label="Edit trip title" title="Edit trip title">
@@ -289,6 +292,7 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
         <button class="btn primary small" type="submit">Save</button>
         <button class="btn small" type="button" data-action="cancelTitle">Cancel</button>
       </form>
+      <p class="title-hint" id="titleHint">Your next adventure starts here. Give your gala a name!</p>
       <p id="tripRange">Plan each drive and ferry leg, then track what the trip costs.</p>
     </header>
 
@@ -455,7 +459,8 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
 const APP_NAME = "Tara Gala";
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
-const DEFAULT_TITLE = "Gala-nelos Overland Trip 2026";
+const DEFAULT_TITLE = "San Tayo?";
+const LEGACY_TITLE = "Gala-nelos Overland Trip 2026";   // old default, treated as "not named yet"
 const COSTS = [
   { key: "fuel",          label: "Fuel (auto)" },
   { key: "food",          label: "Food & dining" },
@@ -534,7 +539,7 @@ let legs = load();
 /* Settings: editable trip title */
 function cleanSettings(s) {
   return {
-    title: String(s?.title ?? "").trim().slice(0, 80) || DEFAULT_TITLE,
+    title: (t => (!t || t === LEGACY_TITLE) ? DEFAULT_TITLE : t)(String(s?.title ?? "").trim().slice(0, 80)),
   };
 }
 function loadSettings() {
@@ -558,6 +563,7 @@ function sortedActive() {
 /* ---------- Rendering ---------- */
 function renderTitle() {
   $("tripTitle").textContent = settings.title;
+  $("titleHint").hidden = settings.title !== DEFAULT_TITLE;   // disappears once the user names the trip
   document.title = `${settings.title} | ${APP_NAME}`;
 }
 

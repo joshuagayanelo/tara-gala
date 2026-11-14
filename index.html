@@ -276,7 +276,8 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   #legsTable tbody.leg tr{display:contents}
   #legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
   #legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
-  #legsTable tbody.leg td.idx{display:none}
+  #legsTable tbody.leg td.idx{order:-3;grid-column:1/-1;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  #legsTable tbody.leg td.idx::before{content:"Leg "}
   #legsTable tbody.leg td.route{order:-2;grid-column:1/-1;font-size:16px;min-width:0}
   #legsTable tbody.leg td.cost{order:-1;grid-column:1/-1;font-size:18px;font-weight:800;color:var(--accent)}
   #legsTable tbody.leg td.cost::before{display:none}
@@ -666,7 +667,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.0.2";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.0.3";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";

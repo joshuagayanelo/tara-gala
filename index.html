@@ -460,7 +460,6 @@ const APP_NAME = "Tara Gala";
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
-const LEGACY_TITLE = "Gala-nelos Overland Trip 2026";   // old default, treated as "not named yet"
 const COSTS = [
   { key: "fuel",          label: "Fuel (auto)" },
   { key: "food",          label: "Food & dining" },
@@ -539,7 +538,7 @@ let legs = load();
 /* Settings: editable trip title */
 function cleanSettings(s) {
   return {
-    title: (t => (!t || t === LEGACY_TITLE) ? DEFAULT_TITLE : t)(String(s?.title ?? "").trim().slice(0, 80)),
+    title: String(s?.title ?? "").trim().slice(0, 80) || DEFAULT_TITLE,
   };
 }
 function loadSettings() {

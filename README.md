@@ -1,112 +1,80 @@
-# Tara Gala!
-Your Filipino road trip and overlanding companion. Plan. Biyahe. Gala.
+# Tara Gala
 
-**Walang iwanan, puro gala lang!** 🏕️🚙
+**Tara Gala** is a Road Trip & Overlanding Planner for overland trips, including routes that use RORO ferries. Add each drive or ferry crossing as a trip leg, and the app works out the distance, travel time, arrival time and estimated costs for you.
 
-Planning your next road trip or overlanding adventure? Tara, let's go!
+It is a single `index.html` file with no build step, no backend and no account. Your trip data stays in your browser.
 
-**Tara Gala** is your all-in-one road trip planner. Whether you're cruising through highways, exploring scenic mountain roads, or hopping between islands via RORO, we've got your trip planning covered.
+## Features
 
-Plan your routes, track your gastos, estimate fuel costs, organize ferry crossings, and keep your entire adventure in one place. Less hassle sa planning, more time sa gala!
+### Trip planning
+- **Trip legs:** log every drive, ferry or major transfer with a date, departure time, starting point and destination.
+- **Editable trip title:** rename the trip (for example "Gala-nelos Overland Trip 2026") right from the page header.
+- **Route itinerary:** legs are sorted by date and departure time, with distance, duration, estimated arrival and cost for each leg.
+- **Trip summary:** total expenses, total distance, total travel time and number of legs at a glance.
 
-Built for Filipino road trippers, campers, overlanders, and families who love exploring the Philippines. 🇵🇭
+### Google Maps integration
+- **Place suggestions:** search for the starting point and destination with autocomplete (limited to the Philippines by default).
+- **Pick on map:** drop or drag a pin on a dark map instead of typing a place name.
+- **Use my location:** set the starting point from your device's current location.
+- **Automatic distance and travel time:** total distance (km) and driving time are filled in from the selected places. Both can still be edited by hand.
+- **Estimated arrival:** calculated from the date, departure time and travel time, including legs that cross midnight.
+- **Open in Google Maps:** view any route in Google Maps with one click.
 
-## ✨ What's inside?
+### Cost estimates
+- **Automatic fuel estimate:** distance ÷ vehicle consumption (km/L) × fuel price (₱ per liter).
+- **Inherited fuel values:** fuel price and km/L carry over from the previous trip leg unless you change them.
+- **Cost categories:** fuel, food and dining, accommodation, RORO ferry and terminal fees, and miscellaneous.
+- **Expense breakdown:** see the share of each category in the total trip budget.
 
-### 🚙 Plan your biyahe
-- Add every drive, ferry crossing, and transfer as a trip leg.
-- Customize your trip name and organize your itinerary.
-- Track distances, travel times, arrival times, and estimated costs.
-- See your total distance, travel time, expenses, and trip legs at a glance.
+### Data and settings
+- **Settings page:** manage your data and your Google Maps connection in one place.
+- **Export to CSV:** download the itinerary and costs for spreadsheets.
+- **Backup and restore:** save the whole trip as a JSON file and restore it on another device or browser.
+- **Local storage:** everything is saved in your browser, so nothing is uploaded anywhere.
 
-### 🗺️ Know your ruta
-- Search locations with Google Maps suggestions.
-- Drop or drag pins to pick your destinations.
-- Use your current location as your starting point.
-- Automatically calculate driving distance and travel time.
-- Open your routes directly in Google Maps.
+### Design
+- **Dark theme:** a low-glare dark interface that is easier on the eyes.
+- **Responsive layout:** works on desktop, tablet and mobile. On phones the itinerary becomes cards and forms open as bottom sheets.
 
-### 💸 Bantay gastos!
-- Automatically estimate fuel expenses based on km/L and fuel price.
-- Carry over fuel settings from your previous trip leg.
-- Track gastos for fuel, food, accommodation, RORO fees, and more.
-- View your expense breakdown so walang gulatan sa budget!
+## Getting started
 
-### 📦 Your trip, your data
-- Export your itinerary and expenses to CSV.
-- Back up and restore your trips using JSON files.
-- Manage your Google Maps API key in Settings.
-- All trip data stays in your browser. Walang account, walang backend!
+1. Open `index.html` in a browser, or host the repository with GitHub Pages (see below).
+2. Click **Add trip leg** and fill in the route.
+3. Optional: turn on the Google Maps features (see the next section).
 
-### 🌙 Made for every screen
-- Clean, eye-friendly dark mode.
-- Responsive layout for desktop, tablet, and mobile.
-- Mobile-friendly itinerary cards and bottom-sheet forms.
+The app works without Google Maps. You can type places, distance and travel time by hand.
 
-## 🚀 Getting started
+## Setting up Google Maps
 
-1. Open `index.html` in your browser.
-2. Hit **Add Trip Leg**.
-3. Enter your starting point, destination, schedule, and expenses.
-4. Repeat for every leg of your adventure.
-5. Optional: Connect Google Maps for automatic routes and distance calculations.
+Place suggestions, map pins, current-location names and automatic distance need a Google Maps API key.
 
-**No Google Maps key? No problem!** You can still manually enter locations, distances, and travel times.
-
-## 🗺️ Google Maps setup
-
-Want automatic place suggestions, map pins, and route calculations? You'll need a Google Maps API key.
-
-1. Visit [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a project and generate an API key.
-3. Enable the following APIs:
+1. In [Google Cloud Console](https://console.cloud.google.com/), create a project and an API key.
+2. Enable these APIs for the project:
    - Maps JavaScript API
    - Places API (New)
    - Routes API
-   - Geocoding API (optional)
-4. Restrict your API key to the required APIs and your website domain (e.g. `https://your-username.github.io/*`).
-5. Open **Settings → Google Maps**, paste your API key, and hit **Save Key**.
+   - Geocoding API (optional, shows pinned and current locations as addresses)
+3. Restrict the key to those APIs and to your website address, for example `https://your-username.github.io/*`.
+4. In the app, open **Settings → Google Maps**, paste the key and click **Save key**.
 
-Your API key is stored in your browser, not in the repository or source code.
+The key is stored only in your browser. It is never written into the code or the repository.
 
-**Note:** Website-restricted keys won't work when opening `index.html` directly. Use GitHub Pages or a local server instead.
+Keys restricted to a website address don't work when `index.html` is opened directly from your computer, so use a hosted page or a local server.
 
-## 🌐 Deploy with GitHub Pages
+## Deploying with GitHub Pages
 
-Want to take Tara Gala online? Here's how:
-
-1. Upload `index.html` to the root of your GitHub repository on the `main` branch.
+1. Put `index.html` in the root of the repository on the `main` branch.
 2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch**.
-4. Choose `main` and `/ (root)`.
-5. Save and wait for deployment.
+3. Under **Build and deployment**, choose **Deploy from a branch**, then select `main` and `/ (root)`.
+4. After a minute or two the app is available at `https://<your-username>.github.io/<repository-name>/`.
 
-Your app will be live at:
+## Things to know
 
-`https://<your-username>.github.io/<repository-name>/`
+- Google's driving estimate may not include RORO crossings, terminal waiting time or rest stops. Add that time to the travel time yourself.
+- Data lives in your browser's local storage. Clearing site data removes it, so use **Save backup** regularly.
+- Browsers share your location only on secure (HTTPS) pages, so **Use my location** works on GitHub Pages but may not work from a local file.
+- Google Maps services are billed by Google. Check the current pricing and free usage limits for your account.
 
-Ayos! Your very own trip planner is now online. 🎉
+## Tech
 
-## ⚠️ A few things to remember
-
-- Google Maps driving estimates don't automatically account for RORO crossings, terminal queues, or rest stops. Add these to your travel time manually.
-- Your trip data is stored locally in your browser. Clearing browser data may erase your trips, so make regular backups.
-- Location services require HTTPS. GitHub Pages supports this.
-- Google Maps API usage may incur charges. Check Google's current pricing and free usage limits.
-
-## 🛠️ Built with
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Google Maps JavaScript API (optional)
-
-No frameworks. No build process. No complicated setup. Just one `index.html` and you're ready to gala!
-
----
-
-**Tara Gala!** 🏕️
-
-*Planuhin ang biyahe. Bantayan ang gastos. Sulitin ang bawat gala.*
-
-Made with ❤️ for Filipino road trippers and overlanding enthusiasts.
+Plain HTML, CSS and JavaScript in a single file. Uses the Google Maps JavaScript API (Places, Routes, Geocoding and Maps libraries) when a key is provided.

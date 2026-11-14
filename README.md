@@ -1,7 +1,5 @@
-# tara-gala
+# Tara Gala!
 Your Filipino road trip and overlanding companion. Plan. Biyahe. Gala.
-
-# 🇵🇭 Tara Gala!
 
 **Walang iwanan, puro gala lang!** 🏕️🚙
 

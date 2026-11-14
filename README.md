@@ -18,7 +18,7 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 
 ### 🚙 Planuhin ang biyahe
 - **Trip Legs:** Add every drive, ferry crossing, or major transfer with dates, departure times, starting points, and destinations.
-- **Trip Name:** Give your adventure a name! Rename your trip anytime (e.g. "Gala-nelos Overland Trip 2026").
+- **San Tayo?:** Every new trip starts with a friendly "San Tayo?" title. Give your adventure a name anytime! The naming prompt disappears once you rename it.
 - **Route Itinerary:** Keep your trip legs organized by date and departure time, with distance, duration, estimated arrival, and costs.
 - **Trip Summary:** See your total gastos, distance, travel time, and number of trip legs at a glance.
 
@@ -39,7 +39,7 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 ### 📦 Lahat ng data, nasa iyo
 - **Settings:** Manage your trip data and Google Maps connection in one place.
 - **Export to CSV:** Download your itinerary and expenses for spreadsheets.
-- **Backup & Restore:** Save your entire trip as a JSON file and restore it on another device or browser.
+- **Backup & Restore:** Save your entire trip as a JSON file, with the filename automatically based on your trip title (e.g. `Gala-nelos-Overland-Trip-2026-backup.json`). Restore it on another device or browser.
 - **Local Storage:** Your trip data stays in your browser. Walang account, walang backend, walang ina-upload!
 
 ### 🌙 Simple lang, pero sulit
@@ -103,8 +103,6 @@ Ayos! Your very own trip planner is now online. 🎉
 
 ## ⚠️ Bago bumiyahe, tandaan!
 
-A few things to keep in mind:
-
 - **RORO & Rest Stops:** Google Maps driving estimates may not include ferry crossings, terminal waiting times, or rest stops. Add these to your travel time manually.
 - **Backup Your Trips:** Your data lives in your browser's local storage. Clearing browser data may erase your trips, so use **Save Backup** regularly.
 - **Location Access:** Browsers require HTTPS for location services. GitHub Pages supports this.
@@ -122,6 +120,36 @@ A few things to keep in mind:
 No frameworks. No build process. No complicated setup.
 
 Just one `index.html` and you're ready to gala!
+
+---
+
+## 📌 Version history
+
+The current app version is displayed in the footer and Settings page.
+
+| Version | Changes |
+|---|---|
+| **2.6.0** | Backup and CSV filenames now follow the trip title. App version displayed in footer and Settings. |
+| **2.5.2** | Default title "San Tayo?" remains until the user names the trip. Any custom name is accepted. |
+| **2.5.0** | Introduced "San Tayo?" as the default title, with a "Your next adventure" label and naming prompt. |
+| **2.4.0** | Added Tara Gala browser tab icon. |
+| **2.3.0** | Added Start Trip in Google Maps from the leg form and itinerary. |
+| **2.2.0** | Introduced the "Road Trip & Overlanding Planner" tagline and overlanding rig logo. |
+| **2.1.0** | Fuel price and km/L carry over from the previous trip leg. |
+| **2.0.0** | Tara Gala branding, editable trip title, Settings page, map pin picker, total distance, automatic fuel estimate, and itinerary icon buttons. |
+| **1.2.0** | Added current location as a starting point. |
+| **1.1.0** | Google Maps place suggestions, automatic travel time, and estimated arrival. |
+| **1.0.0** | Dark, responsive redesign and code cleanup. |
+
+### 🔢 Versioning
+
+Every update gets a version number:
+
+- **Patch (x.y.1):** Bug fixes and minor improvements.
+- **Minor (x.1.0):** New features and enhancements.
+- **Major (2.0.0):** Big redesigns or significant changes.
+
+Update `APP_VERSION` near the top of `index.html` and add a new entry to the version history whenever you release an update.
 
 ---
 

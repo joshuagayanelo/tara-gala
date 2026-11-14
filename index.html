@@ -122,10 +122,11 @@ a.icon-btn{text-decoration:none}
 .settings{max-width:760px;display:grid;gap:var(--gap)}
 
 /* ---------- Itinerary table (cards on small screens) ---------- */
-.table-wrap{margin:0 -20px}
+.table-wrap{margin:0 -20px;overflow-x:auto}   /* safety net: scrolls instead of squeezing if a screen is slightly too narrow */
 table{border-collapse:collapse;width:100%;font-size:14px}
-th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:12px 16px;border-bottom:1px solid var(--line);white-space:nowrap}
-td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+th.exp-h{white-space:normal;line-height:1.25;min-width:64px}
 tbody.leg:hover{background:var(--hover)}
 tbody.leg tr.main td{border-bottom:0;padding-bottom:6px}
 tbody.leg td.stay-cell{padding:0 16px 14px 20px;border-bottom:1px solid var(--line)}
@@ -135,7 +136,7 @@ tbody.leg.no-stay:last-of-type tr.main td{border-bottom:0}
 th:first-child,td:first-child{padding-left:20px}
 th:last-child,td:last-child{padding-right:14px}
 td.idx{color:var(--muted)}
-td.route{font-weight:700;white-space:normal;min-width:200px}
+td.route{font-weight:700;white-space:normal;min-width:180px}
 .arrow{color:var(--accent);margin:0 4px}
 .route-name{display:inline-block;max-width:100%;margin-bottom:5px;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:700;
   line-height:1.5;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-edge)}
@@ -257,18 +258,11 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   transition:opacity .2s,transform .2s;z-index:30;box-shadow:0 10px 30px var(--shadow)}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* ---------- Wide screens: itinerary and expenses side by side ---------- */
-@media(min-width:1440px){
-  .layout{grid-template-columns:minmax(0,1fr) 320px}
-  .side{position:sticky;top:76px}
-  #expenses{display:block}
-}
-
 /* ---------- Tablet and below: the itinerary table becomes cards ---------- */
-@media(max-width:1180px){
-  .table-wrap{margin:0}
+@media(max-width:1400px){
+  .table-wrap{margin:0;overflow:visible}
   #legsTable,#legsTable tbody,#legsTable tr,#legsTable td{display:block}
-  #legsTable{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #legsTable{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
   #legsTable thead{display:none}
   #legsTable tbody.leg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;background:var(--bg);border:1px solid var(--line);
     border-radius:12px;padding:14px;align-content:start}
@@ -281,6 +275,7 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   #legsTable tbody.leg td.route{order:-2;grid-column:1/-1;font-size:16px;min-width:0}
   #legsTable tbody.leg td.cost{order:-1;grid-column:1/-1;font-size:18px;font-weight:800;color:var(--accent)}
   #legsTable tbody.leg td.cost::before{display:none}
+  #legsTable tbody.leg td.exp.zero{display:none}
   #legsTable tbody.leg td.stay-cell{order:5;grid-column:1/-1;border-top:1px solid var(--line)!important;padding-top:10px!important}
   #legsTable tbody.leg td.act{order:6;grid-column:1/-1}
   .stay-info{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
@@ -463,6 +458,9 @@ window.TARA_THEMES = {
             <thead><tr>
               <th scope="col">#</th><th scope="col">Date</th><th scope="col">Route</th><th scope="col">Departs</th>
               <th scope="col">Duration</th><th scope="col">Arrives</th><th scope="col">Distance</th>
+              <th scope="col" class="right exp-h" title="Food &amp; dining">Food &amp; dining</th>
+              <th scope="col" class="right exp-h" title="RORO ferry &amp; terminal">RORO &amp; terminal</th>
+              <th scope="col" class="right exp-h" title="Miscellaneous">Misc.</th>
               <th scope="col" class="right">Leg cost</th>
               <th scope="col"><span class="sr-only">Actions</span></th>
             </tr></thead>
@@ -581,7 +579,7 @@ window.TARA_THEMES = {
       </div>
     </fieldset>
     <fieldset>
-      <legend>Estimated costs (₱)</legend>
+      <legend>Expenses (₱)</legend>
       <div class="grid">
         <div class="field"><label for="fuelPrice">Fuel price (₱ per liter)</label><input id="fuelPrice" type="number" min="0" step=".01" inputmode="decimal" placeholder="e.g. 62.50"></div>
         <div class="field"><label for="kmPerL">Vehicle consumption (km/L)</label><input id="kmPerL" type="number" min="0" step=".1" inputmode="decimal" placeholder="e.g. 12"></div>
@@ -667,7 +665,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.0.3";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.1.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -833,6 +831,13 @@ function renderStats(active) {
 
 const NOT_ADDED = `<span class="na">Not added</span>`;
 
+/* Expense columns shown in the itinerary: ₱0 in the table, hidden on cards when nothing was added */
+const EXP_COLS = [
+  { key: "food", label: "Food & dining" },
+  { key: "roro", label: "RORO ferry & terminal" },
+  { key: "misc", label: "Miscellaneous" },
+];
+
 /* The "Staying at / Check-in / Check-out" strip under each leg (the note is cut to 30 characters on wide screens) */
 function stayInfo(l) {
   const stay = l.stay
@@ -862,6 +867,7 @@ function renderLegs(active) {
         <td data-label="Duration" class="num">${esc(fmtDuration(l.duration))}</td>
         <td data-label="Arrives">${esc(arrival(l))}</td>
         <td data-label="Distance" class="num">${num(l.distance) ? esc(fmtKm(l.distance)) : "—"}</td>
+        ${EXP_COLS.map(c => `<td data-label="${esc(c.label)}" class="exp num right${num(l[c.key]) > 0 ? "" : " zero"}">${peso(l[c.key])}</td>`).join("")}
         <td class="cost num right">${peso(legCost(l))}</td>
         <td class="act"><div class="actions">
           ${(l.from || l.fromLoc) && (l.to || l.toLoc)
@@ -871,7 +877,7 @@ function renderLegs(active) {
           <button class="icon-btn danger" type="button" data-action="delete" data-id="${esc(l.id)}" aria-label="Delete leg ${i + 1}" title="Delete">${icon("trash")}</button>
         </div></td>
       </tr>
-      ${l.stay ? `<tr class="stayrow"><td class="stay-cell" colspan="9">${stayInfo(l)}</td></tr>` : ""}   <!-- hidden when no "Staying at" value -->
+      ${l.stay ? `<tr class="stayrow"><td class="stay-cell" colspan="12">${stayInfo(l)}</td></tr>` : ""}   <!-- hidden when no "Staying at" value -->
     </tbody>`).join(""));
   $("emptyLegs").hidden = active.length > 0;
 }
@@ -1115,7 +1121,7 @@ function viewHtml(l) {
       ${kv("Check-in", timeOrNot(l.checkIn))}
       ${kv("Check-out", timeOrNot(l.checkOut))}
     </dl></section>
-    <section class="view-sec"><h3>Estimated costs</h3>
+    <section class="view-sec"><h3>Expenses</h3>
       ${costs}
       <div class="cost-line total"><span>Leg total</span><span class="num">${peso(legCost(l))}</span></div>
       ${fuelBasis}

@@ -536,10 +536,12 @@ function save() {
 let legs = load();
 
 /* Settings: editable trip title */
+/* A title only counts once the user has named the trip ("named" is set when they save it).
+   Until then, the default "San Tayo?" and its prompt are shown. */
 function cleanSettings(s) {
-  return {
-    title: String(s?.title ?? "").trim().slice(0, 80) || DEFAULT_TITLE,
-  };
+  const t = String(s?.title ?? "").trim().slice(0, 80);
+  const named = Boolean(s?.named) && t !== "" && t !== DEFAULT_TITLE;
+  return { title: named ? t : DEFAULT_TITLE, named };
 }
 function loadSettings() {
   try { return cleanSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY))); }
@@ -562,7 +564,7 @@ function sortedActive() {
 /* ---------- Rendering ---------- */
 function renderTitle() {
   $("tripTitle").textContent = settings.title;
-  $("titleHint").hidden = settings.title !== DEFAULT_TITLE;   // disappears once the user names the trip
+  $("titleHint").hidden = settings.named;   // disappears once the user names the trip
   document.title = `${settings.title} | ${APP_NAME}`;
 }
 
@@ -645,7 +647,7 @@ function startTitleEdit() {
 function endTitleEdit() { $("titleForm").hidden = true; $("titleRow").hidden = false; }
 $("titleForm").addEventListener("submit", e => {
   e.preventDefault();
-  settings.title = cleanSettings({ title: $("titleInput").value }).title;
+  settings = cleanSettings({ title: $("titleInput").value, named: true });
   saveSettings(); renderTitle(); endTitleEdit(); toast("Trip title updated");
 });
 $("titleInput").addEventListener("keydown", e => { if (e.key === "Escape") endTitleEdit(); });
@@ -1123,7 +1125,7 @@ $("backupFile").addEventListener("change", async e => {
     const data = JSON.parse(await file.text());
     if (!Array.isArray(data.legs)) throw new Error("Invalid backup");
     legs = data.legs.map(normalize);
-    if (typeof data.title === "string") settings = cleanSettings({ title: data.title });
+    if (typeof data.title === "string") settings = cleanSettings({ title: data.title, named: true });
     saveSettings(); save(); renderTitle(); render(); toast("Backup restored");
   } catch (err) {
     alert("Could not restore this file. Please choose a backup saved from this app.");

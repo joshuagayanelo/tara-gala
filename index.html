@@ -367,11 +367,16 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
         <p class="status" id="mapsStatus" role="status"></p>
         <button class="btn small ghost danger" id="clearKey" data-action="clearKey" type="button" hidden style="margin-top:8px">Remove key</button>
       </section>
+
+      <section class="panel" aria-labelledby="aboutTitle">
+        <h2 id="aboutTitle">About</h2>
+        <p class="help" style="margin-top:6px">Tara Gala, the Road Trip &amp; Overlanding Planner. Version <strong data-version></strong>. Your trip data is stored only in this browser.</p>
+      </section>
     </div>
   </main>
 </div>
 
-<footer class="foot">Tara Gala • Stored locally in this browser</footer>
+<footer class="foot">Tara Gala <span data-version></span> • Stored locally in this browser</footer>
 
 <!-- Trip leg dialog -->
 <dialog id="legDialog" aria-labelledby="dialogTitle">
@@ -457,6 +462,7 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
+const APP_VERSION = "2.6.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -1068,7 +1074,9 @@ function download(blob, name) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
-const fileSlug = () => settings.title.replace(/[^\w]+/g, "-").replace(/^-+|-+$/g, "") || "trip";
+/* File names follow the trip title the user chose; before they name the trip, the app name is used */
+const slugify = t => t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
+const fileSlug = () => slugify(settings.named ? settings.title : APP_NAME) || "tara-gala";
 
 const actions = {
   add:   () => openDialog(),
@@ -1097,7 +1105,7 @@ const actions = {
     toast("CSV exported");
   },
   backup: () => {
-    const data = { app: APP_NAME, version: 2, title: settings.title, legs };
+    const data = { app: APP_NAME, appVersion: APP_VERSION, version: 2, title: settings.title, legs };
     download(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }), `${fileSlug()}-backup.json`);
     toast("Backup downloaded");
   },
@@ -1144,6 +1152,7 @@ function toast(msg) {
 }
 
 /* ---------- Start ---------- */
+document.querySelectorAll("[data-version]").forEach(el => el.textContent = "v" + APP_VERSION);
 renderTitle();
 renderMapsStatus();
 render();

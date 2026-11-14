@@ -39,13 +39,14 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 ### 📦 Lahat ng data, nasa iyo
 - **Settings:** Manage your trip data and Google Maps connection in one place.
 - **Export to CSV:** Download your itinerary and expenses for spreadsheets.
-- **Backup & Restore:** Save your entire trip as a JSON file, with the filename automatically based on your trip title (e.g. `Gala-nelos-Overland-Trip-2026-backup.json`). Restore it on another device or browser.
+- **Backup & Restore:** Save your entire trip as a JSON file, with the filename based on your trip title (e.g. `Gala-nelos-Overland-Trip-2026-backup.json`). Restore it on another device or browser.
 - **Local Storage:** Your trip data stays in your browser. Walang account, walang backend, walang ina-upload!
 
 ### 🌙 Simple lang, pero sulit
 - **Dark Mode:** Easy-on-the-eyes interface for those late-night planning sessions.
 - **Responsive Design:** Works on desktop, tablet, and mobile.
 - **Mobile-friendly:** Itineraries become easy-to-read cards, while forms open as convenient bottom sheets.
+- **Roomier Itinerary:** More breathing room for your trip details! Table values stay neatly on one line (except routes), and the expenses panel moves below the table on screens narrower than 1440px. Less siksikan, more readability!
 
 ---
 
@@ -129,6 +130,7 @@ The current app version is displayed in the footer and Settings page.
 
 | Version | Changes |
 |---|---|
+| **2.6.1** | Improved itinerary readability with a roomier table, single-line values (except routes), wider page layout, and responsive expense panel placement below 1440px. |
 | **2.6.0** | Backup and CSV filenames now follow the trip title. App version displayed in footer and Settings. |
 | **2.5.2** | Default title "San Tayo?" remains until the user names the trip. Any custom name is accepted. |
 | **2.5.0** | Introduced "San Tayo?" as the default title, with a "Your next adventure" label and naming prompt. |

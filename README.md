@@ -57,7 +57,7 @@ Para alam mo kung magkano ang kailangang budget sa bawat adventure.
 - **Dark and light modes:** Choose between the default low-glare dark theme and a light theme. Change your preference anytime in Settings.
 - **Color combinations:** Pumili mula sa five additional color combinations in each mode, or reset to the default colors.
 - **Responsive layout:** Works on desktop, tablet, at mobile.
-- **Mobile-friendly itinerary:** Sa phone, cards ang display ng itinerary at bottom sheets naman ang forms para mas madaling gamitin.
+- **Mobile-friendly itinerary:** Sa phone, cards ang display ng itinerary at bottom sheets naman ang forms para mas madaling gamitin. Each itinerary card also displays its leg number at the top for easier navigation.
 
 ---
 
@@ -140,6 +140,7 @@ The current app version is displayed in the app footer and on the Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.0.3** | The leg number is shown at the top of each itinerary card on tablets and phones. |
 | **3.0.2** | Route name placeholder changed to "e.g. Manila to Baguio". |
 | **3.0.1** | The "Staying at" strip is hidden in the itinerary for legs with no accommodation note. |
 | **3.0.0** | Route names, read-only view mode for legs, accommodation check-in and check-out, starting point inherits the previous destination, save-or-discard prompt on the leg form, durations shown as hrs and mins, trip summary with total days, staying-at strip in the itinerary, and Settings with dark/light mode and extra color combinations. |

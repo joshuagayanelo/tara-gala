@@ -132,45 +132,9 @@ The current version is displayed in the app footer and on the Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.5.1** | Improved completed-leg animations: cards slide away, the remaining page content glides into place, the Completed legs panel opens and closes smoothly, and completed-leg rows animate into view one by one. |
 | **3.5.0** | Added the ability to mark trip legs as complete. Completed legs move into a collapsible "Completed legs" section where they can be viewed, restored as incomplete, or deleted. Added an undo option after marking a leg as complete. |
 | **3.4.0** | The map picker now has a place search box and a My Location button, in addition to tapping or dragging the pin. |
 | **3.3.0** | Smooth open and close motion for the leg view and all other dialogs. On phones and tablets the leg view slides up like a sheet, and its sections fade in one after another. |
 | **3.2.1** | Removed the blue tap flash on mobile. Cards and buttons still open and respond to taps. |
-| **3.2.0** | Tap or click an itinerary row or card to open the leg view. The leg view fills the screen in card view. The Add leg button floats at the bottom right while scrolling. Smooth transitions on all buttons. |
-| **3.1.0** | "Estimated costs" renamed to "Expenses". Food & dining, RORO ferry & terminal and Miscellaneous amounts are shown in the itinerary (₱0 in the table, hidden on cards when empty). Cards now take over from the table at 1400 px and below, and the expenses panel sits below the itinerary. |
-| **3.0.3** | The leg number is shown at the top of each itinerary card on tablets and phones. |
-| **3.0.2** | Route name placeholder changed to "e.g. Manila to Baguio". |
-| **3.0.1** | The "Staying at" strip is hidden in the itinerary for legs with no accommodation note. |
-| **3.0.0** | Route names, read-only view mode for legs, accommodation check-in and check-out, starting point inherits the previous destination, save-or-discard prompt on the leg form, durations shown as hrs and mins, trip summary with total days, staying-at strip in the itinerary, and Settings with dark/light mode and extra color combinations. |
-| **2.8.0** | Accommodation notes: record where you are staying for each leg (for example "Dencels Hotel"). Shown in the itinerary and included in the CSV export. |
-| **2.7.0** | A new trip leg starts on the previous leg's arrival date and time by default. It can still be changed. |
-| **2.6.1** | Roomier itinerary table: every value stays on one line except Route. Wider page, and the expenses panel sits below the table on screens narrower than 1440 px. |
-| **2.6.0** | Backup and CSV file names follow the trip title. App version shown in the footer and Settings. |
-| **2.5.2** | The default title "San Tayo?" shows until the user names the trip. Any name, including "Gala-nelos Overland Trip 2026", is accepted. |
-| **2.5.0** | New default title "San Tayo?" with a "Your next adventure" label and a naming prompt. |
-| **2.4.0** | Tara Gala browser tab icon. |
-| **2.3.0** | Start trip in Google Maps from the leg form and the itinerary. |
-| **2.2.0** | Tagline "Road Trip & Overlanding Planner" and an overlanding rig logo. |
-| **2.1.0** | Fuel price and km/L carry over from the previous trip leg. |
-| **2.0.0** | Tara Gala branding, editable trip title, Settings page, map pin picker, total distance, automatic fuel estimate, icon buttons in the itinerary. |
-| **1.2.0** | Use my current location for the starting point. |
-| **1.1.0** | Google Maps place suggestions, automatic travel time and estimated arrival. |
-| **1.0.0** | Dark, responsive redesign and code cleanup. |
-
-### 🔢 Versioning
-
-Every update gets a new version number:
-
-- **Patch (x.y.1):** Bug fixes and minor improvements.
-- **Minor (x.1.0):** New features and enhancements.
-- **Major (2.0.0):** Major redesigns or significant changes.
-
-When releasing an update, remember to change `APP_VERSION` near the top of the script in `index.html` and add a new row to the version history above.
-
-## ❤️ Tara na!
-
-**Planuhin ang biyahe. Bantayan ang gastos. Sulitin ang bawat gala.**
-
-Made with ❤️ for Filipino road trippers, campers, overlanders, and adventure-loving families.
-
-**Tara Gala! Bawat biyahe, may kuwento.** 🇵🇭🏕️
+| **3.2.0** | Tap or click an itinerary row or card to open the leg view. The leg view fills the screen

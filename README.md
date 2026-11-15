@@ -16,7 +16,8 @@ It's a simple, single-file `index.html` app. No build step, no backend, and no a
 - **Smart defaults:** Ang starting point ng bagong leg ay automatic na previous leg's destination. It also inherits the previous leg's arrival date and time. Editable pa rin lahat!
 - **No lost work:** Kapag nag-click ka outside the leg form or pinindot ang Esc, the app asks whether to save or discard your changes.
 - **Route itinerary:** Automatically sorted by date and departure time. Makikita mo ang distance, duration, estimated arrival, and cost for each leg. May accommodation details din, including check-in and check-out times, kapag may inilagay kang accommodation note.
-- **View mode:** Open a leg to review all its details without accidentally changing anything. Choose Edit when you're ready to make changes.
+- **Easy leg viewing:** Click an itinerary row, tap a card, or use the eye icon to view all leg details without accidentally changing anything. Choose Edit when you're ready to make changes. On phones and tablets, the leg view takes over the screen for easier viewing.
+- **Floating Add leg button:** No need to scroll all the way back up! The Add leg button stays floating at the bottom right while you browse your itinerary.
 - **Trip summary line:** See your travel dates, total days, and number of planned legs right in the header. Example: "Dec 14 to Dec 19, 2026 (6 days) • 6 legs planned".
 - **Trip summary:** Check your total expenses, distance, travel time, and number of legs at a glance.
 
@@ -29,7 +30,7 @@ It's a simple, single-file `index.html` app. No build step, no backend, and no a
 - **Estimated arrival:** Calculate arrival time using the departure date, time, and travel duration — even kapag tatawid ng midnight ang biyahe.
 - **Start trip in Google Maps:** Open your route in Google Maps with one click, either from the leg form or itinerary. On your phone, it can launch turn-by-turn navigation.
 
-### Expense estimates
+### Expenses
 
 - **Automatic fuel estimate:** Calculate fuel costs using this formula:
 
@@ -52,6 +53,7 @@ It's a simple, single-file `index.html` app. No build step, no backend, and no a
 - **Dark and light modes:** A low-glare dark interface by default, with a light mode available in Settings.
 - **Color combinations:** Choose from five additional color combinations in each mode, or reset to the default colors.
 - **Responsive layout:** Designed for desktop, tablet, and mobile. On phones, the itinerary switches to cards and forms open as bottom sheets.
+- **Smooth interactions:** Buttons feature smooth transitions for a more polished experience across the app.
 
 ## Getting started
 
@@ -87,12 +89,14 @@ Enable these APIs for your Google Cloud project:
 For security, configure the API key restrictions before using it publicly.
 
 **Application restrictions:**
+
 - Select **Websites**.
 - Add your GitHub Pages address, for example: `https://your-username.github.io/*`.
 - If you're using a custom domain, add that domain too.
 - If testing locally through a local server, add the appropriate localhost referrer.
 
 **API restrictions:**
+
 - Select **Restrict key**.
 - Allow only the Google Maps APIs that your app actually uses.
 
@@ -164,6 +168,7 @@ The current app version is displayed in the footer and on the Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.2.0** | Itinerary rows and cards can be clicked or tapped to open the leg view. The leg view fills the screen in card view. The Add leg button floats at the bottom right while scrolling. Smooth transitions added to all buttons. |
 | **3.1.0** | "Estimated costs" renamed to "Expenses". Food & dining, RORO ferry & terminal, and Miscellaneous amounts are shown in the itinerary (₱0 in the table, hidden on cards when empty). Cards replace the table at 1400 px and below, and the expenses panel sits below the itinerary. |
 | **3.0.3** | The leg number is shown at the top of each itinerary card on tablets and phones. |
 | **3.0.2** | Route name placeholder changed to "e.g. Manila to Baguio". |

@@ -35,6 +35,7 @@
   --map-bg:#0b1114;
   --shadow:rgba(0,0,0,.55);
   --overlay:rgba(5,9,11,.72);
+  --ease:cubic-bezier(.2,.8,.2,1);
   --radius:14px;
   --radius-sm:9px;
   --gap:16px;
@@ -59,7 +60,7 @@ a{color:inherit}
 /* ---------- Buttons ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);
   background:var(--raised);border-radius:var(--radius-sm);padding:10px 14px;font-weight:600;line-height:1.2;
-  min-height:40px;transition:background .15s,border-color .15s;text-decoration:none}
+  min-height:40px;text-decoration:none}
 .btn:hover{border-color:var(--line-strong);background:var(--btn-hover)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.primary:hover{background:var(--accent-hover)}
@@ -67,13 +68,30 @@ a{color:inherit}
 .btn.small{padding:6px 11px;min-height:34px;font-size:13px}
 .btn.ghost{background:transparent}
 .icon-btn{width:34px;height:34px;display:inline-grid;place-items:center;border:0;background:transparent;color:var(--muted);
-  border-radius:8px;padding:0;transition:background .15s,color .15s}
+  border-radius:8px;padding:0}
 .icon-btn:hover{background:var(--raised);color:var(--text)}
 .icon-btn.danger:hover{color:var(--danger)}
 a.icon-btn{text-decoration:none}
 .icon-btn.go:hover{color:var(--accent)}
 .route-actions{grid-column:1/-1}
 .route-actions .btn{width:100%}
+
+/* Smooth, fluid motion for every button */
+.btn,.icon-btn,.pill,.seg-btn,.swatch,.linkbtn{
+  transition:background-color .28s var(--ease),border-color .28s var(--ease),color .28s var(--ease),
+    box-shadow .28s var(--ease),transform .22s var(--ease),opacity .28s var(--ease),
+    padding .3s var(--ease),min-height .3s var(--ease),border-radius .3s var(--ease),font-size .3s var(--ease)}
+.btn:hover:not(:disabled),.pill:hover:not(:disabled){transform:translateY(-1px)}
+.icon-btn:hover{transform:scale(1.08)}
+.btn:active:not(:disabled),.pill:active:not(:disabled),.seg-btn:active,.swatch:active{transform:translateY(0) scale(.97)}
+.icon-btn:active{transform:scale(.92)}
+
+/* The "Add leg" button floats at the bottom right once its place scrolls out of view */
+.add-slot{display:inline-flex}
+#addLeg.floating{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:15;
+  min-height:52px;padding:0 22px;border-radius:99px;font-size:15px;background:var(--accent);border-color:var(--accent);color:var(--accent-ink);
+  box-shadow:0 10px 28px var(--shadow)}
+#addLeg.floating:hover:not(:disabled){background:var(--accent-hover)}
 
 /* ---------- Top bar ---------- */
 .topbar{position:sticky;top:0;z-index:10;background:var(--topbar-bg);backdrop-filter:blur(10px);
@@ -127,6 +145,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}
 th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
 th.exp-h{white-space:normal;line-height:1.25;min-width:64px}
+tbody.leg{cursor:pointer}
 tbody.leg:hover{background:var(--hover)}
 tbody.leg tr.main td{border-bottom:0;padding-bottom:6px}
 tbody.leg td.stay-cell{padding:0 16px 14px 20px;border-bottom:1px solid var(--line)}
@@ -171,7 +190,7 @@ td.route{font-weight:700;white-space:normal;min-width:180px}
 .key-form .field{flex:1}
 .status{font-size:13px;margin-top:10px;color:var(--muted)}
 
-.foot{max-width:1520px;margin:auto;color:var(--muted);font-size:12px;text-align:center;padding:18px 24px 28px}
+.foot{max-width:1520px;margin:auto;color:var(--muted);font-size:12px;text-align:center;padding:18px 24px 84px}
 
 /* ---------- Dialogs ---------- */
 dialog{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:18px;padding:0;
@@ -266,7 +285,9 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   #legsTable thead{display:none}
   #legsTable tbody.leg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;background:var(--bg);border:1px solid var(--line);
     border-radius:12px;padding:14px;align-content:start}
-  #legsTable tbody.leg:hover{background:var(--bg)}
+  #legsTable tbody.leg{transition:transform .2s var(--ease),border-color .25s var(--ease),background-color .25s var(--ease)}
+  #legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
+  #legsTable tbody.leg:active{transform:scale(.99)}
   #legsTable tbody.leg tr{display:contents}
   #legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
   #legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
@@ -285,6 +306,12 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   .stay-short{display:none}
   .stay-full{display:inline;overflow-wrap:anywhere}
   .empty{padding:24px 8px}
+
+  /* the leg modal covers the full height of the screen in card view */
+  #viewDialog{height:100dvh;max-height:100dvh;margin:0 auto;border-radius:0;border-top:0;border-bottom:0}
+  #viewDialog .dialog-body{min-height:100dvh;display:flex;flex-direction:column;padding-top:calc(22px + env(safe-area-inset-top,0px))}
+  #viewDialog #viewBody{flex:1}
+  #viewDialog .dialog-foot{position:sticky;bottom:0;background:var(--surface);margin-top:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
 }
 
 /* ---------- Mobile ---------- */
@@ -451,7 +478,7 @@ window.TARA_THEMES = {
             <h2 id="itinTitle">Route itinerary</h2>
             <p class="sub">Legs are sorted by date and departure time.</p>
           </div>
-          <button class="btn small" data-action="add" type="button">＋ Add leg</button>
+          <div class="add-slot" id="addSlot"><button class="btn small" id="addLeg" data-action="add" type="button">＋ Add leg</button></div>
         </div>
         <div class="table-wrap">
           <table id="legsTable">
@@ -665,7 +692,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.1.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.2.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -855,7 +882,7 @@ function renderLegs(active) {
   const table = $("legsTable");
   table.querySelectorAll("tbody").forEach(b => b.remove());
   table.insertAdjacentHTML("beforeend", active.map((l, i) => `
-    <tbody class="leg${l.stay ? "" : " no-stay"}">
+    <tbody class="leg${l.stay ? "" : " no-stay"}" data-id="${esc(l.id)}">
       <tr class="main">
         <td class="idx num">${i + 1}</td>
         <td data-label="Date">${esc(fmtDate(l.date))}</td>
@@ -1514,8 +1541,33 @@ const actions = {
 };
 document.addEventListener("click", e => {
   const el = e.target.closest("[data-action]");
-  if (el) actions[el.dataset.action]?.(el.dataset.id);
+  if (el) { actions[el.dataset.action]?.(el.dataset.id); return; }
+  // clicking or tapping a table row or a card opens the same view as the eye button
+  const leg = e.target.closest("#legsTable tbody.leg");
+  if (leg && !e.target.closest("a, button") && !window.getSelection().toString()) openView(leg.dataset.id);
 });
+
+/* The "Add leg" button floats at the bottom right once its place scrolls away, and glides back when you return */
+(function () {
+  const btn = $("addLeg"), slot = $("addSlot");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  function setFloating(on) {
+    if (btn.classList.contains("floating") === on) return;
+    const animate = !reduce.matches && slot.offsetParent !== null;
+    const first = btn.getBoundingClientRect();
+    if (on) { slot.style.width = first.width + "px"; slot.style.height = first.height + "px"; }   // keep its place so nothing jumps
+    btn.classList.toggle("floating", on);
+    if (!on) { slot.style.width = ""; slot.style.height = ""; }
+    if (!animate) return;
+    const last = btn.getBoundingClientRect();
+    btn.animate(
+      [{ transform: `translate(${first.left - last.left}px, ${first.top - last.top}px)` }, { transform: "translate(0, 0)" }],
+      { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" });
+  }
+  new IntersectionObserver(([e]) => {
+    setFloating(!e.isIntersecting && e.boundingClientRect.top < window.innerHeight / 2);
+  }, { rootMargin: "-72px 0px 0px 0px" }).observe(slot);   // the sticky top bar covers the first 72px
+})();
 
 $("backupFile").addEventListener("change", async e => {
   const file = e.target.files[0];

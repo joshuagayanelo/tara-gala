@@ -271,6 +271,23 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
 .stay-block{margin-top:16px;padding-top:4px;border-top:1px solid var(--line)}
 .stay-fields{margin-top:12px}
 
+/* ---------- Smooth dialog motion ---------- */
+@keyframes dlg-in{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes dlg-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(20px) scale(.97)}}
+@keyframes sheet-in{from{transform:translateY(100%)}to{transform:none}}
+@keyframes sheet-out{from{transform:none}to{transform:translateY(100%)}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes fade-out{from{opacity:1}to{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+dialog[open]{animation:dlg-in .42s var(--ease) both}
+dialog[open]::backdrop{animation:fade-in .35s ease both}
+dialog.closing{animation:dlg-out .28s cubic-bezier(.4,0,.2,1) both}
+dialog.closing::backdrop{animation:fade-out .28s ease both}
+#viewBody .view-sec{animation:rise .55s var(--ease) both}
+#viewBody .view-sec:nth-child(1){animation-delay:.1s}
+#viewBody .view-sec:nth-child(2){animation-delay:.17s}
+#viewBody .view-sec:nth-child(3){animation-delay:.24s}
+
 /* ---------- Toast ---------- */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);
   background:var(--raised);border:1px solid var(--line);padding:11px 16px;border-radius:10px;opacity:0;pointer-events:none;
@@ -312,6 +329,8 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   #viewDialog .dialog-body{min-height:100dvh;display:flex;flex-direction:column;padding-top:calc(22px + env(safe-area-inset-top,0px))}
   #viewDialog #viewBody{flex:1}
   #viewDialog .dialog-foot{position:sticky;bottom:0;background:var(--surface);margin-top:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  #viewDialog[open]{animation:sheet-in .5s var(--ease) both}
+  #viewDialog.closing{animation:sheet-out .32s cubic-bezier(.4,0,.2,1) both}
 }
 
 /* ---------- Mobile ---------- */
@@ -335,10 +354,12 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
   .top-actions .lbl{display:none}
   .brand-name{font-size:22px}
   .picker-map{height:58dvh}
+  dialog[open]{animation:sheet-in .45s var(--ease) both}
+  dialog.closing{animation:sheet-out .3s cubic-bezier(.4,0,.2,1) both}
 }
 @media(max-width:400px){ .logo{display:none} }
 
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 <script>
 /* Color themes: the single source for the CSS variables and the Settings swatches */
@@ -692,7 +713,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.2.1";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.3.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -786,6 +807,35 @@ function tripSummary(active) {
   const days = max - min + 1;
   return `${range} (${days} ${days === 1 ? "day" : "days"}) • ${legsText}`;
 }
+
+/* ---------- Dialog motion: every dialog eases out instead of vanishing ---------- */
+(function () {
+  const nativeClose = HTMLDialogElement.prototype.close;
+  const nativeShow = HTMLDialogElement.prototype.showModal;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  HTMLDialogElement.prototype.close = function (returnValue) {
+    const dlg = this;
+    if (!dlg.open || dlg.classList.contains("closing") || reduce.matches) return nativeClose.call(dlg, returnValue);
+    dlg.classList.add("closing");
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      dlg._finishClose = null;
+      dlg.removeEventListener("animationend", onEnd);
+      dlg.classList.remove("closing");
+      nativeClose.call(dlg, returnValue);
+    };
+    const onEnd = e => { if (e.target === dlg) finish(); };
+    dlg._finishClose = finish;
+    dlg.addEventListener("animationend", onEnd);
+    setTimeout(finish, 480);   // safety net if the animation never reports back
+  };
+  HTMLDialogElement.prototype.showModal = function () {
+    if (this._finishClose) this._finishClose();   // reopened while still easing out
+    return nativeShow.call(this);
+  };
+})();
 
 /* ---------- Data ---------- */
 const toLatLng = v => (v && Number.isFinite(+v.lat) && Number.isFinite(+v.lng)) ? { lat: +v.lat, lng: +v.lng } : null;
@@ -1119,6 +1169,7 @@ dialog.addEventListener("click", e => { if (e.target === dialog && downOnBackdro
 dialog.addEventListener("cancel", e => { e.preventDefault(); requestClose(true); });
 mapDialog.addEventListener("click", e => { if (e.target === mapDialog) mapDialog.close(); });
 viewDialog.addEventListener("click", e => { if (e.target === viewDialog) viewDialog.close(); });
+[viewDialog, mapDialog, confirmDialog].forEach(d => d.addEventListener("cancel", e => { e.preventDefault(); d.close(); }));   // Esc eases out too
 
 /* ---------- View a leg (read only) ---------- */
 let viewId = null;

@@ -146,8 +146,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}
 th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
 th.exp-h{white-space:normal;line-height:1.25;min-width:64px}
-tbody.leg{cursor:pointer;transition:opacity .28s var(--ease)}
-tbody.leg.leaving{opacity:0;pointer-events:none}
+tbody.leg{cursor:pointer}
 tbody.leg:hover{background:var(--hover)}
 tbody.leg tr.main td{border-bottom:0;padding-bottom:6px}
 tbody.leg td.stay-cell{padding:0 16px 14px 20px;border-bottom:1px solid var(--line)}
@@ -293,10 +292,18 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
 .acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
 .acc-body[data-open="true"]{grid-template-rows:1fr}
 .acc-inner{overflow:hidden;min-height:0}
+/* the whole Completed legs panel eases in and out of the page */
+.reveal{display:grid;grid-template-rows:1fr;transition:grid-template-rows .5s var(--ease),margin-bottom .5s var(--ease),visibility 0s}
+.reveal.closed{grid-template-rows:0fr;margin-bottom:calc(var(--gap) * -1);visibility:hidden;
+  transition:grid-template-rows .5s var(--ease),margin-bottom .5s var(--ease),visibility 0s .5s}
+.reveal-inner{min-height:0;overflow:hidden}
+.reveal.no-anim{transition:none!important}   /* no slide-in while the page first loads */
+.empty:not([hidden]){animation:rise .5s var(--ease) both}
 .done-list{list-style:none;margin:0;padding:0 20px 8px}
-.done-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:12px 0;
-  border-top:1px solid var(--line);cursor:pointer}
-.acc-body[data-open="true"] .done-item{animation:rise .5s var(--ease) both}
+.done-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 12px;align-items:center;margin:0 -10px;padding:12px 10px;
+  border-top:1px solid var(--line);border-radius:10px;cursor:pointer;transition:background-color .3s var(--ease)}
+.done-item:hover{background:var(--hover)}
+.acc-body.stagger .done-item{animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0) * 55ms + 120ms)}
 .done-check{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--sea)}
 .done-title{font-weight:700;overflow-wrap:anywhere}
 .done-title .route-name{margin:0 8px 0 0}
@@ -330,7 +337,7 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
 /* ---------- Toast ---------- */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);
   background:var(--raised);border:1px solid var(--line);padding:11px 16px;border-radius:10px;opacity:0;pointer-events:none;
-  transition:opacity .2s,transform .2s;z-index:30;box-shadow:0 10px 30px var(--shadow)}
+  transition:opacity .35s var(--ease),transform .35s var(--ease);z-index:30;box-shadow:0 10px 30px var(--shadow)}
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 
 /* ---------- Tablet and below: the itinerary table becomes cards ---------- */
@@ -344,7 +351,6 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   #legsTable tbody.leg{transition:transform .2s var(--ease),border-color .25s var(--ease),background-color .25s var(--ease)}
   #legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
   #legsTable tbody.leg:active{transform:scale(.99)}
-  #legsTable tbody.leg.leaving{transform:scale(.95)}
   #legsTable tbody.leg tr{display:contents}
   #legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
   #legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
@@ -564,7 +570,8 @@ window.TARA_THEMES = {
         <div class="empty" id="emptyLegs" hidden></div>
       </section>
 
-      <section class="panel accordion" id="completedPanel" aria-labelledby="doneHeading" hidden>
+      <div class="reveal closed no-anim" id="completedReveal" data-flip="completed" inert><div class="reveal-inner">
+      <section class="panel accordion" id="completedPanel" aria-labelledby="doneHeading">
         <h2 id="doneHeading">
           <button type="button" class="acc-head" id="accBtn" data-action="toggleAcc" aria-expanded="false" aria-controls="accBody">
             <span class="acc-title">Completed legs <span class="badge" id="doneCount">0</span><span class="acc-sub" id="doneSub"></span></span>
@@ -575,8 +582,9 @@ window.TARA_THEMES = {
           <div class="acc-inner"><ul class="done-list" id="doneList"></ul></div>
         </div>
       </section>
+      </div></div>
 
-      <aside class="side">
+      <aside class="side" data-flip="side">
         <section class="panel" aria-labelledby="expTitle">
           <div class="panel-head"><div><h2 id="expTitle">Expenses by category</h2><p class="sub">Where the trip budget goes.</p></div></div>
           <div id="expenses"></div>
@@ -781,7 +789,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.5.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.5.1";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -1038,15 +1046,25 @@ function renderLegs(all) {
 }
 
 /* Completed legs: a collapsed accordion with restore and view actions */
+let clearListTimer;
 function renderCompleted(all) {
   const done = all.filter(l => l.done);
-  $("completedPanel").hidden = done.length === 0;
+  const has = done.length > 0;
+  const reveal = $("completedReveal");
+  reveal.classList.toggle("closed", !has);   // eases open or closed
+  reveal.inert = !has;
+  clearTimeout(clearListTimer);
+  if (!has) {
+    setAccordion(false);
+    clearListTimer = setTimeout(() => { $("doneList").innerHTML = ""; }, 600);   // keep the content while the panel eases away
+    return;
+  }
   $("doneCount").textContent = done.length;
   $("doneSub").textContent = `${done.length} of ${all.length} ${all.length === 1 ? "leg" : "legs"} done`;
-  $("doneList").innerHTML = done.map(l => {
+  $("doneList").innerHTML = done.map((l, idx) => {
     const meta = [fmtDate(l.date), num(l.distance) ? fmtKm(l.distance) : "", peso(legCost(l))].filter(v => v && v !== "—").join(" • ");
     const n = all.indexOf(l) + 1;
-    return `<li class="done-item" data-id="${esc(l.id)}">
+    return `<li class="done-item" data-id="${esc(l.id)}" style="--i:${idx}">
       <span class="done-check" aria-hidden="true">${icon("check")}</span>
       <div>
         <div class="done-title">${l.routeName ? `<span class="route-name">${esc(l.routeName)}</span>` : ""}Leg ${n}: ${esc(l.from || "Unspecified")}<span class="arrow">→</span>${esc(l.to || "Unspecified")}</div>
@@ -1059,12 +1077,17 @@ function renderCompleted(all) {
       </div>
     </li>`;
   }).join("");
-  if (!done.length) setAccordion(false);
 }
+let staggerTimer;
 function setAccordion(open) {
   $("accBtn").setAttribute("aria-expanded", String(open));
   $("accBody").dataset.open = String(open);
   $("accBody").inert = !open;   // collapsed content can't be tabbed into
+  if (open) {   // the rows rise in one after another
+    $("accBody").classList.add("stagger");
+    clearTimeout(staggerTimer);
+    staggerTimer = setTimeout(() => $("accBody").classList.remove("stagger"), 1200);
+  }
 }
 
 function setDone(id, done, isUndo) {
@@ -1077,14 +1100,41 @@ function setDone(id, done, isUndo) {
   if (done) { const b = $("doneCount"); b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }
   const n = sortedActive().indexOf(l) + 1;
   if (isUndo) toast("Undone");
-  else toast(done ? `Leg ${n} marked as complete` : `Leg ${n} is back in your itinerary`, { label: "Undo", run: () => setDone(id, !done, true) });
+  else toast(done ? `Leg ${n} marked as complete` : `Leg ${n} is back in your itinerary`, { label: "Undo", run: () => moveLeg(id, !done, true) });
 }
-function completeWithMotion(id) {   // the row fades out, then moves to the completed list
-  const row = [...document.querySelectorAll("#legsTable tbody.leg")].find(r => r.dataset.id === id);
-  if (!row || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setDone(id, true); return; }
-  if (row.classList.contains("leaving")) return;
-  row.classList.add("leaving");
-  setTimeout(() => setDone(id, true), 280);
+/* Fluid moves: the card slides away, then everything else glides into its new place (FLIP) */
+const FLIP_SELECTOR = "#legsTable tbody.leg, #doneList .done-item, [data-flip]";
+const FLIP_EASE = "cubic-bezier(.2,.8,.2,1)";
+const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const flipKey = el => el.dataset.flip || `leg:${el.dataset.id}:${el.classList.contains("done-item") ? "done" : "plan"}`;
+function flipRender(mutate) {
+  const reduce = prefersReducedMotion();
+  const before = new Map();
+  if (!reduce) document.querySelectorAll(FLIP_SELECTOR).forEach(el => { if (el.getClientRects().length) before.set(flipKey(el), el.getBoundingClientRect()); });
+  mutate();
+  if (reduce) return;
+  document.querySelectorAll(FLIP_SELECTOR).forEach(el => {
+    if (!el.getClientRects().length) return;
+    const was = before.get(flipKey(el)), now = el.getBoundingClientRect();
+    if (was) {
+      const dx = was.left - now.left, dy = was.top - now.top;
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], { duration: 520, easing: FLIP_EASE });
+    } else if (!el.hasAttribute("data-flip")) {   // a card that just arrived fades and rises in
+      el.animate([{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 520, easing: FLIP_EASE, fill: "backwards" });
+    }
+  });
+}
+async function moveLeg(id, done, isUndo) {
+  const el = [...document.querySelectorAll(done ? "#legsTable tbody.leg" : "#doneList .done-item")].find(x => x.dataset.id === id);
+  if (el?.dataset.moving) return;   // ignore double taps
+  if (el && !prefersReducedMotion() && el.getClientRects().length) {
+    el.dataset.moving = "1";
+    try {
+      await el.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateX(36px) scale(.97)" }],
+        { duration: 300, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }).finished;
+    } catch (e) { /* interrupted: carry on */ }
+  }
+  flipRender(() => setDone(id, done, isUndo));
 }
 
 function renderExpenses(total) {
@@ -1710,16 +1760,16 @@ const actions = {
   close: () => requestClose(false),
   edit:  id => { const l = legs.find(x => x.id === id); if (l) openDialog(l); },
   view:  openView,
-  complete: completeWithMotion,
-  incomplete: id => setDone(id, false),
+  complete: id => moveLeg(id, true),
+  incomplete: id => moveLeg(id, false),
   toggleDoneFromView: () => {
     const l = legs.find(x => x.id === viewId);
     if (!l) return;
     viewDialog.close();
-    setDone(l.id, !l.done);
+    moveLeg(l.id, !l.done);
   },
   toggleAcc: () => setAccordion($("accBtn").getAttribute("aria-expanded") !== "true"),
-  openCompleted: () => { setAccordion(true); $("completedPanel").scrollIntoView({ behavior: "smooth", block: "nearest" }); },
+  openCompleted: () => { setAccordion(true); $("completedReveal").scrollIntoView({ behavior: "smooth", block: "nearest" }); },
   closeView: () => viewDialog.close(),
   editFromView: () => {
     const l = legs.find(x => x.id === viewId);
@@ -1858,6 +1908,7 @@ renderThemeUI();
 renderMapsStatus();
 render();
 showView();
+requestAnimationFrame(() => requestAnimationFrame(() => $("completedReveal").classList.remove("no-anim")));
 </script>
 </body>
 </html>

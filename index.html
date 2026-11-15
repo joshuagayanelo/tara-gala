@@ -43,7 +43,7 @@
 }
 
 /* ---------- Base ---------- */
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}   /* no blue flash when tapping cards and buttons */
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--font);
   padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -692,7 +692,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.2.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.2.1";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";

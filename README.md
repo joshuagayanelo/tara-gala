@@ -32,8 +32,8 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 ### 🗺️ Hanapin ang ruta, let's go!
 
 - **Place Suggestions:** Search starting points and destinations with Google Maps autocomplete (Philippines by default).
-- **Pick on Map:** Drop or drag a pin on a dark map. No need to memorize addresses!
-- **Use My Location:** Start your adventure from where you are.
+- **Smarter Map Picker:** Find a place using the search box, jump to your current location with the My Location button, or simply tap and drag the pin to your preferred spot. More ways to pinpoint your destination!
+- **Use My Location:** Set the starting point from your device's current location.
 - **Auto Distance & Travel Time:** Automatically calculate driving distance (km) and estimated travel time based on your selected places. Need adjustments? Edit them anytime.
 - **Estimated Arrival:** Know when you'll arrive, even when your biyahe crosses midnight.
 - **Start Trip in Google Maps:** Ready to hit the road? Launch your route directly from the trip leg form or itinerary. On mobile, it opens turn-by-turn navigation. No more switching apps just to find your destination!
@@ -62,7 +62,7 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 - **Roomier Itinerary:** More breathing room for your trip details! Table values stay neatly on one line (except routes), and the expenses panel moves below the itinerary on screens narrower than 1440px.
 - **Smooth Transitions:** Buttons have smooth transitions for a more polished experience.
 - **No Blue Tap Flash:** Removed the blue tap highlight on mobile. Cards and buttons still respond normally when tapped.
-- **Smoother Dialog Animations:** Opening and closing the leg view and other dialogs now feels smoother. On phones and tablets, the leg view slides up like a sheet, while its sections fade in one after another. A little motion makes the experience feel more polished!
+- **Smoother Dialog Animations:** Opening and closing the leg view and other dialogs now feels smoother. On phones and tablets, the leg view slides up like a sheet, while its sections fade in one after another.
 
 ---
 
@@ -189,6 +189,7 @@ The current app version is displayed in the footer and Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.4.0** | The map picker now includes a place search box and a My Location button, in addition to tapping or dragging the pin. |
 | **3.3.0** | Added smooth opening and closing animations for the leg view and all other dialogs. On phones and tablets, the leg view slides up like a sheet, with sections fading in sequentially. |
 | **3.2.1** | Removed the blue tap flash on mobile. Cards and buttons still open and respond to taps. |
 | **3.2.0** | Itinerary rows and cards can be clicked or tapped to open the leg view. The leg view fills the screen in card view. The Add leg button floats at the bottom right while scrolling. Smooth transitions added to all buttons. |

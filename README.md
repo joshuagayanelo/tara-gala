@@ -27,7 +27,7 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 - **View Leg Details:** Click an itinerary row, tap a card, or use the eye icon to view all leg details without accidentally editing anything. Choose Edit when you need to make changes. On phones and tablets, the leg view fills the screen for easier viewing.
 - **Floating Add Leg Button:** No need to scroll back to the top! The Add Leg button stays at the bottom right while you browse your itinerary. Add another stop anytime.
 - **Trip Summary:** See your travel date range, total days, and number of planned legs right in the header. Example: "Dec 14 to Dec 19, 2026 (6 days) • 6 legs planned".
-- **Trip Overview:** Check your total gastos, distance, travel time, and number of trip legs at a glance.
+- **Trip Overview:** Check your total expenses, distance, travel time, and number of trip legs at a glance.
 
 ### 🗺️ Hanapin ang ruta, let's go!
 
@@ -60,7 +60,8 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 - **Responsive Design:** Works on desktop, tablet, and mobile.
 - **Mobile-friendly Itinerary:** On phones, your itinerary becomes easy-to-read cards, while forms open as convenient bottom sheets.
 - **Roomier Itinerary:** More breathing room for your trip details! Table values stay neatly on one line (except routes), and the expenses panel moves below the itinerary on screens narrower than 1440px.
-- **Smooth Transitions:** Buttons have smooth transitions for a more polished experience. Small details, better experience!
+- **Smooth Transitions:** Buttons have smooth transitions for a more polished experience.
+- **No Blue Tap Flash:** Removed the blue tap highlight on mobile. Cards and buttons still respond normally when tapped. Small details, better experience!
 
 ---
 
@@ -187,6 +188,7 @@ The current app version is displayed in the footer and Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.2.1** | Removed the blue tap flash on mobile. Cards and buttons still open and respond to taps. |
 | **3.2.0** | Itinerary rows and cards can be clicked or tapped to open the leg view. The leg view fills the screen in card view. The Add leg button floats at the bottom right while scrolling. Smooth transitions added to all buttons. |
 | **3.1.0** | "Estimated costs" renamed to "Expenses". Food & dining, RORO ferry & terminal, and Miscellaneous amounts are shown in the itinerary (₱0 in the table, hidden on cards when empty). Cards replace the table at 1400 px and below, and the expenses panel sits below the itinerary. |
 | **3.0.3** | The leg number is shown at the top of each itinerary card on tablets and phones. |

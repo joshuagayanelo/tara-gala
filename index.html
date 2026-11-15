@@ -789,7 +789,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.5.1";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.5.2";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -835,7 +835,7 @@ function arrivalDate(date, time, hours) {
 }
 function arrival(l) {
   const d = arrivalDate(l.date, l.departureTime, l.duration);
-  return d ? d.toLocaleString("en-PH", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "—";
+  return d ? ampm(d.toLocaleString("en-PH", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true })) : "—";
 }
 function fmtDate(iso, withYear = true) {
   if (!iso) return "—";
@@ -853,10 +853,11 @@ function fmtDuration(hours) {
   const h = Math.floor(m / 60), r = m % 60;
   return `${h} ${h === 1 ? "hr" : "hrs"}` + (r ? ` ${r} ${r === 1 ? "min" : "mins"}` : "");
 }
-function fmtTime(t) {
+const ampm = str => str.replace(/\b(am|pm)\b/gi, m => m.toUpperCase());   // 10:00 PM, never 10:00 pm
+function fmtTime(t) {   // "22:00" -> "10:00 PM"
   if (!t) return "";
   const d = new Date(`1970-01-01T${t}`);
-  return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit" });
+  return Number.isNaN(d.getTime()) ? "" : ampm(d.toLocaleTimeString("en-PH", { hour: "numeric", minute: "2-digit", hour12: true }));
 }
 const clip = (str, n) => str.length > n ? str.slice(0, n - 1).trimEnd() + "…" : str;
 
@@ -1021,7 +1022,7 @@ function renderLegs(all) {
           ${l.routeName ? `<span class="route-name">${esc(l.routeName)}</span>` : ""}
           <span class="route-line">${esc(l.from || "Unspecified")}<span class="arrow">→</span>${esc(l.to || "Unspecified")}</span>
         </td>
-        <td data-label="Departs" class="num">${esc(l.departureTime || "—")}</td>
+        <td data-label="Departs" class="num">${esc(fmtTime(l.departureTime) || "—")}</td>
         <td data-label="Duration" class="num">${esc(fmtDuration(l.duration))}</td>
         <td data-label="Arrives">${esc(arrival(l))}</td>
         <td data-label="Distance" class="num">${num(l.distance) ? esc(fmtKm(l.distance)) : "—"}</td>
@@ -1201,7 +1202,7 @@ function updateFormTotal() {
   $("legTotal").textContent = peso(COSTS.reduce((s, c) => s + num($(c.key).value), 0));
   const d = arrivalDate($("date").value, $("departureTime").value, $("duration").value);
   $("arrival").value = d
-    ? d.toLocaleString("en-PH", { weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })
+    ? ampm(d.toLocaleString("en-PH", { weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }))
     : "";
 }
 
@@ -1358,7 +1359,7 @@ let viewId = null;
 const kv = (label, value, full) => `<div class="kv-item${full ? " full" : ""}"><dt>${label}</dt><dd>${value}</dd></div>`;
 function arrivalLong(l) {
   const d = arrivalDate(l.date, l.departureTime, l.duration);
-  return d ? d.toLocaleString("en-PH", { weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) : "—";
+  return d ? ampm(d.toLocaleString("en-PH", { weekday: "short", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true })) : "—";
 }
 function viewHtml(l) {
   const dash = "—";

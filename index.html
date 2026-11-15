@@ -235,7 +235,10 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
 .dialog-foot .total{font-size:13px;color:var(--muted);min-width:0}
 .dialog-foot .total strong{display:block;font-size:18px;color:var(--text)}
 .dialog-foot .btns{display:flex;gap:8px;flex:none}
-.picker-map{height:min(56dvh,460px);border-radius:10px;background:var(--map-bg);margin:0 0 16px;border:1px solid var(--line)}
+.picker-tools{display:flex;gap:8px;margin-bottom:12px;align-items:flex-start}
+.picker-search{flex:1;min-width:0}
+.picker-tools .btn{flex:none;min-height:44px}
+.picker-map{height:min(50dvh,440px);border-radius:10px;background:var(--map-bg);margin:0 0 16px;border:1px solid var(--line)}
 #mapPicked{font-size:14px;overflow-wrap:anywhere}
 
 /* ---------- Appearance (Settings) ---------- */
@@ -353,7 +356,7 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   .data-actions{grid-template-columns:1fr}
   .top-actions .lbl{display:none}
   .brand-name{font-size:22px}
-  .picker-map{height:58dvh}
+  .picker-map{height:50dvh}
   dialog[open]{animation:sheet-in .45s var(--ease) both}
   dialog.closing{animation:sheet-out .3s cubic-bezier(.4,0,.2,1) both}
 }
@@ -694,6 +697,13 @@ window.TARA_THEMES = {
       <h2 id="mapTitle">Pick on map</h2>
       <button class="icon-btn" type="button" data-action="closeMap" aria-label="Close" title="Close"><svg class="ic"><use href="#i-close"/></svg></button>
     </div>
+    <div class="picker-tools">
+      <div class="field picker-search">
+        <label class="sr-only" for="mapSearch">Search for a place</label>
+        <input id="mapSearch" placeholder="Search a place or address" autocomplete="off">
+      </div>
+      <button class="btn" type="button" id="pickerLocateBtn" data-action="pickerLocate"><svg class="ic" aria-hidden="true"><use href="#i-target"/></svg>My location</button>
+    </div>
     <div id="pickerMap" class="picker-map" role="application" aria-label="Map. Click or tap to drop a pin."></div>
     <div class="dialog-foot">
       <div class="total">Selected location<strong id="mapPicked">Tap the map to drop a pin</strong></div>
@@ -713,7 +723,7 @@ window.TARA_THEMES = {
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.3.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.4.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -1332,7 +1342,7 @@ async function calcRoute() {
 }
 
 /* Place suggestions on a text input (side is "fromLoc" or "toLoc") */
-function attachAutocomplete(id, side) {
+function attachAutocomplete(id, side, onPick) {   // onPick: used by the map picker search instead of filling the leg form
   const input = $(id), list = document.createElement("ul");
   list.className = "suggest"; list.id = id + "Suggest"; list.hidden = true;
   list.setAttribute("role", "listbox");
@@ -1341,6 +1351,7 @@ function attachAutocomplete(id, side) {
   Object.entries({ role: "combobox", "aria-autocomplete": "list", "aria-controls": list.id, "aria-expanded": "false" })
     .forEach(([k, v]) => input.setAttribute(k, v));
 
+  const say = onPick ? (m => { $("mapPicked").textContent = m; }) : setNote;
   let token = null, timer, seq = 0, items = [], active = -1;
   const options = () => [...list.querySelectorAll("[data-i]")];
   const close = () => { list.hidden = true; input.setAttribute("aria-expanded", "false"); input.removeAttribute("aria-activedescendant"); active = -1; };
@@ -1370,7 +1381,7 @@ function attachAutocomplete(id, side) {
       items.length ? open() : close();
     } catch (e) {
       close();
-      if (getKey() && !mapsError) setNote("Place suggestions are unavailable. Check that Places API (New) is enabled for your key.");
+      if (getKey() && !mapsError) say("Place suggestions are unavailable. Check that Places API (New) is enabled for your key.");
     }
   }
 
@@ -1379,19 +1390,21 @@ function attachAutocomplete(id, side) {
     if (!p) return;
     input.value = p.text.text;
     close();
-    route[side] = null;
+    if (!onPick) route[side] = null;
     try {
       const place = p.toPlace();
       await place.fetchFields({ fields: ["location"] });
       token = null;   // a session ends once a place is chosen
-      route[side] = { lat: place.location.lat(), lng: place.location.lng() };
+      const loc = { lat: place.location.lat(), lng: place.location.lng() };
+      if (onPick) { onPick(loc, p.text.text); return; }   // the map picker moves its map instead
+      route[side] = loc;
       renderNote();
       calcRoute();
-    } catch (e) { setNote("Could not read that place. Try another suggestion."); }
+    } catch (e) { say("Could not read that place. Try another suggestion."); }
   }
 
   input.addEventListener("input", () => {
-    route[side] = null;               // typing again invalidates the picked place
+    if (!onPick) route[side] = null;   // typing again invalidates the picked place
     clearTimeout(timer);
     const q = input.value.trim();
     if (q.length < 3 || !getKey()) { close(); return; }
@@ -1417,15 +1430,16 @@ attachAutocomplete("to", "toLoc");
 /* ---------- Map picker ---------- */
 const picker = { side: null, loc: null, name: "", map: null, marker: null, seq: 0 };
 
-async function setPin(p) {
+async function setPin(p, label) {   // label: a known place name (from search), so no address lookup is needed
   const loc = toLL(p);
   picker.loc = loc;
   picker.marker.position = loc;
   picker.marker.map = picker.map;
-  picker.name = `Pinned location (${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)})`;
-  $("mapPicked").textContent = `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;
+  picker.name = label || `Pinned location (${loc.lat.toFixed(4)}, ${loc.lng.toFixed(4)})`;
+  $("mapPicked").textContent = label || `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;
   $("mapConfirm").disabled = false;
   const my = ++picker.seq;
+  if (label) return;
   const name = await reverseGeocode(loc);
   if (my === picker.seq && name) { picker.name = name; $("mapPicked").textContent = name; }
 }
@@ -1434,8 +1448,9 @@ async function openPicker(side) {
   if (!getKey()) { setNote("Add a Google Maps key in Settings to pick a location on the map."); return; }
   picker.side = side; picker.loc = null; picker.name = ""; ++picker.seq;
   $("mapTitle").textContent = side === "fromLoc" ? "Pick the starting point" : "Pick the destination";
-  $("mapPicked").textContent = "Tap the map to drop a pin";
+  $("mapPicked").textContent = "Search for a place, use your location, or tap the map to drop a pin";
   $("mapConfirm").disabled = true;
+  $("mapSearch").value = "";
   mapDialog.showModal();
   try {
     await loadMaps();
@@ -1467,6 +1482,38 @@ async function openPicker(side) {
   } catch (e) {
     $("mapPicked").textContent = "The map could not load. Check your key in Settings.";
   }
+}
+
+/* Search box in the map picker: jump to a place and pin it */
+attachAutocomplete("mapSearch", null, (loc, text) => {
+  if (!picker.map) return;
+  picker.map.panTo(loc);
+  picker.map.setZoom(15);
+  setPin(loc, text);
+});
+
+/* "My location" in the map picker: pin where the device is right now */
+function pickerLocate() {
+  const out = $("mapPicked");
+  if (!picker.map) return;
+  if (!navigator.geolocation) { out.textContent = "This browser can't share your location."; return; }
+  const btn = $("pickerLocateBtn"), html = btn.innerHTML;
+  const done = () => { btn.disabled = false; btn.innerHTML = html; };
+  btn.disabled = true; btn.textContent = "Locating…";
+  navigator.geolocation.getCurrentPosition(pos => {
+    done();
+    const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    picker.map.panTo(loc);
+    picker.map.setZoom(16);
+    setPin(loc);
+  }, err => {
+    done();
+    out.textContent = {
+      1: "Location permission was denied. Allow it in your browser's site settings, or search for a place.",
+      2: "Your device couldn't determine its location. Search for a place instead.",
+      3: "Finding your location took too long. Try again or search for a place.",
+    }[err.code] || "Could not get your location. Search for a place instead.";
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
 }
 
 function confirmPin() {
@@ -1563,6 +1610,7 @@ const actions = {
   pickTo: () => openPicker("toLoc"),
   closeMap: () => mapDialog.close(),
   confirmPin,
+  pickerLocate,
   recalc: calcRoute,
   export: () => {
     const headers = ["Leg #", "Route Name", "Date", "Starting Point", "Destination", "Staying At", "Check-in", "Check-out", "Departure Time", "Travel Time (hrs)", "Distance (km)",

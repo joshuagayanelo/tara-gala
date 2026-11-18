@@ -59,7 +59,7 @@ a{color:inherit}
 
 /* ---------- Buttons ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);
-  background:var(--raised);border-radius:var(--radius-sm);padding:10px 14px;font-weight:600;line-height:1.2;
+  background:var(--raised);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-weight:600;line-height:1.2;
   min-height:40px;text-decoration:none}
 .btn:hover{border-color:var(--line-strong);background:var(--btn-hover)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -88,25 +88,19 @@ a.icon-btn{text-decoration:none}
 .btn:active:not(:disabled),.pill:active:not(:disabled),.seg-btn:active,.swatch:active{transform:translateY(0) scale(.97)}
 .icon-btn:active{transform:scale(.92)}
 
-/* The "Add leg" button floats at the bottom right once its place scrolls out of view */
-.add-slot{display:inline-flex}
-#addLeg.floating{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:15;
-  min-height:52px;padding:0 22px;border-radius:99px;font-size:15px;background:var(--accent);border-color:var(--accent);color:var(--accent-ink);
-  box-shadow:0 10px 28px var(--shadow)}
-#addLeg.floating:hover:not(:disabled){background:var(--accent-hover)}
-
 /* ---------- Top bar ---------- */
 .topbar{position:sticky;top:0;z-index:10;background:var(--topbar-bg);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
 .topbar-inner{max-width:1520px;margin:auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0;flex:0 1 auto}
 .logo{width:38px;height:38px;border-radius:11px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
 .logo .ic{width:28px;height:28px;stroke-width:1.7}
 .brand-text{display:flex;flex-direction:column;line-height:1.1;min-width:0}
-.brand-name{font-size:24px;font-weight:800;letter-spacing:-.035em;white-space:nowrap}
+.brand-name{font-size:clamp(18px,5.4vw,24px);font-weight:800;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand-name span{color:var(--accent)}
 .brand-tag{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap}
-.top-actions{display:flex;align-items:center;gap:8px}
+.top-actions{display:flex;align-items:center;gap:8px;flex:none}
+.top-actions .btn{min-height:40px;padding:0 14px;white-space:nowrap}   /* same size at every screen width */
 
 /* ---------- Page ---------- */
 .page{max-width:1520px;margin:auto;padding:28px 24px 12px}
@@ -135,14 +129,14 @@ a.icon-btn{text-decoration:none}
 /* ---------- Layout ---------- */
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--gap);align-items:start}
 .side{display:grid;gap:var(--gap)}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.panel{--pad:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--pad)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px 12px;margin-bottom:14px;flex-wrap:wrap}
 .panel h2{font-size:17px;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:13px;margin-top:3px}
 .settings{max-width:760px;display:grid;gap:var(--gap)}
 
 /* ---------- Itinerary table (cards on small screens) ---------- */
-.table-wrap{margin:0 -20px;overflow-x:auto}   /* safety net: scrolls instead of squeezing if a screen is slightly too narrow */
+.table-wrap{margin:0}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
@@ -179,6 +173,9 @@ td.route{font-weight:700;white-space:normal;min-width:180px}
 .stay-info{display:flex;flex-wrap:wrap;gap:4px 26px;font-size:12px;color:var(--text)}
 .si{white-space:nowrap}
 .si b{font-weight:600;color:var(--muted);margin-right:6px}
+.si-notes{grid-column:1/-1;white-space:normal}
+.notes-text{display:block;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.view-notes{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
 .na{color:var(--muted);font-style:italic}
 .stay-full{display:none}
 .right{text-align:right}
@@ -224,10 +221,11 @@ legend{font-weight:700;font-size:14px;padding:0;margin-bottom:10px}
 .field{display:flex;flex-direction:column;gap:5px;min-width:0}
 .field.full{grid-column:1/-1}
 .field label{font-size:13px;color:var(--muted);font-weight:600}
-.field input{width:100%;min-width:0;border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 11px;
+.field input,.field textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 11px;
   background:var(--bg);font-size:16px}
-.field input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
-.field input::placeholder{color:var(--placeholder)}
+.field textarea{display:block;min-height:92px;line-height:1.5;resize:vertical;overflow:hidden;overflow-wrap:anywhere}   /* grows with the text, never cuts it */
+.field input:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.field input::placeholder,.field textarea::placeholder{color:var(--placeholder)}
 .field input[readonly]{background:transparent;border-style:dashed;color:var(--accent);font-weight:600;cursor:default}
 .field.combo{position:relative}
 .label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px;flex-wrap:wrap}
@@ -367,43 +365,57 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   transition:opacity .35s var(--ease),transform .35s var(--ease);z-index:30;box-shadow:0 10px 30px var(--shadow)}
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 
-/* ---------- Tablet and below: the itinerary table becomes cards ---------- */
-@media(max-width:1440px){
-  .table-wrap{margin:0;overflow:visible}
-  #legsTable,#legsTable tbody,#legsTable tr,#legsTable td{display:block}
-  #legsTable{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
-  #legsTable thead{display:none}
-  #legsTable tbody.leg{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;background:var(--bg);border:1px solid var(--line);
-    border-radius:12px;padding:14px;align-content:start}
-  #legsTable tbody.leg{transition:transform .2s var(--ease),border-color .3s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
-  #legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
-  #legsTable tbody.leg:active{transform:scale(.99)}
-  #legsTable tbody.leg tr{display:contents}
-  #legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
-  #legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
-  #legsTable tbody.leg td.idx{order:-3;grid-column:1/-1;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-  #legsTable tbody.leg td.idx::before{content:"Leg "}
-  #legsTable tbody.leg td.route{order:-2;grid-column:1/-1;font-size:16px;min-width:0}
-  #legsTable tbody.leg td.cost{order:-1;grid-column:1/-1;font-size:18px;font-weight:800;color:var(--accent)}
-  #legsTable tbody.leg td.cost::before{display:none}
-  #legsTable tbody.leg td.exp.zero{display:none}
-  #legsTable tbody.leg td.stay-cell{order:5;grid-column:1/-1;border-top:1px solid var(--line)!important;padding-top:10px!important}
-  #legsTable tbody.leg td.act{order:6;grid-column:1/-1}
-  .stay-info{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
-  .si{display:block;white-space:normal}
-  .si b{display:block;margin:0 0 1px}
-  .si:first-child{grid-column:1/-1}
-  .stay-short{display:none}
-  .stay-full{display:inline;overflow-wrap:anywhere}
-  .empty{padding:24px 8px}
-  #legsTable tbody.leg td.exp-extra{display:block}
-  #legsTable tbody.leg td.stay-cell.exp-only{display:none}
-  .si-exp{display:none}
-  #legsTable tbody.leg.is-active{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent),0 12px 30px var(--shadow)}
-  #legsTable tbody.leg.is-active:hover{background:var(--accent-soft)}
-  #legsTable tbody.leg.is-active tr td:first-child{box-shadow:none}
+/* ---------- Itinerary: always cards, in one row that scrolls sideways ---------- */
+#legsTable,#legsTable tbody,#legsTable tr,#legsTable td{display:block}
+#legsTable{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;width:auto;
+  margin:0 calc(var(--pad) * -1);padding:4px var(--pad) 18px;
+  overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;scroll-padding-inline:var(--pad);
+  scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+#legsTable thead{display:none}
+#legsTable tbody.leg{display:flex;flex-direction:column;gap:10px;background:var(--bg);border:1px solid var(--line);
+  border-radius:12px;padding:14px;flex:0 0 clamp(272px,84vw,340px);min-width:0;scroll-snap-align:start}
+#legsTable tbody.leg{transition:transform .2s var(--ease),border-color .3s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
+#legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
+#legsTable tbody.leg:active{transform:scale(.99)}
+#legsTable tbody.leg tr.main{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+#legsTable tbody.leg tr.stayrow{display:block}
+#legsTable tbody.leg tr.stayrow.exp-only{display:none}
+#legsTable tbody.leg tr.actrow{display:block;margin-top:auto}   /* icons stay pinned to the bottom so every card lines up */
+#legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
+#legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
+#legsTable tbody.leg td.idx{order:-3;grid-column:1/-1;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#legsTable tbody.leg td.idx::before{content:"Leg "}
+#legsTable tbody.leg td.route{order:-2;grid-column:1/-1;font-size:16px;min-width:0}
+#legsTable tbody.leg td.cost{order:-1;grid-column:1/-1;font-size:18px;font-weight:800;color:var(--accent)}
+#legsTable tbody.leg td.cost::before{display:none}
+#legsTable tbody.leg td.exp.zero{display:none}
+#legsTable tbody.leg td.stay-cell{order:5;grid-column:1/-1;border-top:1px solid var(--line)!important;padding-top:10px!important}
+#legsTable tbody.leg td.act{order:6;grid-column:1/-1}
+.stay-info{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.si{display:block;white-space:normal}
+.si b{display:block;margin:0 0 1px}
+.si:first-child{grid-column:1/-1}
+.stay-short{display:none}
+.stay-full{display:inline;overflow-wrap:anywhere}
+.empty{padding:24px 8px}
+#legsTable tbody.leg td.exp-extra{display:block}
+#legsTable tbody.leg td.stay-cell.exp-only{display:none}
+.si-exp{display:none}
+#legsTable tbody.leg.is-active{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent),0 6px 16px var(--shadow)}
+#legsTable tbody.leg.is-active:hover{background:var(--accent-soft)}
+#legsTable tbody.leg.is-active tr td:first-child{box-shadow:none}
 
-  /* the leg modal covers the full height of the screen in card view */
+/* Layout controls above the cards */
+.itin-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+.scroll-btns{display:flex;gap:4px}
+.scroll-btns .icon-btn{border:1px solid var(--line);background:var(--raised);color:var(--text)}
+.scroll-btns .icon-btn:disabled{opacity:.35;cursor:default;transform:none}
+.itin-tools .view-toggle{display:none;margin-top:0;padding:2px;width:auto}
+.itin-tools .view-toggle .seg-btn{flex:none;padding:5px 12px;min-height:30px;font-size:13px}
+
+/* ---------- Tablet and below: the leg modal covers the full screen ---------- */
+@media(max-width:1440px){
   #viewDialog{height:100dvh;max-height:100dvh;margin:0 auto;border-radius:0;border-top:0;border-bottom:0}
   #viewDialog .dialog-body{min-height:100dvh;display:flex;flex-direction:column;padding-top:calc(22px + env(safe-area-inset-top,0px))}
   #viewDialog #viewBody{flex:1}
@@ -419,8 +431,12 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   .brand-tag{display:none}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .stat{padding:14px}
-  .panel{padding:16px}
-  #legsTable{grid-template-columns:1fr;gap:10px}
+  .panel{--pad:16px}
+  .scroll-btns{display:none}   /* swiping is enough on a phone */
+  .itin-tools .view-toggle{display:inline-flex}
+  /* Vertical option: cards stack in a column instead of a sideways row */
+  html[data-legview="v"] #legsTable{flex-direction:column;overflow:visible;margin:0;padding:0;scroll-snap-type:none}
+  html[data-legview="v"] #legsTable tbody.leg{flex:none}
 }
 
 @media(max-width:560px){
@@ -435,19 +451,19 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   .done-list{padding:0 16px 8px}
   .data-actions{grid-template-columns:1fr}
   .top-actions .lbl{display:none}
-  .brand-name{font-size:22px}
+  #settingsLink{width:40px;padding:0}
   .picker-map{height:50dvh}
   dialog[open]{animation:sheet-in .45s var(--ease) both}
   dialog.closing{animation:sheet-out .3s cubic-bezier(.4,0,.2,1) both}
 }
 .lbl-short{display:none}
 @media(max-width:420px){
-  .logo{display:none}
+  .logo{width:32px;height:32px;border-radius:9px}
+  .logo .ic{width:22px;height:22px}
+  .brand{gap:8px}
   .lbl-full{display:none}
   .lbl-short{display:inline}
   .top-actions{gap:6px}
-  .top-actions .btn{padding:9px 12px;min-height:40px}
-  .btn{padding:10px 12px}
   .dialog-foot{flex-wrap:wrap}
   .dialog-foot .total{flex:1 1 100%;display:flex;align-items:baseline;justify-content:space-between}
   .dialog-foot .btns{flex:1 1 100%}
@@ -465,6 +481,14 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   .key-form{flex-wrap:wrap}
   .key-form .btn{width:100%}
   .fonts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:340px){
+  .topbar-inner{padding-left:10px;padding-right:10px;gap:8px}
+  .logo{width:28px;height:28px;border-radius:8px}
+  .logo .ic{width:20px;height:20px}
+  .brand{gap:6px}
+  .top-actions{gap:5px}
 }
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -588,6 +612,8 @@ window.TARA_FONTS = [
   <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
@@ -649,7 +675,16 @@ window.TARA_FONTS = [
             <h2 id="itinTitle">Route itinerary</h2>
             <p class="sub">Legs are sorted by date and departure time.</p>
           </div>
-          <div class="add-slot" id="addSlot"><button class="btn small" id="addLeg" data-action="add" type="button">＋ Add leg</button></div>
+          <div class="itin-tools">
+            <div class="seg view-toggle" role="group" aria-label="Card layout">
+              <button type="button" class="seg-btn" data-action="setLegView" data-id="h" aria-pressed="false">Horizontal</button>
+              <button type="button" class="seg-btn" data-action="setLegView" data-id="v" aria-pressed="true">Vertical</button>
+            </div>
+            <div class="scroll-btns" id="legScroll" hidden>
+              <button type="button" class="icon-btn" data-action="scrollLegs" data-id="-1" aria-label="Scroll cards left" title="Previous cards"><svg class="ic"><use href="#i-prev"/></svg></button>
+              <button type="button" class="icon-btn" data-action="scrollLegs" data-id="1" aria-label="Scroll cards right" title="Next cards"><svg class="ic"><use href="#i-next"/></svg></button>
+            </div>
+          </div>
         </div>
         <div class="table-wrap">
           <table id="legsTable">
@@ -815,6 +850,13 @@ window.TARA_FONTS = [
         <div class="grid three stay-fields" id="stayFields"></div>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>Additional notes</legend>
+      <div class="field">
+        <label class="sr-only" for="notes">Additional notes</label>
+        <textarea id="notes" rows="3" placeholder="Anything else to remember for this leg: reminders, contacts, road conditions, booking details…"></textarea>
+      </div>
+    </fieldset>
     <div class="dialog-foot">
       <div class="total">Leg total<strong class="num" id="legTotal">₱0</strong></div>
       <div class="btns">
@@ -897,7 +939,7 @@ window.TARA_FONTS = [
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.6.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.7.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -908,7 +950,7 @@ const COSTS = [
   { key: "roro",          label: "RORO ferry & terminal" },
   { key: "misc",          label: "Miscellaneous" },
 ];
-const TEXT_FIELDS = ["routeName", "mode", "date", "from", "to", "departureTime", "stay", "checkIn", "checkOut"];   // "stay" = where the user is staying
+const TEXT_FIELDS = ["routeName", "mode", "date", "from", "to", "departureTime", "stay", "checkIn", "checkOut", "notes"];   // "stay" = where the user is staying
 const META_FIELDS = ["duration", "distance", "fuelPrice", "kmPerL"];
 const NUM_FIELDS  = [...META_FIELDS, ...COSTS.map(c => c.key)];
 const INITIAL_DATA = [
@@ -1117,6 +1159,7 @@ function detailInfo(l) {
     items.push(`<span class="si"><b>Check-in</b>${time(l.checkIn)}</span>`);
     items.push(`<span class="si"><b>Check-out</b>${time(l.checkOut)}</span>`);
   }
+  if (l.notes && l.notes.trim()) items.push(`<span class="si si-notes"><b>Notes</b><span class="notes-text">${esc(l.notes)}</span></span>`);
   if (num(l.fuel) > 0) items.push(`<span class="si si-exp"><b>Fuel</b>${peso(l.fuel)}</span>`);
   if (num(l.accommodation) > 0) items.push(`<span class="si si-exp"><b>Accommodation</b>${peso(l.accommodation)}</span>`);
   return items.length ? `<div class="stay-info">${items.join("")}</div>` : "";
@@ -1153,6 +1196,9 @@ function renderLegs(all) {
         ${num(l.accommodation) > 0 ? `<td data-label="Accommodation" class="exp-extra num">${peso(l.accommodation)}</td>` : ""}
         ${EXP_COLS.map(c => `<td data-label="${esc(c.label)}" class="exp num right${num(l[c.key]) > 0 ? "" : " zero"}">${peso(l[c.key])}</td>`).join("")}
         <td class="cost num right">${peso(legCost(l))}</td>
+      </tr>
+      ${detail ? `<tr class="stayrow${l.stay || (l.notes && l.notes.trim()) ? "" : " exp-only"}"><td class="stay-cell${l.stay || (l.notes && l.notes.trim()) ? "" : " exp-only"}" colspan="12">${detail}</td></tr>` : ""}
+      <tr class="actrow">
         <td class="act"><div class="actions">
           ${(l.from || l.fromLoc) && (l.to || l.toLoc)
             ? `<a class="icon-btn go" href="${esc(mapsDirUrl(l.from, l.to, l.fromLoc, l.toLoc))}" target="_blank" rel="noopener" aria-label="Start leg ${i + 1} in Google Maps" title="Start trip in Google Maps">${icon("navigate")}</a>`
@@ -1163,7 +1209,6 @@ function renderLegs(all) {
           <button class="icon-btn danger" type="button" data-action="delete" data-id="${esc(l.id)}" aria-label="Delete leg ${i + 1}" title="Delete">${icon("trash")}</button>
         </div></td>
       </tr>
-      ${detail ? `<tr class="stayrow"><td class="stay-cell${l.stay ? "" : " exp-only"}" colspan="12">${detail}</td></tr>` : ""}
     </tbody>`;
   }).join(""));
   const none = pending.length === 0;
@@ -1171,6 +1216,7 @@ function renderLegs(all) {
   if (none) $("emptyLegs").innerHTML = all.length
     ? `<strong>All legs completed</strong>Every leg is done. <button type="button" class="linkbtn" data-action="openCompleted">View completed legs</button>`
     : `<strong>No trip legs yet</strong>Add your first drive or ferry leg to start planning.`;
+  requestAnimationFrame(updateLegScroll);
 }
 
 /* "In progress": one leg at a time is highlighted; changing it never re-draws the list, so the highlight eases in */
@@ -1427,6 +1473,7 @@ function defaultStartFromPrevious() {
   };
 }
 
+const autoGrow = el => { el.style.height = "auto"; el.style.height = el.scrollHeight + 2 + "px"; };
 function openDialog(leg) {
   form.reset();
   $("editId").value = leg?.id || "";
@@ -1466,6 +1513,7 @@ function openDialog(leg) {
   renderNote();
   formBaseline = formState();
   dialog.showModal();
+  autoGrow($("notes"));
   if (getKey()) loadMaps().catch(() => {});
 }
 
@@ -1481,6 +1529,7 @@ const closeDialog = () => dialog.close();
 
 form.addEventListener("input", e => {
   const id = e.target.id;
+  if (id === "notes") autoGrow(e.target);
   if (id === "fuelPrice" || id === "kmPerL") { inherit[id] = false; applyInherited(false); }   // user took control
   if (id === "date" || id === "departureTime" || id === "from") $("dateNote").hidden = true;
   if (id === "date" || id === "departureTime") applyInherited(true);   // a new date can change which leg is "previous"
@@ -1542,6 +1591,7 @@ function viewHtml(l) {
       ${kv("Check-in", timeOrNot(l.checkIn))}
       ${kv("Check-out", timeOrNot(l.checkOut))}
     </dl></section>
+    ${l.notes && l.notes.trim() ? `<section class="view-sec"><h3>Notes</h3><p class="view-notes">${esc(l.notes)}</p></section>` : ""}
     <section class="view-sec"><h3>Expenses</h3>
       ${costs}
       <div class="cost-line total"><span>Leg total</span><span class="num">${peso(legCost(l))}</span></div>
@@ -1917,7 +1967,33 @@ function download(blob, name) {
 const slugify = t => t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
 const fileSlug = () => slugify(settings.named ? settings.title : APP_NAME) || "tara-gala";
 
+/* ---------- Itinerary card layout (horizontal row or vertical stack on phones) ---------- */
+const LEGVIEW_KEY = "galanellos-overland-2026-legview";
+function updateLegScroll() {
+  const t = $("legsTable"), box = $("legScroll");
+  const row = getComputedStyle(t).flexDirection === "row";
+  const max = t.scrollWidth - t.clientWidth;
+  box.hidden = !(row && max > 2);
+  box.querySelector('[data-id="-1"]').disabled = t.scrollLeft <= 2;
+  box.querySelector('[data-id="1"]').disabled = t.scrollLeft >= max - 2;
+}
+function applyLegView(v, persist) {
+  v = v === "h" ? "h" : "v";
+  document.documentElement.dataset.legview = v;
+  document.querySelectorAll('[data-action="setLegView"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === v)));
+  if (persist) { try { localStorage.setItem(LEGVIEW_KEY, v); } catch (e) { /* ignore */ } }
+  updateLegScroll();
+}
+function scrollLegs(dir) {
+  const t = $("legsTable"), card = t.querySelector("tbody.leg");
+  t.scrollBy({ left: (card ? card.offsetWidth + 12 : 340) * (parseInt(dir, 10) || 1), behavior: prefersReducedMotion() ? "auto" : "smooth" });
+}
+$("legsTable").addEventListener("scroll", updateLegScroll, { passive: true });
+window.addEventListener("resize", updateLegScroll);
+
 const actions = {
+  setLegView: id => applyLegView(id, true),
+  scrollLegs,
   add:   () => openDialog(),
   close: () => requestClose(false),
   edit:  id => { const l = legs.find(x => x.id === id); if (l) openDialog(l); },
@@ -1962,9 +2038,9 @@ const actions = {
   pickerLocate,
   recalc: calcRoute,
   export: () => {
-    const headers = ["Leg #", "Route Name", "Travel Mode", "Status", "Date", "Starting Point", "Destination", "Staying At", "Check-in", "Check-out", "Departure Time", "Travel Time (hrs)", "Distance (km)",
+    const headers = ["Leg #", "Route Name", "Travel Mode", "Status", "Date", "Starting Point", "Destination", "Staying At", "Check-in", "Check-out", "Notes", "Departure Time", "Travel Time (hrs)", "Distance (km)",
       "Estimated Arrival", "Fuel Price (PHP/L)", "Vehicle Consumption (km/L)", ...COSTS.map(c => c.label.replace(" (auto)", "")), "Total Leg Cost"];
-    const rows = sortedActive().map((l, i) => [i + 1, l.routeName, modeLabel(l), l.done ? "Completed" : "Planned", l.date, l.from, l.to, l.stay, l.checkIn, l.checkOut, l.departureTime, l.duration, l.distance,
+    const rows = sortedActive().map((l, i) => [i + 1, l.routeName, modeLabel(l), l.done ? "Completed" : "Planned", l.date, l.from, l.to, l.stay, l.checkIn, l.checkOut, l.notes, l.departureTime, l.duration, l.distance,
       arrival(l), l.fuelPrice, l.kmPerL, ...COSTS.map(c => l[c.key]), legCost(l)]);
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
     download(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }), `${fileSlug()}.csv`);
@@ -1994,28 +2070,6 @@ document.addEventListener("click", e => {
   const leg = e.target.closest("#legsTable tbody.leg, .done-item");
   if (leg && !e.target.closest("a, button") && !window.getSelection().toString()) openView(leg.dataset.id);
 });
-
-/* The "Add leg" button floats at the bottom right once its place scrolls away, and glides back when you return */
-(function () {
-  const btn = $("addLeg"), slot = $("addSlot");
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  function setFloating(on) {
-    if (btn.classList.contains("floating") === on) return;
-    const animate = !reduce.matches && slot.offsetParent !== null;
-    const first = btn.getBoundingClientRect();
-    if (on) { slot.style.width = first.width + "px"; slot.style.height = first.height + "px"; }   // keep its place so nothing jumps
-    btn.classList.toggle("floating", on);
-    if (!on) { slot.style.width = ""; slot.style.height = ""; }
-    if (!animate) return;
-    const last = btn.getBoundingClientRect();
-    btn.animate(
-      [{ transform: `translate(${first.left - last.left}px, ${first.top - last.top}px)` }, { transform: "translate(0, 0)" }],
-      { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" });
-  }
-  new IntersectionObserver(([e]) => {
-    setFloating(!e.isIntersecting && e.boundingClientRect.top < window.innerHeight / 2);
-  }, { rootMargin: "-72px 0px 0px 0px" }).observe(slot);   // the sticky top bar covers the first 72px
-})();
 
 $("backupFile").addEventListener("change", async e => {
   const file = e.target.files[0];
@@ -2079,6 +2133,7 @@ renderTitle();
 renderThemeUI();
 renderFontUI();
 renderMapsStatus();
+{ let v = null; try { v = localStorage.getItem(LEGVIEW_KEY); } catch (e) { /* ignore */ } applyLegView(v, false); }
 render();
 showView();
 requestAnimationFrame(() => requestAnimationFrame(() => $("completedReveal").classList.remove("no-anim")));

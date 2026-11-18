@@ -368,20 +368,37 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
 /* ---------- Itinerary: always cards, in one row that scrolls sideways ---------- */
 #legsTable,#legsTable tbody,#legsTable tr,#legsTable td{display:block}
 #legsTable{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;width:auto;
-  margin:0 calc(var(--pad) * -1);padding:4px var(--pad) 18px;
+  margin:0 -3px;padding:4px 3px 10px;
   overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
-  scroll-snap-type:x proximity;scroll-padding-inline:var(--pad);
-  scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+  scroll-snap-type:x mandatory;scroll-padding-inline:3px;   /* one card per screen, each swipe lands on the next card */
+  scrollbar-width:none}
+#legsTable::-webkit-scrollbar{display:none}
+#legsTable:focus-visible{outline-offset:0;border-radius:12px}
 #legsTable thead{display:none}
 #legsTable tbody.leg{display:flex;flex-direction:column;gap:10px;background:var(--bg);border:1px solid var(--line);
-  border-radius:12px;padding:14px;flex:0 0 clamp(272px,84vw,340px);min-width:0;scroll-snap-align:start}
+  border-radius:12px;padding:14px;flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always}
 #legsTable tbody.leg{transition:transform .2s var(--ease),border-color .3s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
 #legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
 #legsTable tbody.leg:active{transform:scale(.99)}
 #legsTable tbody.leg tr.main{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+#legsTable tbody.leg > tr{transition:transform .5s var(--ease),opacity .5s var(--ease)}
+#legsTable tbody.leg.is-away > tr{opacity:.3;transform:scale(.95)}
 #legsTable tbody.leg tr.stayrow{display:block}
 #legsTable tbody.leg tr.stayrow.exp-only{display:none}
-#legsTable tbody.leg tr.actrow{display:block;margin-top:auto}   /* icons stay pinned to the bottom so every card lines up */
+/* The button section: a footer bar pinned to the bottom, so every card lines up and the buttons stand out */
+#legsTable tbody.leg tr.actrow{display:block;margin:auto -14px -14px;padding:8px 10px;background:var(--surface);
+  border-top:1px solid var(--line);border-radius:0 0 11px 11px}
+#legsTable .actions{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+#legsTable .actions .icon-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  width:auto;height:auto;min-height:50px;padding:7px 2px;border:1px solid var(--line);border-radius:10px;
+  background:var(--raised);color:var(--text)}
+#legsTable .actions .icon-btn:hover{background:var(--btn-hover);border-color:var(--line-strong)}
+#legsTable .actions .icon-btn.go:hover{color:var(--accent)}
+#legsTable .actions .icon-btn.ok:hover{color:var(--sea)}
+#legsTable .actions .icon-btn.danger:hover{color:var(--danger)}
+#legsTable .actions .icon-btn.live-btn[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-edge)}
+.act-lbl{font-size:11px;font-weight:600;line-height:1.1;color:var(--muted)}
+#legsTable .actions .icon-btn:hover .act-lbl,#legsTable .actions .icon-btn[aria-pressed="true"] .act-lbl{color:inherit}
 #legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
 #legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
 #legsTable tbody.leg td.idx{order:-3;grid-column:1/-1;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
@@ -406,13 +423,37 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
 #legsTable tbody.leg.is-active:hover{background:var(--accent-soft)}
 #legsTable tbody.leg.is-active tr td:first-child{box-shadow:none}
 
-/* Layout controls above the cards */
-.itin-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
-.scroll-btns{display:flex;gap:4px}
-.scroll-btns .icon-btn{border:1px solid var(--line);background:var(--raised);color:var(--text)}
-.scroll-btns .icon-btn:disabled{opacity:.35;cursor:default;transform:none}
-.itin-tools .view-toggle{display:none;margin-top:0;padding:2px;width:auto}
-.itin-tools .view-toggle .seg-btn{flex:none;padding:5px 12px;min-height:30px;font-size:13px}
+/* Card navigator under the cards: first, previous, count and scrubber, next, last */
+.card-nav{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;align-items:center;gap:6px;margin-top:4px}
+.card-nav .icon-btn{width:38px;height:38px;border:1px solid var(--line);background:var(--raised);color:var(--text)}
+.card-nav .icon-btn:disabled{opacity:.3;cursor:default;transform:none}
+.nav-mid{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;padding:0 6px}
+.nav-count{font-size:13px;font-weight:700;color:var(--muted)}
+.nav-slider{width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
+
+/* Discreet layout switch (phones only): one small muted icon */
+.itin-tools{display:flex;align-items:center;margin-left:auto}
+.layout-btn{display:none;width:32px;height:32px;color:var(--muted);opacity:.8}
+.layout-btn:hover{opacity:1}
+.layout-btn .ic{width:17px;height:17px}
+html[data-legview="h"] .layout-btn .ic-cards,html[data-legview="v"] .layout-btn .ic-rows{display:none}
+
+/* Wide screens: each full card spreads its details over four columns */
+@media(min-width:900px){
+  #legsTable tbody.leg tr.main{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stay-info{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .si:first-child{grid-column:span 2}
+  .si.si-notes{grid-column:1/-1}
+}
+
+/* Floating Add trip leg button */
+.btn.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:15;
+  min-height:52px;padding:0 22px;border-radius:99px;box-shadow:0 10px 28px var(--shadow);white-space:nowrap;
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(18px) scale(.92);
+  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s linear .35s,background-color .28s var(--ease)}
+.btn.fab.show{opacity:1;visibility:visible;pointer-events:auto;transform:none;
+  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s,background-color .28s var(--ease)}
+.btn.fab.show:hover{transform:translateY(-2px)}
 
 /* ---------- Tablet and below: the leg modal covers the full screen ---------- */
 @media(max-width:1440px){
@@ -432,8 +473,7 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .stat{padding:14px}
   .panel{--pad:16px}
-  .scroll-btns{display:none}   /* swiping is enough on a phone */
-  .itin-tools .view-toggle{display:inline-flex}
+  .layout-btn{display:inline-grid}
   /* Vertical option: cards stack in a column instead of a sideways row */
   html[data-legview="v"] #legsTable{flex-direction:column;overflow:visible;margin:0;padding:0;scroll-snap-type:none}
   html[data-legview="v"] #legsTable tbody.leg{flex:none}
@@ -614,6 +654,10 @@ window.TARA_FONTS = [
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
   <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
   <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-first" viewBox="0 0 24 24"><path d="M6 5v14M18 6l-6 6 6 6"/></symbol>
+  <symbol id="i-last" viewBox="0 0 24 24"><path d="M18 5v14M6 6l6 6-6 6"/></symbol>
+  <symbol id="i-rows" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3" y="5" width="12" height="14" rx="2"/><path d="M19 8v8M22 10v4"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
@@ -676,14 +720,9 @@ window.TARA_FONTS = [
             <p class="sub">Legs are sorted by date and departure time.</p>
           </div>
           <div class="itin-tools">
-            <div class="seg view-toggle" role="group" aria-label="Card layout">
-              <button type="button" class="seg-btn" data-action="setLegView" data-id="h" aria-pressed="false">Horizontal</button>
-              <button type="button" class="seg-btn" data-action="setLegView" data-id="v" aria-pressed="true">Vertical</button>
-            </div>
-            <div class="scroll-btns" id="legScroll" hidden>
-              <button type="button" class="icon-btn" data-action="scrollLegs" data-id="-1" aria-label="Scroll cards left" title="Previous cards"><svg class="ic"><use href="#i-prev"/></svg></button>
-              <button type="button" class="icon-btn" data-action="scrollLegs" data-id="1" aria-label="Scroll cards right" title="Next cards"><svg class="ic"><use href="#i-next"/></svg></button>
-            </div>
+            <button type="button" class="icon-btn layout-btn" data-action="toggleLegView" id="layoutBtn" aria-label="Switch card layout" title="Switch card layout">
+              <svg class="ic ic-rows"><use href="#i-rows"/></svg><svg class="ic ic-cards"><use href="#i-cards"/></svg>
+            </button>
           </div>
         </div>
         <div class="table-wrap">
@@ -698,6 +737,16 @@ window.TARA_FONTS = [
               <th scope="col"><span class="sr-only">Actions</span></th>
             </tr></thead>
           </table>
+        </div>
+        <div class="card-nav" id="cardNav" hidden>
+          <button type="button" class="icon-btn" data-action="legNav" data-id="first" aria-label="Jump to first leg" title="First leg"><svg class="ic"><use href="#i-first"/></svg></button>
+          <button type="button" class="icon-btn" data-action="legNav" data-id="prev" aria-label="Previous leg" title="Previous leg"><svg class="ic"><use href="#i-prev"/></svg></button>
+          <div class="nav-mid">
+            <span class="nav-count num" id="navCount" aria-live="polite">1 / 1</span>
+            <input type="range" class="nav-slider" id="navSlider" min="0" max="0" step="1" value="0" aria-label="Drag to scroll quickly through legs">
+          </div>
+          <button type="button" class="icon-btn" data-action="legNav" data-id="next" aria-label="Next leg" title="Next leg"><svg class="ic"><use href="#i-next"/></svg></button>
+          <button type="button" class="icon-btn" data-action="legNav" data-id="last" aria-label="Jump to last leg" title="Last leg"><svg class="ic"><use href="#i-last"/></svg></button>
         </div>
         <div class="empty" id="emptyLegs" hidden></div>
       </section>
@@ -777,6 +826,8 @@ window.TARA_FONTS = [
     </div>
   </main>
 </div>
+
+<button class="btn primary fab" id="addFab" data-action="add" type="button" inert>＋ Add trip leg</button>
 
 <footer class="foot">Tara Gala <span data-version></span> • Stored locally in this browser</footer>
 
@@ -939,7 +990,7 @@ window.TARA_FONTS = [
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.7.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "3.8.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
@@ -1201,12 +1252,12 @@ function renderLegs(all) {
       <tr class="actrow">
         <td class="act"><div class="actions">
           ${(l.from || l.fromLoc) && (l.to || l.toLoc)
-            ? `<a class="icon-btn go" href="${esc(mapsDirUrl(l.from, l.to, l.fromLoc, l.toLoc))}" target="_blank" rel="noopener" aria-label="Start leg ${i + 1} in Google Maps" title="Start trip in Google Maps">${icon("navigate")}</a>`
+            ? `<a class="icon-btn go" href="${esc(mapsDirUrl(l.from, l.to, l.fromLoc, l.toLoc))}" target="_blank" rel="noopener" aria-label="Start leg ${i + 1} in Google Maps" title="Start trip in Google Maps">${icon("navigate")}<span class="act-lbl" aria-hidden="true">Navigate</span></a>`
             : ""}
-          <button class="icon-btn live-btn" type="button" data-action="toggleActive" data-id="${esc(l.id)}" aria-pressed="${l.active ? "true" : "false"}" aria-label="Leg ${i + 1} is in progress" title="${l.active ? "Stop marking as in progress" : "Mark as in progress"}">${icon("pulse")}</button>
-          <button class="icon-btn ok" type="button" data-action="complete" data-id="${esc(l.id)}" aria-label="Mark leg ${i + 1} as complete" title="Mark as complete">${icon("check")}</button>
-          <button class="icon-btn" type="button" data-action="view" data-id="${esc(l.id)}" aria-label="View details of leg ${i + 1}" title="View details">${icon("eye")}</button>
-          <button class="icon-btn danger" type="button" data-action="delete" data-id="${esc(l.id)}" aria-label="Delete leg ${i + 1}" title="Delete">${icon("trash")}</button>
+          <button class="icon-btn live-btn" type="button" data-action="toggleActive" data-id="${esc(l.id)}" aria-pressed="${l.active ? "true" : "false"}" aria-label="Leg ${i + 1} is in progress" title="${l.active ? "Stop marking as in progress" : "Mark as in progress"}">${icon("pulse")}<span class="act-lbl" aria-hidden="true">Live</span></button>
+          <button class="icon-btn ok" type="button" data-action="complete" data-id="${esc(l.id)}" aria-label="Mark leg ${i + 1} as complete" title="Mark as complete">${icon("check")}<span class="act-lbl" aria-hidden="true">Done</span></button>
+          <button class="icon-btn" type="button" data-action="view" data-id="${esc(l.id)}" aria-label="View details of leg ${i + 1}" title="View details">${icon("eye")}<span class="act-lbl" aria-hidden="true">View</span></button>
+          <button class="icon-btn danger" type="button" data-action="delete" data-id="${esc(l.id)}" aria-label="Delete leg ${i + 1}" title="Delete">${icon("trash")}<span class="act-lbl" aria-hidden="true">Delete</span></button>
         </div></td>
       </tr>
     </tbody>`;
@@ -1216,7 +1267,7 @@ function renderLegs(all) {
   if (none) $("emptyLegs").innerHTML = all.length
     ? `<strong>All legs completed</strong>Every leg is done. <button type="button" class="linkbtn" data-action="openCompleted">View completed legs</button>`
     : `<strong>No trip legs yet</strong>Add your first drive or ferry leg to start planning.`;
-  requestAnimationFrame(updateLegScroll);
+  requestAnimationFrame(updateLegNav);
 }
 
 /* "In progress": one leg at a time is highlighted; changing it never re-draws the list, so the highlight eases in */
@@ -1969,31 +2020,59 @@ const fileSlug = () => slugify(settings.named ? settings.title : APP_NAME) || "t
 
 /* ---------- Itinerary card layout (horizontal row or vertical stack on phones) ---------- */
 const LEGVIEW_KEY = "galanellos-overland-2026-legview";
-function updateLegScroll() {
-  const t = $("legsTable"), box = $("legScroll");
+const legCards = () => [...$("legsTable").querySelectorAll("tbody.leg")];
+const legStep = () => { const c = legCards()[0]; return c ? c.offsetWidth + 12 : 1; };   // card width plus the gap
+const legIndex = () => Math.max(0, Math.min(legCards().length - 1, Math.round($("legsTable").scrollLeft / legStep())));
+function updateLegNav() {
+  const t = $("legsTable"), nav = $("cardNav"), cards = legCards(), n = cards.length;
   const row = getComputedStyle(t).flexDirection === "row";
-  const max = t.scrollWidth - t.clientWidth;
-  box.hidden = !(row && max > 2);
-  box.querySelector('[data-id="-1"]').disabled = t.scrollLeft <= 2;
-  box.querySelector('[data-id="1"]').disabled = t.scrollLeft >= max - 2;
+  nav.hidden = !(row && n > 1);
+  if (!row) { cards.forEach(c => c.classList.remove("is-away")); return; }
+  const i = legIndex();
+  cards.forEach((c, k) => c.classList.toggle("is-away", n > 1 && k !== i));
+  $("navCount").textContent = `${n ? i + 1 : 0} / ${n}`;
+  const sl = $("navSlider");
+  sl.max = Math.max(0, n - 1); sl.value = i; sl.hidden = n < 3;
+  const b = id => nav.querySelector(`[data-id="${id}"]`);
+  b("first").disabled = b("prev").disabled = i <= 0;
+  b("next").disabled = b("last").disabled = i >= n - 1;
+}
+function goLeg(i, instant) {
+  const n = legCards().length;
+  $("legsTable").scrollTo({ left: Math.max(0, Math.min(n - 1, i)) * legStep(), behavior: instant || prefersReducedMotion() ? "instant" : "smooth" });
+}
+function legNav(which) {
+  const i = legIndex();
+  goLeg(which === "first" ? 0 : which === "last" ? 1e9 : which === "prev" ? i - 1 : i + 1);
 }
 function applyLegView(v, persist) {
   v = v === "h" ? "h" : "v";
   document.documentElement.dataset.legview = v;
-  document.querySelectorAll('[data-action="setLegView"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === v)));
+  const btn = $("layoutBtn"), label = v === "h" ? "Switch to a vertical list" : "Switch to swipe cards";
+  btn.title = label; btn.setAttribute("aria-label", label);
   if (persist) { try { localStorage.setItem(LEGVIEW_KEY, v); } catch (e) { /* ignore */ } }
-  updateLegScroll();
+  updateLegNav();
 }
-function scrollLegs(dir) {
-  const t = $("legsTable"), card = t.querySelector("tbody.leg");
-  t.scrollBy({ left: (card ? card.offsetWidth + 12 : 340) * (parseInt(dir, 10) || 1), behavior: prefersReducedMotion() ? "auto" : "smooth" });
-}
-$("legsTable").addEventListener("scroll", updateLegScroll, { passive: true });
-window.addEventListener("resize", updateLegScroll);
+$("legsTable").addEventListener("scroll", updateLegNav, { passive: true });
+$("navSlider").addEventListener("input", e => goLeg(+e.target.value, true));   // dragging the scrubber flies through the legs
+window.addEventListener("resize", updateLegNav);
+
+/* Floating "Add trip leg" button: appears once you scroll down the trip page */
+(function () {
+  const fab = $("addFab");
+  function sync() {
+    const on = location.hash !== "#settings" && window.scrollY > 160;
+    fab.classList.toggle("show", on);
+    fab.inert = !on;
+  }
+  window.addEventListener("scroll", sync, { passive: true });
+  window.addEventListener("hashchange", sync);
+  sync();
+})();
 
 const actions = {
-  setLegView: id => applyLegView(id, true),
-  scrollLegs,
+  toggleLegView: () => applyLegView(document.documentElement.dataset.legview === "h" ? "v" : "h", true),
+  legNav,
   add:   () => openDialog(),
   close: () => requestClose(false),
   edit:  id => { const l = legs.find(x => x.id === id); if (l) openDialog(l); },

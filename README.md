@@ -20,12 +20,14 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 
 - **Trip Legs:** Add every drive, ferry crossing, or major transfer with a route name, date, departure time, starting point, and destination. Use the **Add trip leg** button in the top bar anytime.
 - **Route Names:** Give each trip leg a highlighted label (e.g. "Manila to Baguio") that appears above the route in your itinerary.
+- **Floating Add Trip Leg Button:** No need to scroll back to the top! Once you scroll down, an **Add trip leg** button floats at the bottom right of the screen and glides away again when you return to the top. Add another stop anytime.
 - **Additional Notes:** Jot down anything else you need to remember for a leg: reminders, contacts, booking details, road conditions. The notes box grows as you type, so nothing gets cut off, and your line breaks are kept. Notes show in full on the itinerary card and in the leg view.
 - **San Tayo?:** Every new trip starts with a friendly "San Tayo?" title. Give your adventure a name anytime! The naming prompt disappears once you rename it.
 - **Smart Defaults:** Your next trip leg automatically starts from the previous leg's destination and inherits its estimated arrival date and time. Less encoding, less hassle! You can still change these details anytime.
 - **No Lost Work:** Click outside the leg form or press Esc, and Tara Gala asks whether you want to save or discard your changes.
-- **Route Itinerary:** Every trip leg is a card, sorted by date and departure time. See each leg's distance, duration, estimated arrival, cost, accommodation details (where you're staying and your check-in/check-out times), and notes. The cards sit in one row that you scroll sideways, and on desktop, left and right arrow buttons help you move along.
-- **Pinned Card Actions:** The action icons (start in Google Maps, mark in progress, mark complete, view, delete) are pinned to the bottom of every card, so they line up neatly even when some cards are taller than others.
+- **Route Itinerary:** Every trip leg is a full card, sorted by date and departure time. See each leg's distance, duration, estimated arrival, cost, accommodation details (where you're staying and your check-in/check-out times), and notes. One card fits the screen at a time: swipe left or right and the next card glides in, with the card you leave softly fading back. On wide screens, the card spreads its details across four columns.
+- **Fast Scroll:** Got many legs? A navigator under the cards shows where you are (e.g. "3 / 8"). Use the previous and next buttons, jump straight to the first or last leg, or drag the scrubber to fly through your itinerary. The scrubber appears once you have three or more legs.
+- **Action Button Section:** Every card ends with its own button section: a highlighted footer bar pinned to the bottom, with labeled buttons (Navigate, Live, Done, View, Delete). Because it is pinned, the buttons line up neatly across cards, even when some cards are taller than others.
 - **View Leg Details:** Click or tap a card, or use the eye icon, to view all leg details without accidentally editing anything. Choose Edit when you need to make changes. On phones and tablets, the leg view fills the screen for easier viewing.
 - **Trip Summary:** See your travel date range, total days, and number of planned legs right in the header. Example: "Dec 14 to Dec 19, 2026 (6 days) • 6 legs planned".
 - **Trip Overview:** Check your total expenses, distance, travel time, and number of trip legs at a glance.
@@ -59,7 +61,7 @@ Built for Filipino road trippers, campers, overlanders, and families who love ex
 - **Dark & Light Modes:** Choose a low-glare dark interface by default, or switch to light mode in Settings.
 - **Color Combinations:** Pick from five additional color combinations in each mode, or reset to the default colors.
 - **Responsive Design:** Works on desktop, tablet, and mobile.
-- **Mobile Card Layout:** On phones, choose how your itinerary looks with the **Horizontal / Vertical** toggle above the cards. Swipe sideways through the cards in Horizontal, or stack them in a column in Vertical. Tara Gala remembers your choice on that device. Forms open as convenient bottom sheets.
+- **Mobile Card Layout:** On phones, a small, discreet icon beside the itinerary title switches between swipe cards (one card at a time) and a vertical list. Tara Gala remembers your choice on that device. Forms open as convenient bottom sheets.
 - **Logo on Every Screen:** The Tara Gala logo now shows on small phones too, and scales down to fit even the narrowest screens.
 - **Consistent Buttons:** Buttons keep the same text size and height on every screen size, so the top bar and dialogs look the same on a phone as on a desktop.
 - **Roomier Itinerary:** More breathing room for your trip details! The expenses panel sits below the itinerary.
@@ -192,6 +194,7 @@ The current app version is displayed in the footer and Settings page.
 
 | Version | Changes |
 |---|---|
+| **3.8.0** | The floating **Add trip leg** button is back: it appears at the bottom right once you scroll down. Itinerary cards now fit the screen one at a time, with swipe paging that snaps to each card and a smooth fade and scale transition between cards. Added a card navigator with previous, next, first, last, a "2 / 6" counter, and a scrubber for fast scrolling. The Horizontal / Vertical toggle on phones is now a small, muted icon. Each card has a highlighted footer section for its action buttons, with labels under the icons. On wide screens, the card details spread over four columns. |
 | **3.7.0** | The itinerary is now always cards in a single row that scrolls sideways, with left and right arrow buttons on desktop. On phones, a Horizontal / Vertical toggle lets you choose between swiping sideways or stacking the cards. Added an "Additional notes" field to each leg that grows with the text and shows in full on the card and in the leg view; notes are included in the CSV export and backups. Action icons are pinned to the bottom of every card so they line up. The logo now shows on small screens, and buttons keep the same text size and height on every screen. Removed the "Add leg" button from the Route itinerary panel; use **Add trip leg** in the top bar. |
 | **3.4.0** | The map picker now includes a place search box and a My Location button, in addition to tapping or dragging the pin. |
 | **3.3.0** | Added smooth opening and closing animations for the leg view and all other dialogs. On phones and tablets, the leg view slides up like a sheet, with sections fading in sequentially. |

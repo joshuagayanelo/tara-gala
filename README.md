@@ -1,241 +1,125 @@
-# 🇵🇭 Tara Gala!
+# Tara Gala
 
-**Walang iwanan, puro gala lang!** 🏕️🚙
+**Tara Gala! Bawat biyahe, may kuwento.** Tara Gala is a Road Trip & Overlanding Planner for trips with long drives, island crossings, RORO ferries, campsites and hotels. *Walang iwanan, puro gala lang!*
 
-Planning your next road trip or overlanding adventure? Tara, biyahe tayo!
+It is a single `index.html` file: plain HTML, CSS and JavaScript, no build step and no backend. Your trips are saved on your device first, and (optionally) synced to a **private folder in your own Google Drive** so they follow you across your laptop, phone and tablet.
 
-**Tara Gala** is your Filipino-inspired **Road Trip & Overlanding Planner**. Whether you're cruising along highways, exploring mountain trails, or hopping between islands via RORO, we've got your trip planning covered.
+## Features
 
-Plan your routes, bantayan ang gastos, estimate your fuel, organize your RORO crossings, and keep your entire adventure in one place.
+### Organize
+- **Trip Groups** on the home screen, in grid or list view. Rename, open and delete groups safely: deleting a group with trips makes you move them first, and deletions can be undone.
+- **Trips** inside each group, each with an editable title ("San Tayo?" until you name it), a breadcrumb back to its group and a CSV export.
+- **Itinerary legs** with route name, date, departure time, starting point, destination, travel mode (Drive or RORO / Ferry) and arrival time, including journeys that cross midnight.
+- **Smart defaults:** a new leg starts at the previous leg's destination, on its arrival date and time, with the same fuel price and km/L.
 
-Less hassle sa planning, more time sa gala!
+### Plan and track
+- **Statuses:** planned, in progress (one at a time, highlighted) and completed (moved into a collapsible section, restorable, with undo).
+- **Expenses:** fuel (distance ÷ km/L × price), food and dining, accommodation, RORO ferry and terminal, miscellaneous, with a category breakdown and totals.
+- **Accommodation:** where you are staying, check-in and check-out times and the price.
+- **Route itinerary as cards:** each leg is a card in one row that scrolls and snaps sideways (three cards at a time on large screens, two on tablets, one on phones), with a card navigator (first, previous, next, last and a slider) and a labeled action bar (Navigate, Live, Done, View, Delete). Phones can switch between a swipeable row and a vertical list. Cards out of view are dimmed, and the leg view fills the screen on small screens.
+- **Leg notes:** a free-text note per leg, shown on the card, in the leg view and in the CSV.
 
-Built for Filipino road trippers, campers, overlanders, and families who love exploring the Philippines. 🇵🇭
+### Google Maps (optional)
+Place search, a map picker with search and My location, automatic distance and driving time, estimated arrival and one-tap Google Maps navigation. Without a Maps key everything can still be typed by hand.
 
----
+### Login page
+A welcome screen appears on your first visit: **Continue with Google** (sign in and sync right away) or **Continue with local data** (go straight to the home page, and sign in later in Settings). If you have connected a Google account before, the login page appears once per browser session as **Welcome back**, with one tap to reconnect or to carry on with the trips already on your device.
 
-## ✨ Features: Ano'ng meron?
+### Smooth motion
+Screens cross-fade, cards and groups rise in one after another, cards slide away before they are removed while the rest glide into place, the sync banner slides open and closed, and theme changes fade. Everything shares one set of timings and easing, and it all switches off if your device is set to reduce motion.
 
-### 🚙 Planuhin ang biyahe
+### Saved on your device, synced to your Google Drive
+- **IndexedDB** is the working database, so Tara Gala is fast, saves every change immediately and keeps working offline.
+- **Google Drive sync** (optional): sign in with Google and your trips are backed up automatically while the app is open. A sync chip shows **Synced, Syncing, Pending changes, Offline, Reconnecting, Reconnect, Sync failed or Conflict**, with a **Sync now** button in Settings.
+- **Conflict-safe:** if two devices change the same item, nothing is overwritten. You choose what to keep (or keep both). Changes to different items merge on their own, and deleted items stay deleted on every device.
+- **Backups:** export and restore a JSON backup, export a trip as CSV, restore the cloud backup or the previous cloud backup, and undo a restore. Backups from older versions of Tara Gala can still be imported.
+- **Appearance:** dark and light modes, color combinations and font options. These stay on each device.
 
-- **Trip Legs:** Add every drive, ferry crossing, or major transfer with a route name, date, departure time, starting point, and destination. Use the **Add trip leg** button in the top bar anytime.
-- **Route Names:** Give each trip leg a highlighted label (e.g. "Manila to Baguio") that appears above the route in your itinerary.
-- **Floating Add Trip Leg Button:** No need to scroll back to the top! Once you scroll down, an **Add trip leg** button floats at the bottom right of the screen and glides away again when you return to the top. Add another stop anytime.
-- **Additional Notes:** Jot down anything else you need to remember for a leg: reminders, contacts, booking details, road conditions. The notes box grows as you type, so nothing gets cut off, and your line breaks are kept. Notes show in full on the itinerary card and in the leg view.
-- **San Tayo?:** Every new trip starts with a friendly "San Tayo?" title. Give your adventure a name anytime! The naming prompt disappears once you rename it.
-- **Smart Defaults:** Your next trip leg automatically starts from the previous leg's destination and inherits its estimated arrival date and time. Less encoding, less hassle! You can still change these details anytime.
-- **No Lost Work:** Click outside the leg form or press Esc, and Tara Gala asks whether you want to save or discard your changes.
-- **Route Itinerary:** Every trip leg is a full card, sorted by date and departure time. See each leg's distance, duration, estimated arrival, cost, accommodation details (where you're staying and your check-in/check-out times), and notes. One card fits the screen at a time: swipe left or right and the next card glides in, with the card you leave softly fading back. On wide screens, the card spreads its details across four columns.
-- **Fast Scroll:** Got many legs? A navigator under the cards shows where you are (e.g. "3 / 8"). Use the previous and next buttons, jump straight to the first or last leg, or drag the scrubber to fly through your itinerary. The scrubber appears once you have three or more legs.
-- **Action Button Section:** Every card ends with its own button section: a highlighted footer bar pinned to the bottom, with labeled buttons (Navigate, Live, Done, View, Delete). Because it is pinned, the buttons line up neatly across cards, even when some cards are taller than others.
-- **View Leg Details:** Click or tap a card, or use the eye icon, to view all leg details without accidentally editing anything. Choose Edit when you need to make changes. On phones and tablets, the leg view fills the screen for easier viewing.
-- **Trip Summary:** See your travel date range, total days, and number of planned legs right in the header. Example: "Dec 14 to Dec 19, 2026 (6 days) • 6 legs planned".
-- **Trip Overview:** Check your total expenses, distance, travel time, and number of trip legs at a glance.
+## How sync works (and what it can't do)
 
-### 🗺️ Hanapin ang ruta, let's go!
+1. Every edit is written to IndexedDB first. Then it is marked as pending and uploaded about two seconds later (rapid edits become one upload).
+2. The cloud copy is a versioned JSON file, `tara-gala-backup.json`, in your Drive's private **appDataFolder**, plus `tara-gala-backup.previous.json` as a recoverable earlier version.
+3. Before uploading, Tara Gala checks that the cloud file hasn't changed since it last looked. If it has, it downloads it and does a three-way merge against the state both sides last agreed on. Items changed on only one side merge automatically. Items changed on both sides are shown to you.
+4. Opening the app on another device downloads the newest cloud data, and while the app is open it checks for changes every 90 seconds.
 
-- **Place Suggestions:** Search starting points and destinations with Google Maps autocomplete (Philippines by default).
-- **Smarter Map Picker:** Find a place using the search box, jump to your current location with the My Location button, or simply tap and drag the pin to your preferred spot. More ways to pinpoint your destination!
-- **Use My Location:** Set the starting point from your device's current location.
-- **Auto Distance & Travel Time:** Automatically calculate driving distance (km) and estimated travel time based on your selected places. Need adjustments? Edit them anytime.
-- **Estimated Arrival:** Know when you'll arrive, even when your biyahe crosses midnight.
-- **Start Trip in Google Maps:** Ready to hit the road? Launch your route directly from the trip leg form or itinerary. On mobile, it opens turn-by-turn navigation. No more switching apps just to find your destination!
+**Limits you should know about**
+- Google's browser sign-in issues short-lived tokens (about an hour) and no refresh token. Tara Gala keeps the token in memory only, never in storage, so **after about an hour, or each time you reopen the app, tap Reconnect** to keep syncing. Your changes stay safe on the device in the meantime.
+- Sync runs only while the app is open, online and connected. There is no background sync after you close the browser.
+- Google Drive's API has no atomic "write only if unchanged", so Tara Gala checks the file version right before writing. If two devices write within the same fraction of a second, the later write can replace the earlier one, so one device's very latest edit may be overwritten. This is rare, and the check shrinks the window as far as the API allows. The previous cloud backup and a JSON backup are your way back to an earlier state.
+- Opening Tara Gala for the first time while fully offline needs the page to be in your browser's cache. After that, your saved trips work without a connection.
 
-### 💸 Bantay gastos!
+## Google Cloud setup (once)
 
-- **Fuel Calculator:** Automatically estimate fuel costs using distance, vehicle consumption (km/L), and fuel price (₱/liter).
-- **Carry-over Fuel Settings:** Fuel price and vehicle consumption carry over from your previous trip leg. Less encoding, less hassle!
-- **Expense Categories:** Track fuel, food and dining, accommodation, RORO ferry and terminal fees, and miscellaneous expenses.
-- **Accommodation Tracker:** Record where you're staying — campsite, hotel, or resort — including check-in and check-out times, alongside the accommodation cost.
-- **Expense Breakdown:** See how much each expense category contributes to your total trip budget. Para walang gulatan!
+Tara Gala ships with an OAuth Client ID in the `GOOGLE_CLIENT_ID` constant near the top of the script in `index.html`. To use your own Google Cloud project:
 
-### 📦 Lahat ng data, nasa iyo
+1. Open the [Google Cloud Console](https://console.cloud.google.com/) and create (or pick) a project.
+2. **Turn on the Google Drive API:** *APIs & Services → Library → Google Drive API → Enable.*
+3. **Configure the OAuth consent screen:** *APIs & Services → OAuth consent screen.* Choose **External**, add your app name and email, and add the scopes `openid`, `email`, `profile` and `https://www.googleapis.com/auth/drive.appdata`. While the app is in **Testing**, only the test users you list can sign in. Add yourself and anyone else who will use it.
+4. **Create the OAuth client:** *APIs & Services → Credentials → Create credentials → OAuth client ID → Web application.* Under **Authorized JavaScript origins** add the address Tara Gala runs from, for example `https://your-username.github.io` (just the origin, with no path and no trailing slash) and `http://localhost:8000` if you test locally. You do **not** need an authorized redirect URI.
+5. Copy the **Client ID** (it ends in `.apps.googleusercontent.com`) into the constant:
 
-- **Settings:** Manage your trip data and Google Maps connection in one place.
-- **Export to CSV:** Download your itinerary, expenses, and notes for spreadsheets and further analysis.
-- **Backup & Restore:** Save your entire trip as a JSON file, with the filename based on your trip title (e.g. `Gala-nelos-Overland-Trip-2026-backup.json`). Restore it on another device or browser.
-- **Local Storage:** Your trip data stays in your browser. Walang account, walang backend, walang ina-upload!
+   ```js
+   const GOOGLE_CLIENT_ID = "1234567890-abc123.apps.googleusercontent.com";   // CONFIG
+   ```
 
-### 🌙 Simple lang, pero sulit
+   The Client ID is public by design. Never put a client secret anywhere: Tara Gala doesn't use one.
+6. In the app, open **Settings → Google Drive sync → Sign in with Google**.
 
-- **Dark & Light Modes:** Choose a low-glare dark interface by default, or switch to light mode in Settings.
-- **Color Combinations:** Pick from five additional color combinations in each mode, or reset to the default colors.
-- **Responsive Design:** Works on desktop, tablet, and mobile.
-- **Mobile Card Layout:** On phones, a small, discreet icon beside the itinerary title switches between swipe cards (one card at a time) and a vertical list. Tara Gala remembers your choice on that device. Forms open as convenient bottom sheets.
-- **Logo on Every Screen:** The Tara Gala logo now shows on small phones too, and scales down to fit even the narrowest screens.
-- **Consistent Buttons:** Buttons keep the same text size and height on every screen size, so the top bar and dialogs look the same on a phone as on a desktop.
-- **Roomier Itinerary:** More breathing room for your trip details! The expenses panel sits below the itinerary.
-- **Smooth Transitions:** Buttons have smooth transitions for a more polished experience.
-- **No Blue Tap Flash:** Removed the blue tap highlight on mobile. Cards and buttons still respond normally when tapped.
-- **Smoother Dialog Animations:** Opening and closing the leg view and other dialogs now feels smoother. On phones and tablets, the leg view slides up like a sheet, while its sections fade in one after another.
+Common errors: `origin_mismatch` means the page's address isn't listed under Authorized JavaScript origins. "Access blocked" means you aren't a test user yet. "Drive API isn't turned on" means step 2 was skipped. Google sign-in doesn't work from a `file://` page, so host the app or use `http://localhost`.
 
----
+### Google Maps key (optional)
+In **Settings → Google Maps**, paste an API key from a project with **Maps JavaScript API**, **Places API (New)** and **Routes API** enabled (and **Geocoding API** for addresses of pinned locations). Restrict the key to those APIs and your site's address. The key is saved only in your browser. It is never put in the code, a backup or the cloud.
 
-## 🚀 Paano magsimula?
+## Deploying with GitHub Pages
+1. Put `index.html` (and this `README.md`) in the root of your repository on `main`.
+2. *Settings → Pages → Build and deployment → Deploy from a branch → `main` / `(root)`.*
+3. After a minute or two the app is live at `https://<your-username>.github.io/<repository-name>/`. Add `https://<your-username>.github.io` to the OAuth client's Authorized JavaScript origins.
+4. Hard refresh (Ctrl+Shift+R, or Cmd+Shift+R) after each deploy so the browser loads the new file.
 
-Ready na ba? Let's get your next adventure rolling!
+## Privacy and security
+- Sign-in uses Google Identity Services in the browser. Only these scopes are requested: `openid`, `email`, `profile` and `drive.appdata`. Tara Gala can't see your other Drive files.
+- No client secret exists in the app. Access tokens live in memory only and are never saved in localStorage, IndexedDB or a backup.
+- Your trips go only to your own device and your own Drive appDataFolder. There is no analytics, no tracking and no other server.
+- Client-side code is visible to anyone, so don't treat it as access control. Your Drive data is protected by your Google account.
 
-1. Open `index.html` in your browser, or deploy it using GitHub Pages.
-2. Click **Add Trip Leg**.
-3. Fill in your route name, starting point, destination, schedule, expenses, and any notes.
-4. Add more legs until your entire adventure is mapped out.
-5. Optional: Connect Google Maps for automatic place suggestions, route calculations, map pins, and navigation.
+## Data
+- Records have stable IDs, `updatedAt` times and delete tombstones: `groups`, `trips` (with a `groupId`) and `legs` (with a `tripId`).
+- Backup format: `{ app, schemaVersion, appVersion, lastUpdated, groups, trips, legs, settings, syncMetadata }`, currently `schemaVersion: 2` (version 2 added per-leg notes). Version 1 backups still import, and an older copy of the app that sees a version 2 backup stops syncing and asks you to update instead of dropping your notes, so update every device together.
+- Existing data from earlier versions is moved into IndexedDB automatically on first open (into a "My Trips" group). The original browser data is left in place.
 
-**Walang Google Maps API key? No problem!** You can still manually enter locations, distances, and travel times. Tara Gala works even without Google Maps integration!
+## Version history
 
----
-
-## 🗺️ Google Maps setup
-
-Gusto mo ng automatic place suggestions, map pins, and route calculations? You'll need a Google Maps API key.
-
-### 1. Create your API key
-
-1. Visit [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a project or select an existing one.
-3. Generate an API key under APIs & Services → Credentials.
-
-### 2. Enable the required APIs
-
-Enable these APIs for your project:
-
-- Maps JavaScript API
-- Places API (New)
-- Routes API
-- Geocoding API (optional, for address details of pinned and current locations)
-
-### 3. Restrict your API key
-
-For security, configure your API key restrictions before publishing your app.
-
-**Application restrictions:**
-
-- Select **Websites**.
-- Add your GitHub Pages address (e.g. `https://your-username.github.io/*`).
-- If you're using a custom domain, add that domain too.
-- If testing locally through a local server, add the appropriate localhost referrer.
-
-**API restrictions:**
-
-- Select **Restrict key**.
-- Allow only the Google Maps APIs your app actually uses.
-
-It's also a good idea to monitor API usage, configure available quotas, and set up billing alerts.
-
-### 4. Connect your key to Tara Gala
-
-1. Open the app.
-2. Go to **Settings → Google Maps**.
-3. Paste your API key.
-4. Click **Save Key**.
-
-Your API key is stored in your browser and is not written into the app's source code or repository.
-
-**Heads up! Security matters!** A browser-based Google Maps API key is visible to visitors who inspect your website or network requests. Storing it in browser storage does not make it secret. Always apply website and API restrictions before publishing. Never use an unrestricted API key in a public repository or website.
-
-Website-restricted keys generally won't work when opening `index.html` directly from your computer using a `file://` address. Use GitHub Pages or a local development server instead.
-
-Google Maps services may incur charges depending on usage. Check Google's latest pricing, free usage limits, and billing requirements.
-
----
-
-## 🌐 Deploy with GitHub Pages
-
-Gusto mo nang ma-access ang Tara Gala online? Let's put it on the road!
-
-### 1. Create a GitHub repository
-
-Upload `index.html` to the root of your GitHub repository on the `main` branch.
-
-### 2. Enable GitHub Pages
-
-1. Open your repository.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch**.
-4. Choose `main` and `/ (root)`.
-5. Hit **Save** and wait for deployment.
-
-### 3. Open your app
-
-Your app will be live at:
-
-`https://<your-username>.github.io/<repository-name>/`
-
-Ayos! Your very own trip planner is now online. 🎉
-
----
-
-## ⚠️ Bago bumiyahe, tandaan!
-
-- **RORO & Rest Stops:** Google Maps driving estimates may not include ferry crossings, terminal waiting times, boarding, or rest stops. Add these to your travel time manually for a more realistic arrival estimate.
-- **Backup Your Trips:** Your data lives in your browser's local storage. Clearing browser or website data may erase your trips, so use **Save Backup** regularly.
-- **Location Access:** Browsers generally require HTTPS for location services. GitHub Pages supports this, but opening the app directly from a local file may not.
-- **Google Maps Costs:** Google Maps services may incur usage-based charges. Check Google's latest pricing and free usage limits.
-- **API Key Security:** Browser-based API keys are visible to website visitors. Always restrict your key to your website and the APIs your app uses.
-
----
-
-## 🛠️ Built with
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Google Maps JavaScript API (optional)
-
-No frameworks. No build process. No complicated setup.
-
-Just one `index.html` and you're ready to gala!
-
----
-
-## 📌 Version history
-
-The current app version is displayed in the footer and Settings page.
+The current version is shown in the app footer and on the Settings page. Every change gets a new version: patch (x.y.1) for fixes, minor (x.1.0) for features, major for big architecture changes. Update `APP_VERSION` near the top of the script in `index.html` and add a row here.
 
 | Version | Changes |
-|---|---|
-| **3.8.0** | The floating **Add trip leg** button is back: it appears at the bottom right once you scroll down. Itinerary cards now fit the screen one at a time, with swipe paging that snaps to each card and a smooth fade and scale transition between cards. Added a card navigator with previous, next, first, last, a "2 / 6" counter, and a scrubber for fast scrolling. The Horizontal / Vertical toggle on phones is now a small, muted icon. Each card has a highlighted footer section for its action buttons, with labels under the icons. On wide screens, the card details spread over four columns. |
-| **3.7.0** | The itinerary is now always cards in a single row that scrolls sideways, with left and right arrow buttons on desktop. On phones, a Horizontal / Vertical toggle lets you choose between swiping sideways or stacking the cards. Added an "Additional notes" field to each leg that grows with the text and shows in full on the card and in the leg view; notes are included in the CSV export and backups. Action icons are pinned to the bottom of every card so they line up. The logo now shows on small screens, and buttons keep the same text size and height on every screen. Removed the "Add leg" button from the Route itinerary panel; use **Add trip leg** in the top bar. |
-| **3.4.0** | The map picker now includes a place search box and a My Location button, in addition to tapping or dragging the pin. |
-| **3.3.0** | Added smooth opening and closing animations for the leg view and all other dialogs. On phones and tablets, the leg view slides up like a sheet, with sections fading in sequentially. |
-| **3.2.1** | Removed the blue tap flash on mobile. Cards and buttons still open and respond to taps. |
-| **3.2.0** | Itinerary rows and cards can be clicked or tapped to open the leg view. The leg view fills the screen in card view. The Add leg button floats at the bottom right while scrolling. Smooth transitions added to all buttons. |
-| **3.1.0** | "Estimated costs" renamed to "Expenses". Food & dining, RORO ferry & terminal, and Miscellaneous amounts are shown in the itinerary (₱0 in the table, hidden on cards when empty). Cards replace the table at 1400 px and below, and the expenses panel sits below the itinerary. |
-| **3.0.3** | The leg number is shown at the top of each itinerary card on tablets and phones. |
-| **3.0.2** | Route name placeholder changed to "e.g. Manila to Baguio". |
-| **3.0.1** | The "Staying at" strip is hidden in the itinerary for legs with no accommodation note. |
-| **3.0.0** | Route names, read-only view mode for legs, accommodation check-in and check-out, starting point inherits the previous destination, save-or-discard prompt on the leg form, durations shown as hrs and mins, trip summary with total days, staying-at strip in the itinerary, and Settings with dark/light mode and extra color combinations. |
-| **2.8.0** | Accommodation notes: record where you are staying for each leg (for example "Dencels Hotel"). Shown in the itinerary and included in the CSV export. |
-| **2.7.0** | A new trip leg starts on the previous leg's arrival date and time by default. It can still be changed. |
-| **2.6.1** | Roomier itinerary table: every value stays on one line except Route. Wider page, and the expenses panel sits below the table on screens narrower than 1440 px. |
-| **2.6.0** | Backup and CSV file names follow the trip title. App version shown in the footer and Settings. |
-| **2.5.2** | The default title "San Tayo?" shows until the user names the trip. Any name, including "Gala-nelos Overland Trip 2026", is accepted. |
-| **2.5.0** | New default title "San Tayo?" with a "Your next adventure" label and a naming prompt. |
-| **2.4.0** | Tara Gala browser tab icon. |
-| **2.3.0** | Start trip in Google Maps from the leg form and the itinerary. |
-| **2.2.0** | Tagline "Road Trip & Overlanding Planner" and an overlanding rig logo. |
-| **2.1.0** | Fuel price and km/L carry over from the previous trip leg. |
-| **2.0.0** | Tara Gala branding, editable trip title, Settings page, map pin picker, total distance, automatic fuel estimate, icon buttons in the itinerary. |
-| **1.2.0** | Use my current location for the starting point. |
-| **1.1.0** | Google Maps place suggestions, automatic travel time and estimated arrival. |
-| **1.0.0** | Dark, responsive redesign and code cleanup. |
-
-### 🔢 Versioning
-
-Every update gets a version number:
-
-- **Patch (x.y.1):** Bug fixes and minor improvements.
-- **Minor (x.1.0):** New features and enhancements.
-- **Major (2.0.0):** Big redesigns or significant changes.
-
-Update `APP_VERSION` near the top of `index.html` and add a new entry to the version history whenever you release an update.
-
----
-
-## ❤️ Tara na!
-
-**Planuhin ang biyahe. Bantayan ang gastos. Sulitin ang bawat gala.**
-
-Made with ❤️ for Filipino road trippers, campers, overlanders, and adventure-loving families.
-
-**Tara Gala! Bawat biyahe, may kuwento.** 🇵🇭🏕️
+| --- | --- |
+| 4.1.0 | Route itinerary rebuilt as a swipeable card row with a card navigator, labeled action bar, phone layout switch and floating Add trip leg button (not shown on phones). Per-leg notes. New login page with Continue with Google or Continue with local data. Screens cross-fade, lists and cards animate in and out, and the sync banner and theme changes are smooth. Backup schema version 2. Conflict review now shows the differing values. |
+| 4.0.0 | Google sign-in and private Google Drive sync. Trips now live in IndexedDB and work offline. New home screen with Trip Groups, groups of trips and trips of legs. Safe three-way sync with conflict review, delete tombstones and a previous cloud backup. Versioned backups, with older JSON backups still importable. No floating Add leg button on phones, right-aligned modal footers and larger action icons. |
+| 3.6.1 | On phones, the buttons in the footer of every window are aligned to the right, with the main action at the bottom right, for easier one-handed use. |
+| 3.6.0 | Fuel and accommodation amounts show on itinerary cards (and under the row in the table) when entered. Quick Drive / RORO-Ferry toggle per leg. Mark a leg as in progress, with a highlighted card. Buttons adapt to small phone screens. Font options in Settings. |
+| 3.5.2 | Departure times in the itinerary use the 12-hour format (for example 10:00 PM). Arrival and check-in/out times use capital AM/PM too. |
+| 3.5.1 | Smoother completed-leg flow: cards slide away, the rest of the page glides into place, the Completed legs panel eases open and closed, and its rows rise in one by one. |
+| 3.5.0 | Mark trip legs as complete. Completed legs move into a collapsible "Completed legs" section where they can be viewed, restored (marked as incomplete) or deleted. Undo after marking. |
+| 3.4.0 | The map picker now has a place search box and a My location button, in addition to tapping or dragging the pin. |
+| 3.3.0 | Smooth open and close motion for the leg view and all other dialogs. On phones and tablets the leg view slides up like a sheet, and its sections fade in one after another. |
+| 3.2.1 | Removed the blue tap flash on mobile. Cards and buttons still open and respond to taps. |
+| 3.2.0 | Tap or click an itinerary row or card to open the leg view. The leg view fills the screen in card view. The Add leg button floats at the bottom right while scrolling. Smooth transitions on all buttons. |
+| 3.1.0 | "Estimated costs" renamed to "Expenses". Food & dining, RORO ferry & terminal and Miscellaneous amounts are shown in the itinerary (₱0 in the table, hidden on cards when empty). Cards now take over from the table at 1400 px and below, and the expenses panel sits below the itinerary. |
+| 3.0.3 | The leg number is shown at the top of each itinerary card on tablets and phones. |
+| 3.0.2 | Route name placeholder changed to "e.g. Manila to Baguio". |
+| 3.0.1 | The "Staying at" strip is hidden in the itinerary for legs with no accommodation note. |
+| 3.0.0 | Route names, read-only view mode for legs, accommodation check-in and check-out, starting point inherits the previous destination, save-or-discard prompt on the leg form, durations shown as hrs and mins, trip summary with total days, staying-at strip in the itinerary, and Settings with dark/light mode and extra color combinations. |
+| 2.8.0 | Accommodation notes: record where you are staying for each leg (for example "Dencels Hotel"). Shown in the itinerary and included in the CSV export. |
+| 2.7.0 | A new trip leg starts on the previous leg's arrival date and time by default. It can still be changed. |
+| 2.6.1 | Roomier itinerary table: every value stays on one line except Route. Wider page, and the expenses panel sits below the table on screens narrower than 1440 px. |
+| 2.6.0 | Backup and CSV file names follow the trip title. App version shown in the footer and Settings. |
+| 2.5.2 | The default title "San Tayo?" shows until the user names the trip. Any name, including "Gala-nelos Overland Trip 2026", is accepted. |
+| 2.5.0 | New default title "San Tayo?" with a "Your next adventure" label and a naming prompt. |
+| 2.4.0 | Tara Gala browser tab icon. |
+| 2.3.0 | Start trip in Google Maps from the leg form and the itinerary. |
+| 2.2.0 | Tagline "Road Trip & Overlanding Planner" and an overlanding rig logo. |
+| 2.1.0 | Fuel price and km/L carry over from the previous trip leg. |
+| 2.0.0 | Tara Gala branding, editable trip title, Settings page, map pin picker, total distance, automatic fuel estimate, icon buttons in the itinerary. |
+| 1.2.0 | Use my current location for the starting point. |
+| 1.1.0 | Google Maps place suggestions, automatic travel time and estimated arrival. |
+| 1.0.0 | Dark, responsive redesign and code cleanup. |

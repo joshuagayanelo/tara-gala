@@ -36,6 +36,9 @@
   --shadow:rgba(0,0,0,.55);
   --overlay:rgba(5,9,11,.72);
   --ease:cubic-bezier(.2,.8,.2,1);
+  --t-fast:.2s;   /* motion tokens: quick feedback, normal changes, big entrances */
+  --t-med:.35s;
+  --t-slow:.55s;
   --radius:14px;
   --radius-sm:9px;
   --gap:16px;
@@ -59,7 +62,7 @@ a{color:inherit}
 
 /* ---------- Buttons ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);
-  background:var(--raised);border-radius:var(--radius-sm);padding:10px 14px;font-size:14px;font-weight:600;line-height:1.2;
+  background:var(--raised);border-radius:var(--radius-sm);padding:10px 14px;font-weight:600;line-height:1.2;
   min-height:40px;text-decoration:none}
 .btn:hover{border-color:var(--line-strong);background:var(--btn-hover)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -92,15 +95,14 @@ a.icon-btn{text-decoration:none}
 .topbar{position:sticky;top:0;z-index:10;background:var(--topbar-bg);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
 .topbar-inner{max-width:1520px;margin:auto;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0;flex:0 1 auto}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
 .logo{width:38px;height:38px;border-radius:11px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
 .logo .ic{width:28px;height:28px;stroke-width:1.7}
 .brand-text{display:flex;flex-direction:column;line-height:1.1;min-width:0}
-.brand-name{font-size:clamp(18px,5.4vw,24px);font-weight:800;letter-spacing:-.035em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-name{font-size:24px;font-weight:800;letter-spacing:-.035em;white-space:nowrap}
 .brand-name span{color:var(--accent)}
 .brand-tag{font-size:12px;color:var(--muted);margin-top:3px;white-space:nowrap}
-.top-actions{display:flex;align-items:center;gap:8px;flex:none}
-.top-actions .btn{min-height:40px;padding:0 14px;white-space:nowrap}   /* same size at every screen width */
+.top-actions{display:flex;align-items:center;gap:8px}
 
 /* ---------- Page ---------- */
 .page{max-width:1520px;margin:auto;padding:28px 24px 12px}
@@ -129,33 +131,13 @@ a.icon-btn{text-decoration:none}
 /* ---------- Layout ---------- */
 .layout{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--gap);align-items:start}
 .side{display:grid;gap:var(--gap)}
-.panel{--pad:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--pad)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
 .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px 12px;margin-bottom:14px;flex-wrap:wrap}
 .panel h2{font-size:17px;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:13px;margin-top:3px}
 .settings{max-width:760px;display:grid;gap:var(--gap)}
 
-/* ---------- Itinerary table (cards on small screens) ---------- */
-.table-wrap{margin:0}
-table{border-collapse:collapse;width:100%;font-size:14px}
-th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;padding:12px;border-bottom:1px solid var(--line);white-space:nowrap}
-td{padding:14px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
-th.exp-h{white-space:normal;line-height:1.25;min-width:64px}
-tbody.leg{cursor:pointer;transition:background-color .35s var(--ease)}
-tbody.leg:hover{background:var(--hover)}
-tbody.leg.is-active{background:var(--accent-soft)}
-tbody.leg.is-active:hover{background:color-mix(in srgb,var(--accent) 22%,transparent)}
-tbody.leg.is-active tr td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
-td.exp-extra{display:none}   /* fuel and accommodation amounts show on cards; the table lists them under the row */
-tbody.leg tr.main td{border-bottom:0;padding-bottom:6px}
-tbody.leg td.stay-cell{padding:0 16px 14px 20px;border-bottom:1px solid var(--line)}
-tbody.leg:last-of-type td.stay-cell{border-bottom:0}
-tbody.leg.no-stay tr.main td{border-bottom:1px solid var(--line);padding-bottom:14px}
-tbody.leg.no-stay:last-of-type tr.main td{border-bottom:0}
-th:first-child,td:first-child{padding-left:20px}
-th:last-child,td:last-child{padding-right:14px}
-td.idx{color:var(--muted)}
-td.route{font-weight:700;white-space:normal;min-width:180px}
+/* ---------- Itinerary: card parts ---------- */
 .arrow{color:var(--accent);margin:0 4px}
 .route-name{display:inline-block;max-width:100%;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:700;
   line-height:1.5;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-edge)}
@@ -170,18 +152,101 @@ td.route{font-weight:700;white-space:normal;min-width:180px}
 .is-active .live-chip,.live-chip.on{display:inline-flex;animation:rise .45s var(--ease) both}
 .live-dot{display:block;width:7px;height:7px;border-radius:50%;background:currentColor;animation:livepulse 1.6s ease-in-out infinite}
 @keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
-.stay-info{display:flex;flex-wrap:wrap;gap:4px 26px;font-size:12px;color:var(--text)}
-.si{white-space:nowrap}
-.si b{font-weight:600;color:var(--muted);margin-right:6px}
 .si-notes{grid-column:1/-1;white-space:normal}
 .notes-text{display:block;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
 .view-notes{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
 .na{color:var(--muted);font-style:italic}
-.stay-full{display:none}
+.stay-info{font-size:12px;color:var(--text)}
+.si b{font-weight:600;color:var(--muted)}
 .right{text-align:right}
-.actions{display:flex;gap:2px;justify-content:flex-end}
 .empty{text-align:center;color:var(--muted);padding:30px 12px}
 .empty strong{display:block;color:var(--text);margin-bottom:4px}
+
+/* ---------- Itinerary: always cards, in one row that scrolls sideways ---------- */
+#legsTable,#legsTable tbody,#legsTable tr,#legsTable td{display:block}
+#legsTable{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;width:auto;
+  margin:0 -3px;padding:4px 3px 10px;
+  overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x mandatory;scroll-padding-inline:3px;   /* one card per screen, each swipe lands on the next card */
+  scrollbar-width:none}
+#legsTable::-webkit-scrollbar{display:none}
+#legsTable{--per:1}
+@media(min-width:700px){#legsTable{--per:2}}
+@media(min-width:1000px){#legsTable{--per:3}}   /* web: up to 3 cards in view, swipe or scroll for the rest */
+#legsTable:focus-visible{outline-offset:0;border-radius:12px}
+#legsTable tbody.leg{display:flex;flex-direction:column;gap:16px;background:var(--bg);border:1px solid var(--line);
+  border-radius:12px;padding:18px;flex:0 0 calc((100% - 12px * (var(--per) - 1)) / var(--per));min-width:0;scroll-snap-align:start;scroll-snap-stop:always}
+#legsTable tbody.leg{transition:transform .2s var(--ease),border-color .3s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
+#legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
+#legsTable tbody.leg:active{transform:scale(.99)}
+#legsTable tbody.leg tr.main{display:grid;grid-template-columns:1fr 1fr;gap:17px 12px}
+#legsTable tbody.leg > tr{transition:transform .5s var(--ease),opacity .5s var(--ease)}
+#legsTable tbody.leg.is-away > tr{opacity:.3;transform:scale(.95)}
+#legsTable tbody.leg tr.stayrow{display:block}
+#legsTable tbody.leg tr.stayrow.exp-only{display:none}
+/* The button section: a footer bar pinned to the bottom, so every card lines up and the buttons stand out */
+#legsTable tbody.leg tr.actrow{display:block;margin:auto -18px -18px;padding:10px 12px;background:var(--surface);
+  border-top:1px solid var(--line);border-radius:0 0 11px 11px}
+#legsTable .actions{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
+#legsTable .actions .icon-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  width:auto;height:auto;min-height:54px;padding:8px 2px;border:1px solid var(--line);border-radius:10px;
+  background:var(--raised);color:var(--text)}
+#legsTable .actions .icon-btn:hover{background:var(--btn-hover);border-color:var(--line-strong)}
+#legsTable .actions .icon-btn.go:hover{color:var(--accent)}
+#legsTable .actions .icon-btn.ok:hover{color:var(--sea)}
+#legsTable .actions .icon-btn.danger:hover{color:var(--danger)}
+#legsTable .actions .icon-btn.live-btn[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-edge)}
+.act-lbl{font-size:11px;font-weight:600;line-height:1.1;color:var(--muted)}
+#legsTable .actions .icon-btn:hover .act-lbl,#legsTable .actions .icon-btn[aria-pressed="true"] .act-lbl{color:inherit}
+#legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
+#legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
+#legsTable tbody.leg td.idx{order:-3;grid-column:1/-1;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#legsTable tbody.leg td.idx::before{content:"Leg "}
+#legsTable tbody.leg td.route{order:-2;grid-column:1/-1;font-size:16px;min-width:0}
+#legsTable tbody.leg td.cost{order:-1;grid-column:1/-1;font-size:18px;font-weight:800;color:var(--accent)}
+#legsTable tbody.leg td.cost::before{display:none}
+#legsTable tbody.leg td.exp.zero{display:none}
+#legsTable tbody.leg td.stay-cell{order:5;grid-column:1/-1;border-top:1px solid var(--line)!important;padding-top:10px!important}
+#legsTable tbody.leg td.act{order:6;grid-column:1/-1}
+.stay-info{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+.si{display:block;white-space:normal}
+.si b{display:block;margin:0 0 1px}
+.si:first-child{grid-column:1/-1}
+.stay-short{display:none}
+.stay-full{display:inline;overflow-wrap:anywhere}
+.empty{padding:24px 8px}
+#legsTable tbody.leg td.exp-extra{display:block}
+#legsTable tbody.leg td.stay-cell.exp-only{display:none}
+.si-exp{display:none}
+#legsTable tbody.leg.is-active{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent),0 6px 16px var(--shadow)}
+#legsTable tbody.leg.is-active:hover{background:var(--accent-soft)}
+#legsTable tbody.leg.is-active tr td:first-child{box-shadow:none}
+
+/* Card navigator under the cards: first, previous, count and scrubber, next, last */
+.card-nav{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;align-items:center;gap:6px;margin-top:4px}
+.card-nav .icon-btn{width:38px;height:38px;border:1px solid var(--line);background:var(--raised);color:var(--text)}
+.card-nav .icon-btn:disabled{opacity:.3;cursor:default;transform:none}
+.nav-mid{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;padding:0 6px}
+.nav-count{font-size:13px;font-weight:700;color:var(--muted)}
+.nav-slider{width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
+
+/* Discreet layout switch (phones only): one small muted icon */
+.itin-tools{display:flex;align-items:center;margin-left:auto}
+.layout-btn{display:none;width:32px;height:32px;color:var(--muted);opacity:.8}
+.layout-btn:hover{opacity:1}
+.layout-btn .ic{width:17px;height:17px}
+html[data-legview="h"] .layout-btn .ic-cards,html[data-legview="v"] .layout-btn .ic-rows{display:none}
+
+/* Floating Add trip leg button */
+.btn.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:15;
+  min-height:52px;padding:0 22px;border-radius:99px;box-shadow:0 10px 28px var(--shadow);white-space:nowrap;
+  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(18px) scale(.92);
+  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s linear .35s,background-color .28s var(--ease)}
+.btn.fab.show{opacity:1;visibility:visible;pointer-events:auto;transform:none;
+  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s,background-color .28s var(--ease)}
+.btn.fab.show:hover{transform:translateY(-2px)}
+@media(max-width:760px){.btn.fab{display:none}}   /* no floating Add button on phones: the top bar already has Add */
+
 
 /* ---------- Expenses ---------- */
 .cost-row{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:11px 0;border-bottom:1px solid var(--line)}
@@ -342,6 +407,60 @@ dialog.small-dialog{width:min(460px,calc(100% - 24px))}
 .toast-undo:hover{background:var(--hover)}
 #viewDialog .dialog-foot{flex-wrap:wrap}
 
+/* ---------- Motion: screens, lists, banner, theme ---------- */
+a{transition:color var(--t-fast) var(--ease)}
+html.theme-fading *,html.theme-fading *::before,html.theme-fading *::after{
+  transition:background-color .45s var(--ease),border-color .45s var(--ease),color .45s var(--ease),fill .45s var(--ease),stroke .45s var(--ease),box-shadow .45s var(--ease)!important}
+/* Screen to screen: a cross-fade where the browser supports it (the top bar stays put) */
+.topbar{view-transition-name:topbar}
+::view-transition-group(topbar){animation:none}
+::view-transition-old(topbar){display:none}
+::view-transition-new(topbar){animation:none}
+::view-transition-old(root){animation:vt-out .28s cubic-bezier(.4,0,.2,1) both;mix-blend-mode:normal}
+::view-transition-new(root){animation:vt-in .5s var(--ease) both;mix-blend-mode:normal}
+@keyframes vt-out{to{opacity:0;transform:translateY(-8px)}}
+@keyframes vt-in{from{opacity:0;transform:translateY(16px)}}
+.view-enter{animation:vt-in .5s var(--ease) both}   /* fallback when View Transitions aren't available */
+/* cards rise in one after another when a screen opens */
+.cards.stagger .gcard,#legsTable.stagger tbody.leg{animation:rise .55s var(--ease) backwards;animation-delay:calc(var(--i,0) * 55ms)}
+.title-row:not([hidden]),.title-form:not([hidden]){animation:rise var(--t-med) var(--ease) backwards}
+.view-seg .seg-btn{transition:background-color var(--t-med) var(--ease),color var(--t-med) var(--ease),transform var(--t-fast) var(--ease)}
+/* the sync banner slides open and closed */
+.sync-banner{display:grid;grid-template-rows:0fr;transition:grid-template-rows .45s var(--ease)}
+.sync-banner.open{grid-template-rows:1fr}
+.sb-clip{min-height:0;overflow:hidden}
+
+/* ---------- Login page ---------- */
+body[data-view="login"] .topbar,body[data-view="login"] .page,body[data-view="login"] .foot,
+body[data-view="login"] .sync-banner,body[data-view="login"] .btn.fab,body[data-view="login"] .toast.hidden-on-login{display:none}
+.login{min-height:100dvh;display:grid;place-items:center;padding:calc(28px + env(safe-area-inset-top,0px)) 20px calc(28px + env(safe-area-inset-bottom,0px));
+  background:radial-gradient(900px 480px at 50% -8%,var(--accent-soft),transparent 72%),var(--bg)}
+.login-card{width:min(440px,100%);display:flex;flex-direction:column;align-items:center;text-align:center}
+.login-logo{display:grid;place-items:center;width:76px;height:76px;border-radius:22px;background:var(--accent);color:var(--accent-ink);box-shadow:0 14px 40px var(--shadow)}
+.login-logo .ic{width:46px;height:46px}
+.login-brand{margin:18px 0 4px;font-size:46px;font-weight:800;letter-spacing:-.04em;line-height:1.05}
+.login-brand span{color:var(--accent)}
+.login-tag{margin:0;font-size:16px;color:var(--muted)}
+.login-panel{width:100%;margin-top:28px;padding:22px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 70px var(--shadow)}
+.login-lead{margin:0 0 16px;font-size:15px;line-height:1.6}
+.login-who{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.gbtn.gbtn-lg{width:100%;justify-content:center;min-height:52px;font-size:16px}
+.gbtn[disabled]{opacity:.55;pointer-events:none}
+.login-or{display:flex;align-items:center;gap:12px;margin:18px 0;font-size:13px;color:var(--muted)}
+.login-or::before,.login-or::after{content:"";flex:1;height:1px;background:var(--line)}
+.login-local{width:100%;min-height:50px;font-size:15px}
+.login-sub{margin:10px 2px 0;font-size:13px;line-height:1.6;color:var(--muted)}
+.login-note,.login-msg{margin:14px 0 0;padding:10px 12px;border-radius:var(--radius-sm);font-size:13px;line-height:1.55;
+  background:color-mix(in srgb,var(--danger) 12%,transparent);border:1px solid color-mix(in srgb,var(--danger) 40%,transparent)}
+.login-fine{margin:22px 0 0;font-size:13px;color:var(--muted)}
+.login-switch{margin-top:12px;text-align:center}
+#loginView.busy .login-panel{opacity:.72;pointer-events:none;transition:opacity var(--t-med) var(--ease)}
+#loginView:not([hidden]) .login-card>*{animation:rise .7s var(--ease) backwards}
+#loginView:not([hidden]) .login-card>:nth-child(2){animation-delay:.07s}
+#loginView:not([hidden]) .login-card>:nth-child(3){animation-delay:.14s}
+#loginView:not([hidden]) .login-card>:nth-child(4){animation-delay:.22s}
+#loginView:not([hidden]) .login-card>:nth-child(5){animation-delay:.3s}
+
 /* ---------- Smooth dialog motion ---------- */
 @keyframes dlg-in{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:none}}
 @keyframes dlg-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(20px) scale(.97)}}
@@ -358,102 +477,13 @@ dialog.closing::backdrop{animation:fade-out .28s ease both}
 #viewBody .view-sec:nth-child(1){animation-delay:.1s}
 #viewBody .view-sec:nth-child(2){animation-delay:.17s}
 #viewBody .view-sec:nth-child(3){animation-delay:.24s}
+#viewBody .view-sec:nth-child(4){animation-delay:.31s}
 
 /* ---------- Toast ---------- */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);
   background:var(--raised);border:1px solid var(--line);padding:11px 16px;border-radius:10px;opacity:0;pointer-events:none;
   transition:opacity .35s var(--ease),transform .35s var(--ease);z-index:30;box-shadow:0 10px 30px var(--shadow)}
 .toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
-
-/* ---------- Itinerary: always cards, in one row that scrolls sideways ---------- */
-#legsTable,#legsTable tbody,#legsTable tr,#legsTable td{display:block}
-#legsTable{display:flex;flex-wrap:nowrap;align-items:stretch;gap:12px;width:auto;
-  margin:0 -3px;padding:4px 3px 10px;
-  overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;
-  scroll-snap-type:x mandatory;scroll-padding-inline:3px;   /* one card per screen, each swipe lands on the next card */
-  scrollbar-width:none}
-#legsTable::-webkit-scrollbar{display:none}
-#legsTable:focus-visible{outline-offset:0;border-radius:12px}
-#legsTable thead{display:none}
-#legsTable tbody.leg{display:flex;flex-direction:column;gap:10px;background:var(--bg);border:1px solid var(--line);
-  border-radius:12px;padding:14px;flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always}
-#legsTable tbody.leg{transition:transform .2s var(--ease),border-color .3s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
-#legsTable tbody.leg:hover{background:var(--bg);border-color:var(--line-strong)}
-#legsTable tbody.leg:active{transform:scale(.99)}
-#legsTable tbody.leg tr.main{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
-#legsTable tbody.leg > tr{transition:transform .5s var(--ease),opacity .5s var(--ease)}
-#legsTable tbody.leg.is-away > tr{opacity:.3;transform:scale(.95)}
-#legsTable tbody.leg tr.stayrow{display:block}
-#legsTable tbody.leg tr.stayrow.exp-only{display:none}
-/* The button section: a footer bar pinned to the bottom, so every card lines up and the buttons stand out */
-#legsTable tbody.leg tr.actrow{display:block;margin:auto -14px -14px;padding:8px 10px;background:var(--surface);
-  border-top:1px solid var(--line);border-radius:0 0 11px 11px}
-#legsTable .actions{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:6px}
-#legsTable .actions .icon-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  width:auto;height:auto;min-height:50px;padding:7px 2px;border:1px solid var(--line);border-radius:10px;
-  background:var(--raised);color:var(--text)}
-#legsTable .actions .icon-btn:hover{background:var(--btn-hover);border-color:var(--line-strong)}
-#legsTable .actions .icon-btn.go:hover{color:var(--accent)}
-#legsTable .actions .icon-btn.ok:hover{color:var(--sea)}
-#legsTable .actions .icon-btn.danger:hover{color:var(--danger)}
-#legsTable .actions .icon-btn.live-btn[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-edge)}
-.act-lbl{font-size:11px;font-weight:600;line-height:1.1;color:var(--muted)}
-#legsTable .actions .icon-btn:hover .act-lbl,#legsTable .actions .icon-btn[aria-pressed="true"] .act-lbl{color:inherit}
-#legsTable tbody.leg td{display:block;padding:0!important;border:0!important;text-align:left;white-space:normal}
-#legsTable td[data-label]::before{content:attr(data-label);display:block;font-size:12px;color:var(--muted);font-weight:600;margin-bottom:1px}
-#legsTable tbody.leg td.idx{order:-3;grid-column:1/-1;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-#legsTable tbody.leg td.idx::before{content:"Leg "}
-#legsTable tbody.leg td.route{order:-2;grid-column:1/-1;font-size:16px;min-width:0}
-#legsTable tbody.leg td.cost{order:-1;grid-column:1/-1;font-size:18px;font-weight:800;color:var(--accent)}
-#legsTable tbody.leg td.cost::before{display:none}
-#legsTable tbody.leg td.exp.zero{display:none}
-#legsTable tbody.leg td.stay-cell{order:5;grid-column:1/-1;border-top:1px solid var(--line)!important;padding-top:10px!important}
-#legsTable tbody.leg td.act{order:6;grid-column:1/-1}
-.stay-info{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
-.si{display:block;white-space:normal}
-.si b{display:block;margin:0 0 1px}
-.si:first-child{grid-column:1/-1}
-.stay-short{display:none}
-.stay-full{display:inline;overflow-wrap:anywhere}
-.empty{padding:24px 8px}
-#legsTable tbody.leg td.exp-extra{display:block}
-#legsTable tbody.leg td.stay-cell.exp-only{display:none}
-.si-exp{display:none}
-#legsTable tbody.leg.is-active{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent),0 6px 16px var(--shadow)}
-#legsTable tbody.leg.is-active:hover{background:var(--accent-soft)}
-#legsTable tbody.leg.is-active tr td:first-child{box-shadow:none}
-
-/* Card navigator under the cards: first, previous, count and scrubber, next, last */
-.card-nav{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto auto;align-items:center;gap:6px;margin-top:4px}
-.card-nav .icon-btn{width:38px;height:38px;border:1px solid var(--line);background:var(--raised);color:var(--text)}
-.card-nav .icon-btn:disabled{opacity:.3;cursor:default;transform:none}
-.nav-mid{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;padding:0 6px}
-.nav-count{font-size:13px;font-weight:700;color:var(--muted)}
-.nav-slider{width:100%;height:20px;margin:0;accent-color:var(--accent);cursor:pointer}
-
-/* Discreet layout switch (phones only): one small muted icon */
-.itin-tools{display:flex;align-items:center;margin-left:auto}
-.layout-btn{display:none;width:32px;height:32px;color:var(--muted);opacity:.8}
-.layout-btn:hover{opacity:1}
-.layout-btn .ic{width:17px;height:17px}
-html[data-legview="h"] .layout-btn .ic-cards,html[data-legview="v"] .layout-btn .ic-rows{display:none}
-
-/* Wide screens: each full card spreads its details over four columns */
-@media(min-width:900px){
-  #legsTable tbody.leg tr.main{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .stay-info{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .si:first-child{grid-column:span 2}
-  .si.si-notes{grid-column:1/-1}
-}
-
-/* Floating Add trip leg button */
-.btn.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:15;
-  min-height:52px;padding:0 22px;border-radius:99px;box-shadow:0 10px 28px var(--shadow);white-space:nowrap;
-  opacity:0;visibility:hidden;pointer-events:none;transform:translateY(18px) scale(.92);
-  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s linear .35s,background-color .28s var(--ease)}
-.btn.fab.show{opacity:1;visibility:visible;pointer-events:auto;transform:none;
-  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s,background-color .28s var(--ease)}
-.btn.fab.show:hover{transform:translateY(-2px)}
 
 /* ---------- Tablet and below: the leg modal covers the full screen ---------- */
 @media(max-width:1440px){
@@ -472,7 +502,7 @@ html[data-legview="h"] .layout-btn .ic-cards,html[data-legview="v"] .layout-btn 
   .brand-tag{display:none}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .stat{padding:14px}
-  .panel{--pad:16px}
+  .panel{padding:16px}
   .layout-btn{display:inline-grid}
   /* Vertical option: cards stack in a column instead of a sideways row */
   html[data-legview="v"] #legsTable{flex-direction:column;overflow:visible;margin:0;padding:0;scroll-snap-type:none}
@@ -491,26 +521,24 @@ html[data-legview="h"] .layout-btn .ic-cards,html[data-legview="v"] .layout-btn 
   .done-list{padding:0 16px 8px}
   .data-actions{grid-template-columns:1fr}
   .top-actions .lbl{display:none}
-  #settingsLink{width:40px;padding:0}
+  .brand-name{font-size:22px}
   .picker-map{height:50dvh}
   dialog[open]{animation:sheet-in .45s var(--ease) both}
   dialog.closing{animation:sheet-out .3s cubic-bezier(.4,0,.2,1) both}
+
+  /* right-handed reach: footer buttons sit at the bottom right, the main action last */
+  .dialog-foot .btns{margin-left:auto;justify-content:flex-end;flex-wrap:wrap}
+  .confirm-btns{justify-content:flex-end}
+  #viewDialog .dialog-foot{flex-direction:column;align-items:flex-end;gap:10px}
+  #viewDialog .dialog-foot .btns{margin-left:0}
 }
 .lbl-short{display:none}
 @media(max-width:420px){
-  .logo{width:32px;height:32px;border-radius:9px}
-  .logo .ic{width:22px;height:22px}
-  .brand{gap:8px}
   .lbl-full{display:none}
   .lbl-short{display:inline}
   .top-actions{gap:6px}
-  .dialog-foot{flex-wrap:wrap}
-  .dialog-foot .total{flex:1 1 100%;display:flex;align-items:baseline;justify-content:space-between}
-  .dialog-foot .btns{flex:1 1 100%}
-  .dialog-foot .btns .btn{flex:1}
-  #viewDialog .dialog-foot .btns{flex:1 1 100%}
-  .confirm-btns{flex-direction:column-reverse}
-  .confirm-btns .btn{width:100%}
+  .top-actions .btn{padding:9px 12px;min-height:40px}
+  .btn{padding:10px 12px}
   .done-actions{flex-wrap:wrap}
   .done-actions .btn.small{flex:1}
   .seg{display:flex;width:100%}
@@ -523,13 +551,109 @@ html[data-legview="h"] .layout-btn .ic-cards,html[data-legview="v"] .layout-btn 
   .fonts{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
-@media(max-width:340px){
-  .topbar-inner{padding-left:10px;padding-right:10px;gap:8px}
-  .logo{width:28px;height:28px;border-radius:8px}
-  .logo .ic{width:20px;height:20px}
-  .brand{gap:6px}
-  .top-actions{gap:5px}
+/* ---------- Home, groups, trips ---------- */
+.boot{padding:70px 0;text-align:center;color:var(--muted)}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:14px}
+.crumbs a{color:var(--muted);text-decoration:none}
+.crumbs a:hover{color:var(--text)}
+.crumbs .sep{opacity:.5}
+.crumbs [aria-current]{color:var(--text);font-weight:600;overflow-wrap:anywhere}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.view-seg{margin-top:0}
+.view-seg .seg-btn{padding:8px 14px;display:inline-flex;align-items:center}
+.cards{display:grid;gap:12px}
+.cards.grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.cards.list{grid-template-columns:1fr}
+.gcard{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;cursor:pointer;
+  transition:border-color .3s var(--ease),transform .25s var(--ease),background-color .3s var(--ease)}
+.gcard:hover{border-color:var(--line-strong);background:var(--hover);transform:translateY(-2px)}
+.gcard:active{transform:scale(.985)}
+.gc-icon{display:grid;place-items:center;width:44px;height:44px;border-radius:12px;background:var(--accent-soft);color:var(--accent);flex:none}
+.gc-icon .ic{width:22px;height:22px}
+.gc-main{min-width:0;flex:1}
+.gc-main h3{margin:0;font-size:17px;letter-spacing:-.01em;overflow-wrap:anywhere}
+.gc-main h3 a{color:inherit;text-decoration:none}
+.gc-main h3 a:hover{color:var(--accent)}
+.gc-main p{margin:3px 0 0;font-size:13px;color:var(--muted)}
+.gc-actions{display:flex;gap:2px;flex:none}
+.empty.big{padding:46px 16px;border:1px dashed var(--line);border-radius:var(--radius)}
+
+/* ---------- Sync chip, banner and panel ---------- */
+.sync-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--raised);border-radius:99px;
+  padding:6px 13px;min-height:38px;font-size:13px;font-weight:600;color:var(--text);transition:border-color .3s var(--ease),background-color .3s var(--ease),transform .2s var(--ease)}
+.sync-chip:hover{border-color:var(--line-strong)}
+.sync-chip:active{transform:scale(.96)}
+.sync-dot{display:block;width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none;transition:background-color .3s var(--ease)}
+[data-state="synced"] .sync-dot{background:var(--sea)}
+[data-state="syncing"] .sync-dot,[data-state="reconnecting"] .sync-dot{background:var(--accent);animation:livepulse 1s ease-in-out infinite}
+[data-state="pending"] .sync-dot{background:var(--accent)}
+[data-state="auth"] .sync-dot,[data-state="failed"] .sync-dot,[data-state="conflict"] .sync-dot{background:var(--danger)}
+.sync-chip[data-state="auth"],.sync-chip[data-state="failed"],.sync-chip[data-state="conflict"]{border-color:color-mix(in srgb,var(--danger) 55%,var(--line))}
+.sync-banner-inner{max-width:none;margin:0;padding:10px max(24px,calc((100% - 1472px)/2));background:color-mix(in srgb,var(--danger) 12%,var(--surface));border-bottom:1px solid color-mix(in srgb,var(--danger) 35%,var(--line));display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;font-size:14px}
+.sync-banner-actions{display:flex;gap:6px;margin-left:auto}
+.sync-warn{margin:12px 0 0;padding:10px 12px;border-radius:var(--radius-sm);font-size:13px;line-height:1.55;
+  background:color-mix(in srgb,var(--danger) 12%,transparent);border:1px solid color-mix(in srgb,var(--danger) 40%,transparent)}
+.acct{display:flex;align-items:center;gap:12px;margin:14px 0 4px}
+.avatar{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;overflow:hidden;background:var(--accent-soft);color:var(--accent);font-weight:800;flex:none}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.acct-name{font-weight:700}
+.acct-email{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.status-line{display:flex;align-items:flex-start;gap:10px;margin:10px 0 0;font-size:14px}
+.status-line .sync-dot{margin-top:6px}
+.sync-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#1f1f1f;border:1px solid #dadce0;border-radius:var(--radius-sm);
+  padding:10px 16px;font-weight:600;min-height:44px;transition:background-color .25s var(--ease),box-shadow .25s var(--ease),transform .2s var(--ease)}
+.gbtn:hover{background:#f6f8fb;box-shadow:0 1px 6px rgba(0,0,0,.25)}
+.gbtn:active{transform:scale(.97)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:14px;font-weight:600}
+.toggle-row small{font-weight:400}
+.switch{position:relative;flex:none;width:46px;height:28px;border-radius:99px;border:1px solid var(--line);background:var(--track);padding:0;transition:background-color .3s var(--ease),border-color .3s var(--ease)}
+.switch span{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--muted);transition:transform .3s var(--ease),background-color .3s var(--ease)}
+.switch[aria-checked="true"]{background:var(--accent-soft);border-color:var(--accent)}
+.switch[aria-checked="true"] span{transform:translateX(18px);background:var(--accent)}
+.setup{margin-top:16px;font-size:13px;color:var(--muted);line-height:1.65}
+.setup summary{cursor:pointer;font-weight:600;color:var(--text)}
+.setup code{background:var(--raised);padding:1px 6px;border-radius:5px;font-size:12px;overflow-wrap:anywhere}
+
+/* ---------- Question and conflict dialogs ---------- */
+.ask-lines p{margin:0 0 8px;font-size:14px;color:var(--muted);line-height:1.6}
+.field select{width:100%;border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 11px;background:var(--bg);font-size:16px}
+.field select:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.btn.primary.dangerous{background:var(--danger);border-color:var(--danger);color:#fff}
+.conflict{border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 14px;margin:0 0 12px}
+.conflict legend{font-size:14px;font-weight:700;padding:0 6px}
+.cf-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cf-side{background:var(--bg);border-radius:8px;padding:10px;min-width:0}
+.cf-side h4{margin:0 0 4px;font-size:12px;color:var(--muted)}
+.cf-side p{margin:0;font-size:14px;overflow-wrap:anywhere}
+.cf-side small{color:var(--muted)}
+.cf-field{margin-top:4px!important;font-size:13px!important;color:var(--muted)}
+.cf-field b{color:var(--text);font-weight:600}
+.cf-choices{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px}
+.cf-opt{display:flex;align-items:center;gap:8px;font-size:14px}
+.cf-opt input{accent-color:var(--accent);width:18px;height:18px}
+
+/* ---------- Mobile: no floating Add leg button, right-aligned footers, easy-to-tap icons ---------- */
+@media(max-width:760px){
+  .foot{padding-bottom:28px}
+  .sync-banner-inner{padding:10px 14px}
+  .icon-btn{width:40px;height:40px}
+  .dialog-foot{flex-wrap:wrap;justify-content:flex-end;gap:10px}
+  .dialog-foot .total{flex:1 1 100%;display:flex;align-items:baseline;justify-content:space-between}
+  .dialog-foot .btns{margin-left:auto;justify-content:flex-end;flex-wrap:nowrap;gap:10px}
+  .dialog-foot .btns .btn{flex:0 0 auto}
+  .confirm-btns{flex-wrap:nowrap;justify-content:flex-end;gap:10px}
+  #viewDialog .dialog-foot{justify-content:flex-end}
+  #viewDialog .dialog-foot .btns{flex:0 1 auto;flex-wrap:wrap}
+  .cf-cols{grid-template-columns:1fr}
 }
+@media(max-width:560px){
+  .sync-chip{padding:0;width:40px;height:40px;justify-content:center}
+  .sync-label{display:none}
+  .cards.grid{grid-template-columns:1fr}
+  .gc-actions .icon-btn{width:40px;height:40px}
+}
+@media(max-width:360px){ .logo{display:none} }
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -586,6 +710,11 @@ window.TARA_THEMES = {
   document.head.appendChild(style);
 
   window.applyTheme = function (mode, palette, persist) {
+    if (persist) {   // colors glide to the new theme instead of snapping
+      document.documentElement.classList.add("theme-fading");
+      clearTimeout(window.__themeFade);
+      window.__themeFade = setTimeout(() => document.documentElement.classList.remove("theme-fading"), 560);
+    }
     if (!T[mode]) mode = "dark";
     if (!T[mode].some(t => t.id === palette)) palette = "default";
     const root = document.documentElement;
@@ -646,18 +775,22 @@ window.TARA_FONTS = [
   <symbol id="i-rig" viewBox="0 0 24 24"><path d="M4.5 6.6h9M6 6.6v2M12 6.6v2"/><path d="M3 17V8.6h12l2.4 3.2 3.6 1V17"/><path d="M3 17h2M10 17h4M19 17h2"/><circle cx="7.5" cy="17" r="2.5"/><circle cx="16.5" cy="17" r="2.5"/><path d="M6 10.8h8"/></symbol>
   <symbol id="i-navigate" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></symbol>
   <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
-  <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 11l1.6-4.4A2 2 0 018.5 5.3h7a2 2 0 011.9 1.3L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17" r="1.6"/><circle cx="16.5" cy="17" r="1.6"/></symbol>
-  <symbol id="i-ship" viewBox="0 0 24 24"><path d="M4 14l1.2-5h13.6L20 14z"/><path d="M12 9V4M9 6.5h6"/><path d="M2 18c1.7 1.6 3.3 1.6 5 0s3.3-1.6 5 0 3.3 1.6 5 0 3.3-1.6 5 0"/></symbol>
-  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
-  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></symbol>
-  <symbol id="i-undo" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></symbol>
-  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 20h16"/></symbol>
   <symbol id="i-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
   <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
   <symbol id="i-first" viewBox="0 0 24 24"><path d="M6 5v14M18 6l-6 6 6 6"/></symbol>
   <symbol id="i-last" viewBox="0 0 24 24"><path d="M18 5v14M6 6l6 6-6 6"/></symbol>
   <symbol id="i-rows" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
   <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3" y="5" width="12" height="14" rx="2"/><path d="M19 8v8M22 10v4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 11l1.6-4.4A2 2 0 018.5 5.3h7a2 2 0 011.9 1.3L19 11"/><rect x="3" y="11" width="18" height="6" rx="2"/><circle cx="7.5" cy="17" r="1.6"/><circle cx="16.5" cy="17" r="1.6"/></symbol>
+  <symbol id="i-ship" viewBox="0 0 24 24"><path d="M4 14l1.2-5h13.6L20 14z"/><path d="M12 9V4M9 6.5h6"/><path d="M2 18c1.7 1.6 3.3 1.6 5 0s3.3-1.6 5 0 3.3 1.6 5 0 3.3-1.6 5 0"/></symbol>
+  <symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
   <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
   <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
@@ -668,7 +801,7 @@ window.TARA_FONTS = [
 
 <div class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="#trip" aria-label="Tara Gala, home">
+    <a class="brand" href="#home" aria-label="Tara Gala, home">
       <span class="logo"><svg class="ic"><use href="#i-rig"/></svg></span>
       <span class="brand-text">
         <span class="brand-name">Tara <span>Gala</span></span>
@@ -676,18 +809,92 @@ window.TARA_FONTS = [
       </span>
     </a>
     <div class="top-actions">
+      <button class="sync-chip" id="syncChip" data-action="syncChip" data-state="local" type="button">
+        <span class="sync-dot" aria-hidden="true"></span><span class="sync-label" id="syncChipLabel">Not synced</span>
+      </button>
       <a class="btn ghost" href="#settings" id="settingsLink" aria-label="Settings" title="Settings">
         <svg class="ic"><use href="#i-sliders"/></svg><span class="lbl">Settings</span>
       </a>
-      <button class="btn primary" id="addTop" data-action="add" type="button">＋ <span class="lbl-full">Add trip leg</span><span class="lbl-short">Add</span></button>
+      <button class="btn primary" id="addTop" data-action="add" type="button" hidden>＋ <span class="lbl-full">Add trip leg</span><span class="lbl-short">Add</span></button>
     </div>
   </div>
 </div>
 
+<div class="sync-banner" id="syncBanner" role="status" inert>
+  <div class="sb-clip"><div class="sync-banner-inner">
+    <span id="syncBannerText"></span>
+    <span class="sync-banner-actions">
+      <button type="button" class="btn small primary" id="syncBannerBtn" data-action="bannerAction">Reconnect Google</button>
+      <button type="button" class="btn small ghost" data-action="bannerDismiss">Dismiss</button>
+    </span>
+  </div></div>
+</div>
+
+<!-- ===== Login ===== -->
+<section class="login" id="loginView" hidden aria-labelledby="loginTitle">
+  <div class="login-card">
+    <span class="login-logo"><svg class="ic" aria-hidden="true"><use href="#i-rig"/></svg></span>
+    <h1 class="login-brand" id="loginTitle">Tara <span>Gala</span></h1>
+    <p class="login-tag">Bawat biyahe, may kuwento.</p>
+    <div class="login-panel" id="loginBody"></div>
+    <p class="login-fine">Walang iwanan, puro gala lang!</p>
+  </div>
+</section>
+
 <div class="page">
 
+  <p class="boot" id="booting">Loading your trips…</p>
+
+  <!-- ===== Home: Trip Groups ===== -->
+  <div id="homeView" hidden>
+    <header class="intro">
+      <div class="eyebrow">Tara Gala! Bawat biyahe, may kuwento.</div>
+      <h1>Trip Groups</h1>
+      <p>Walang iwanan, puro gala lang!</p>
+    </header>
+    <p class="sync-warn" id="storageWarn" hidden>Your browser isn't letting Tara Gala save on this device (private browsing can do this). Your trips will be lost when you close the tab, so save a backup before you leave.</p>
+    <div class="toolbar">
+      <button class="btn primary" data-action="newGroup" type="button">＋ New Trip Group</button>
+      <div class="seg view-seg" role="group" aria-label="Layout">
+        <button class="seg-btn" type="button" data-action="setView" data-id="grid" aria-pressed="true" aria-label="Grid view" title="Grid view"><svg class="ic"><use href="#i-grid"/></svg></button>
+        <button class="seg-btn" type="button" data-action="setView" data-id="list" aria-pressed="false" aria-label="List view" title="List view"><svg class="ic"><use href="#i-list"/></svg></button>
+      </div>
+    </div>
+    <div class="cards grid" id="groupList"></div>
+    <div class="empty big" id="homeEmpty" hidden>
+      <strong>Wala pang Trip Group</strong>Start with a group for your next adventure, then add trips to it.
+      <div style="margin-top:14px"><button class="btn primary" data-action="newGroup" type="button">＋ Create your first group</button></div>
+    </div>
+  </div>
+
+  <!-- ===== A group and its trips ===== -->
+  <div id="groupView" hidden>
+    <nav class="crumbs" id="groupCrumbs" aria-label="Breadcrumb"></nav>
+    <header class="intro">
+      <div class="eyebrow">Trip Group</div>
+      <div class="title-row">
+        <h1 id="groupName"></h1>
+        <button class="icon-btn" type="button" data-action="renameCurrentGroup" aria-label="Rename this group" title="Rename group"><svg class="ic"><use href="#i-edit"/></svg></button>
+      </div>
+      <p id="groupSub"></p>
+    </header>
+    <div class="toolbar">
+      <button class="btn primary" data-action="newTrip" type="button">＋ New trip</button>
+      <div class="seg view-seg" role="group" aria-label="Layout">
+        <button class="seg-btn" type="button" data-action="setView" data-id="grid" aria-pressed="true" aria-label="Grid view" title="Grid view"><svg class="ic"><use href="#i-grid"/></svg></button>
+        <button class="seg-btn" type="button" data-action="setView" data-id="list" aria-pressed="false" aria-label="List view" title="List view"><svg class="ic"><use href="#i-list"/></svg></button>
+      </div>
+    </div>
+    <div class="cards grid" id="tripList"></div>
+    <div class="empty big" id="groupEmpty" hidden>
+      <strong>No trips in this group yet</strong>Add your first trip. It starts as "San Tayo?" and you can name it right away.
+      <div style="margin-top:14px"><button class="btn primary" data-action="newTrip" type="button">＋ New trip</button></div>
+    </div>
+  </div>
+
   <!-- ===== Trip view ===== -->
-  <div id="tripView">
+  <div id="tripView" hidden>
+    <nav class="crumbs" id="tripCrumbs" aria-label="Breadcrumb"></nav>
     <header class="intro">
       <div class="eyebrow">Your next adventure</div>
       <div class="title-row" id="titleRow">
@@ -695,6 +902,7 @@ window.TARA_FONTS = [
         <button class="icon-btn" type="button" data-action="editTitle" aria-label="Edit trip title" title="Edit trip title">
           <svg class="ic"><use href="#i-edit"/></svg>
         </button>
+        <button class="icon-btn" type="button" data-action="export" aria-label="Export this trip as CSV" title="Export as CSV"><svg class="ic"><use href="#i-download"/></svg></button>
       </div>
       <form class="title-form" id="titleForm" hidden>
         <input id="titleInput" maxlength="80" aria-label="Trip title" autocomplete="off">
@@ -725,19 +933,7 @@ window.TARA_FONTS = [
             </button>
           </div>
         </div>
-        <div class="table-wrap">
-          <table id="legsTable">
-            <thead><tr>
-              <th scope="col">#</th><th scope="col">Date</th><th scope="col">Route</th><th scope="col">Departs</th>
-              <th scope="col">Duration</th><th scope="col">Arrives</th><th scope="col">Distance</th>
-              <th scope="col" class="right exp-h" title="Food &amp; dining">Food &amp; dining</th>
-              <th scope="col" class="right exp-h" title="RORO ferry &amp; terminal">RORO &amp; terminal</th>
-              <th scope="col" class="right exp-h" title="Miscellaneous">Misc.</th>
-              <th scope="col" class="right">Leg cost</th>
-              <th scope="col"><span class="sr-only">Actions</span></th>
-            </tr></thead>
-          </table>
-        </div>
+        <table id="legsTable" aria-label="Route itinerary legs"></table>
         <div class="card-nav" id="cardNav" hidden>
           <button type="button" class="icon-btn" data-action="legNav" data-id="first" aria-label="Jump to first leg" title="First leg"><svg class="ic"><use href="#i-first"/></svg></button>
           <button type="button" class="icon-btn" data-action="legNav" data-id="prev" aria-label="Previous leg" title="Previous leg"><svg class="ic"><use href="#i-prev"/></svg></button>
@@ -777,11 +973,16 @@ window.TARA_FONTS = [
   <!-- ===== Settings view ===== -->
   <main id="settingsView" hidden>
     <header class="intro">
-      <a class="back" href="#trip"><svg class="ic"><use href="#i-back"/></svg>Back to trip</a>
+      <a class="back" id="backLink" href="#home"><svg class="ic"><use href="#i-back"/></svg><span>Back</span></a>
       <h1>Settings</h1>
-      <p>Manage your trip data and the Google Maps connection.</p>
+      <p>Google Drive sync, appearance, your data and the Google Maps connection.</p>
     </header>
     <div class="settings">
+      <section class="panel" aria-labelledby="syncTitle">
+        <h2 id="syncTitle">Google Drive sync</h2>
+        <div id="syncBody"></div>
+      </section>
+
       <section class="panel" aria-labelledby="themeTitle">
         <h2 id="themeTitle">Appearance</h2>
         <p class="help" style="margin-top:6px">Switch between dark and light mode, then pick a color combination you like.</p>
@@ -798,12 +999,12 @@ window.TARA_FONTS = [
 
       <section class="panel" aria-labelledby="dataTitle">
         <h2 id="dataTitle">Your data</h2>
-        <p class="help" style="margin-top:6px">Add a leg for every drive, ferry, or major transfer. Arrival times and totals are calculated for you. Changes are saved in this browser only, so save a backup before switching devices.</p>
+        <p class="help" style="margin-top:6px">Your trips are saved on this device first, so Tara Gala works offline. Back them up as a file any time, or export a trip as a spreadsheet.</p>
         <div class="data-actions">
-          <button class="btn" data-action="export" type="button">↓ Export CSV</button>
-          <button class="btn" data-action="backup" type="button">Save backup</button>
+          <button class="btn" data-action="export" type="button">↓ Export trip as CSV</button>
+          <button class="btn" data-action="backup" type="button">Save backup (JSON)</button>
           <button class="btn" data-action="restore" type="button">Restore backup</button>
-          <button class="btn danger" data-action="reset" type="button">Reset data</button>
+          <button class="btn danger" data-action="reset" type="button">Clear this device</button>
         </div>
       </section>
 
@@ -829,7 +1030,7 @@ window.TARA_FONTS = [
 
 <button class="btn primary fab" id="addFab" data-action="add" type="button" inert>＋ Add trip leg</button>
 
-<footer class="foot">Tara Gala <span data-version></span> • Stored locally in this browser</footer>
+<footer class="foot">Tara Gala <span data-version></span> • Saved on this device, synced to your Google Drive when connected</footer>
 
 <!-- Trip leg dialog -->
 <dialog id="legDialog" aria-labelledby="dialogTitle">
@@ -957,6 +1158,39 @@ window.TARA_FONTS = [
   </div>
 </dialog>
 
+<!-- Question dialog: naming, confirming, choosing -->
+<dialog id="askDialog" class="small-dialog" aria-labelledby="askTitle">
+  <form id="askForm" class="dialog-body" novalidate>
+    <h2 id="askTitle" style="font-size:20px;margin-bottom:8px"></h2>
+    <div id="askLines" class="ask-lines"></div>
+    <div class="field" id="askInputWrap" hidden><label for="askInput" id="askInputLabel"></label><input id="askInput" maxlength="60" autocomplete="off"></div>
+    <div class="field" id="askSelectWrap" hidden><label for="askSelect" id="askSelectLabel"></label><select id="askSelect"></select></div>
+    <div class="confirm-btns" style="margin-top:18px">
+      <button type="button" class="btn ghost" id="askCancel" data-action="askCancel">Cancel</button>
+      <button type="submit" class="btn primary" id="askOk">OK</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Sync conflicts -->
+<dialog id="conflictDialog" class="wide-dialog" aria-labelledby="conflictTitle">
+  <form id="conflictForm" class="dialog-body" novalidate>
+    <div class="dialog-head">
+      <h2 id="conflictTitle">Some changes clash</h2>
+      <button class="icon-btn" type="button" data-action="closeConflicts" aria-label="Close" title="Close"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="help" style="margin-bottom:14px">The same item was changed on this device and in Google Drive. Choose what to keep. Nothing is lost until you apply, and "Keep both" saves a copy of each.</p>
+    <div id="conflictList"></div>
+    <div class="dialog-foot">
+      <div class="total"></div>
+      <div class="btns">
+        <button class="btn" type="button" data-action="closeConflicts">Decide later</button>
+        <button class="btn primary" type="submit">Apply choices</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
 <!-- Map picker dialog -->
 <dialog id="mapDialog" class="wide-dialog" aria-labelledby="mapTitle">
   <div class="dialog-body">
@@ -990,10 +1224,19 @@ window.TARA_FONTS = [
 
 /* ---------- Config ---------- */
 const APP_NAME = "Tara Gala";
-const APP_VERSION = "3.8.0";   // bump on every change (see the changelog in README.md)
+const APP_VERSION = "4.1.0";   // bump on every change (see the changelog in README.md)
 const STORAGE_KEY = "galanellos-overland-2026-v1";
 const SETTINGS_KEY = "galanellos-overland-2026-settings";
 const DEFAULT_TITLE = "San Tayo?";
+
+/* ----- Google sign-in and Drive sync: the only things you need to change to use your own Google Cloud project ----- */
+const GOOGLE_CLIENT_ID = "453402013464-gn6jgsqp2438phselg59qi9bjphpru7n.apps.googleusercontent.com";   // CONFIG: your OAuth 2.0 Web client ID (public, never a secret)
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.appdata";                                       // private app storage only: no access to your other Drive files
+const GOOGLE_SCOPES = ["openid", "email", "profile", DRIVE_SCOPE];
+const DRIVE_FILES = { primary: "tara-gala-backup.json", previous: "tara-gala-backup.previous.json" };    // stored in the Drive appDataFolder
+const SYNC_DEBOUNCE_MS = 2000;     // rapid edits are collapsed into one upload
+const SCHEMA_VERSION = 2;          // version of the backup format (2 added per-leg notes; version 1 backups still import)
+const DB_NAME = "tara-gala", DB_VERSION = 1;   // the IndexedDB database on this device
 const COSTS = [
   { key: "fuel",          label: "Fuel (auto)" },
   { key: "food",          label: "Food & dining" },
@@ -1004,10 +1247,6 @@ const COSTS = [
 const TEXT_FIELDS = ["routeName", "mode", "date", "from", "to", "departureTime", "stay", "checkIn", "checkOut", "notes"];   // "stay" = where the user is staying
 const META_FIELDS = ["duration", "distance", "fuelPrice", "kmPerL"];
 const NUM_FIELDS  = [...META_FIELDS, ...COSTS.map(c => c.key)];
-const INITIAL_DATA = [
-  { id: "leg-1", date: "2026-03-01", from: "Manila", to: "Naga", departureTime: "05:00",
-    duration: 8, distance: 0, fuelPrice: 0, kmPerL: 0, fuel: 1800, food: 650, accommodation: 0, roro: 0, misc: 250 },
-];
 const icon = name => `<svg class="ic" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
 /* ---------- Helpers ---------- */
@@ -1117,52 +1356,1281 @@ function tripSummary(active) {
 })();
 
 /* ---------- Data ---------- */
+/* =====================================================================
+   Data layer: records, IndexedDB (DatabaseManager) and migration
+   ===================================================================== */
+const nowISO = () => new Date().toISOString();
+const newId = prefix => `${prefix}_${crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 10)}`;
+const isoOr = (v, fallback) => (typeof v === "string" && !Number.isNaN(Date.parse(v))) ? v : fallback;
+
+/* A content hash that ignores updatedAt: it tells us whether a record really changed, on any device */
+function canon(v) {
+  if (Array.isArray(v)) return "[" + v.map(canon).join(",") + "]";
+  if (v && typeof v === "object") return "{" + Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + canon(v[k])).join(",") + "}";
+  return JSON.stringify(v ?? null);
+}
+function recHash(rec) {
+  const { updatedAt, ...rest } = rec;
+  const str = canon(rest);
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ c, 2654435761);
+    h2 = Math.imul(h2 ^ c, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36);
+}
+
+/* ----- record normalizers (every record, local or from a backup, passes through these) ----- */
 const toLatLng = v => (v && Number.isFinite(+v.lat) && Number.isFinite(+v.lng)) ? { lat: +v.lat, lng: +v.lng } : null;
-function normalize(raw) {
-  const l = { id: String(raw?.id || "leg-" + Date.now() + Math.random().toString(36).slice(2, 6)) };
+function tombstone(rec, raw) {
+  rec.deleted = Boolean(raw?.deleted);
+  rec.deletedAt = rec.deleted ? isoOr(raw?.deletedAt, nowISO()) : "";
+  return rec;
+}
+function normalize(raw) {   // an itinerary leg
+  const l = { id: String(raw?.id || newId("leg")) };
+  l.tripId = String(raw?.tripId || "");
   TEXT_FIELDS.forEach(k => l[k] = String(raw?.[k] ?? ""));
   NUM_FIELDS.forEach(k => l[k] = Math.max(0, num(raw?.[k])));
+  l.notes = l.notes.slice(0, 4000);
   l.fromLoc = toLatLng(raw?.fromLoc);
   l.toLoc = toLatLng(raw?.toLoc);
   l.done = Boolean(raw?.done);              // marked as complete
   l.completedAt = Math.max(0, num(raw?.completedAt));
   l.mode = l.mode === "ferry" ? "ferry" : "drive";   // Drive unless marked RORO / Ferry
   l.active = Boolean(raw?.active) && !l.done;         // the leg you are on right now
-  return l;
+  l.createdAt = isoOr(raw?.createdAt, nowISO());
+  l.updatedAt = isoOr(raw?.updatedAt, l.createdAt);
+  return tombstone(l, raw);
 }
-function load() {
+function normalizeGroup(raw) {
+  const created = isoOr(raw?.createdAt, nowISO());
+  return tombstone({
+    id: String(raw?.id || newId("group")),
+    name: String(raw?.name ?? "").trim().slice(0, 60) || "Untitled group",
+    createdAt: created, updatedAt: isoOr(raw?.updatedAt, created),
+  }, raw);
+}
+function normalizeTrip(raw) {
+  const created = isoOr(raw?.createdAt, nowISO());
+  const title = String(raw?.title ?? "").trim().slice(0, 80);
+  const named = Boolean(raw?.named) && title !== "" && title !== DEFAULT_TITLE;
+  return tombstone({
+    id: String(raw?.id || newId("trip")),
+    groupId: String(raw?.groupId || ""),
+    title: named ? title : DEFAULT_TITLE, named,
+    createdAt: created, updatedAt: isoOr(raw?.updatedAt, created),
+  }, raw);
+}
+const KINDS = ["groups", "trips", "legs"];
+const NORMALIZE = { groups: normalizeGroup, trips: normalizeTrip, legs: normalize };
+const ID_PREFIX = { groups: "group", trips: "trip", legs: "leg" };
+
+/* ----- DatabaseManager: IndexedDB, the working database ----- */
+const DatabaseManager = {
+  db: null,
+  open() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return reject(new Error("IndexedDB is not available in this browser"));
+      let req;
+      try { req = indexedDB.open(DB_NAME, DB_VERSION); } catch (e) { return reject(e); }
+      req.onupgradeneeded = () => {   // first run, or a future schema upgrade
+        const d = req.result;
+        if (!d.objectStoreNames.contains("groups")) d.createObjectStore("groups", { keyPath: "id" });
+        if (!d.objectStoreNames.contains("trips")) d.createObjectStore("trips", { keyPath: "id" }).createIndex("groupId", "groupId");
+        if (!d.objectStoreNames.contains("legs")) d.createObjectStore("legs", { keyPath: "id" }).createIndex("tripId", "tripId");
+        if (!d.objectStoreNames.contains("meta")) d.createObjectStore("meta", { keyPath: "key" });
+      };
+      req.onsuccess = () => {
+        this.db = req.result;
+        this.db.onversionchange = () => { this.db.close(); this.db = null; };   // another tab upgraded the database
+        resolve();
+      };
+      req.onerror = () => reject(req.error || new Error("Could not open the local database"));
+      req.onblocked = () => reject(new Error("The local database is blocked by another open tab"));
+    });
+  },
+  read(store, fn) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) return reject(new Error("The local database isn't open"));
+      try {
+        const req = fn(this.db.transaction(store, "readonly").objectStore(store));
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      } catch (e) { reject(e); }
+    });
+  },
+  getAll(store) { return this.read(store, s => s.getAll()); },
+  async getMeta(key) { const r = await this.read("meta", s => s.get(key)); return r ? r.value : undefined; },
+  /* One transaction for everything in the batch: it all lands, or none of it does */
+  writeBatch(batch) {
+    return new Promise((resolve, reject) => {
+      const names = Object.keys(batch).filter(k => batch[k] && batch[k].length);
+      if (!names.length) return resolve();
+      if (!this.db) return reject(new Error("The local database isn't open"));
+      try {
+        const tx = this.db.transaction(names, "readwrite");
+        names.forEach(n => batch[n].forEach(r => tx.objectStore(n).put(r)));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error || new Error("The save was cancelled"));
+      } catch (e) { reject(e); }
+    });
+  },
+  setMeta(key, value) { return this.writeBatch({ meta: [{ key, value }] }); },
+  clearAll() {
+    return new Promise((resolve, reject) => {
+      if (!this.db) return resolve();
+      const tx = this.db.transaction(["groups", "trips", "legs", "meta"], "readwrite");
+      ["groups", "trips", "legs", "meta"].forEach(n => tx.objectStore(n).clear());
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+};
+
+/* ----- in-memory working copy of the database (the single source of truth the screens read) ----- */
+const ST = { groups: [], trips: [], legs: [] };   // every record, including deleted ones (tombstones)
+let legs = [];                                     // live legs of the open trip: the same objects as in ST.legs
+let currentGroupId = null, currentTripId = null;
+let storageOk = true;                              // false when the browser blocks IndexedDB
+const persistedHash = new Map();                   // "kind:id" -> hash last written to IndexedDB
+
+const liveGroups = () => ST.groups.filter(g => !g.deleted);
+const liveTrips = gid => ST.trips.filter(t => !t.deleted && (!gid || t.groupId === gid));
+const getGroup = id => ST.groups.find(g => g.id === id && !g.deleted);
+const getTrip = id => ST.trips.find(t => t.id === id && !t.deleted);
+const curTrip = () => getTrip(currentTripId);
+const legsOf = tripId => ST.legs.filter(l => l.tripId === tripId && !l.deleted);
+function refreshLegs() { legs = ST.legs.filter(l => l.tripId === currentTripId && !l.deleted); }
+
+let writeChain = Promise.resolve();
+function queueWrite(fn) {
+  writeChain = writeChain.then(() => { if (DatabaseManager.db) return fn(); }).catch(e => {
+    console.error("[Tara Gala] local save failed", e);
+    toast("Couldn't save on this device. Export a backup soon.");
+  });
+  return writeChain;
+}
+
+async function loadAll() {
+  const [g, t, l] = await Promise.all(KINDS.map(k => DatabaseManager.getAll(k)));
+  ST.groups = g.map(normalizeGroup);
+  ST.trips = t.map(normalizeTrip);
+  ST.legs = l.map(normalize);
+  persistedHash.clear();
+  KINDS.forEach(k => ST[k].forEach(r => persistedHash.set(k + ":" + r.id, recHash(r))));
+}
+
+/* save(): every edit anywhere in the app ends here. Changed records go to IndexedDB at once, then the cloud sync is queued. */
+function flushChanges() {
+  const batch = { groups: [], trips: [], legs: [] };
+  const stamp = nowISO();
+  let count = 0;
+  KINDS.forEach(k => ST[k].forEach(rec => {
+    const key = k + ":" + rec.id, h = recHash(rec);
+    if (persistedHash.get(key) === h) return;
+    rec.updatedAt = stamp;
+    persistedHash.set(key, h);
+    batch[k].push(structuredClone(rec));
+    count++;
+  }));
+  if (count) { queueWrite(() => DatabaseManager.writeBatch(batch)); Sync.markDirty(); }
+  return count;
+}
+const save = flushChanges;
+
+/* Records that came from the cloud or a restore: written to IndexedDB without marking the data as changed */
+function persistExternal(changed) {
+  const batch = { groups: [], trips: [], legs: [] };
+  KINDS.forEach(k => (changed[k] || []).forEach(rec => { persistedHash.set(k + ":" + rec.id, recHash(rec)); batch[k].push(structuredClone(rec)); }));
+  queueWrite(() => DatabaseManager.writeBatch(batch));
+}
+
+/* ----- one-time move of the old single-trip localStorage data into IndexedDB ----- */
+async function migrateLegacy() {
+  const done = await DatabaseManager.getMeta("legacyMigration");
+  if (done) return false;                                   // never migrate twice
+  if (ST.groups.length || ST.trips.length || ST.legs.length) {   // the database already has data: leave it alone
+    await DatabaseManager.setMeta("legacyMigration", { status: "skipped", at: nowISO() });
+    return false;
+  }
+  let rawLegs = null, rawSettings = null;
+  try { rawLegs = localStorage.getItem(STORAGE_KEY); rawSettings = localStorage.getItem(SETTINGS_KEY); } catch (e) { /* storage blocked */ }
+  if (rawLegs === null && rawSettings === null) {
+    await DatabaseManager.setMeta("legacyMigration", { status: "none", at: nowISO() });
+    return false;
+  }
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (Array.isArray(saved)) return saved.map(normalize);
-  } catch (e) { /* fall through to defaults */ }
-  return clone(INITIAL_DATA).map(normalize);
+    const parsed = rawLegs === null ? [] : JSON.parse(rawLegs);
+    if (!Array.isArray(parsed)) throw new Error("The old trip data isn't a list of legs");
+    const old = rawSettings ? JSON.parse(rawSettings) : null;
+    const stamp = nowISO();
+    const group = normalizeGroup({ id: newId("group"), name: "My Trips", createdAt: stamp, updatedAt: stamp });
+    const trip = normalizeTrip({ id: newId("trip"), groupId: group.id, title: old?.title, named: old?.named, createdAt: stamp, updatedAt: stamp });
+    const migratedLegs = parsed.filter(x => x && typeof x === "object").map(x => normalize({ ...x, id: x.id ? `leg_${x.id}` : newId("leg"), tripId: trip.id, createdAt: stamp, updatedAt: stamp }));
+    if (!migratedLegs.length && !trip.named) {              // nothing worth keeping
+      await DatabaseManager.setMeta("legacyMigration", { status: "empty", at: nowISO() });
+      return false;
+    }
+    await DatabaseManager.writeBatch({ groups: [group], trips: [trip], legs: migratedLegs });   // all or nothing
+    const check = await Promise.all(KINDS.map(k => DatabaseManager.getAll(k)));               // read it back before trusting it
+    if (check[0].length !== 1 || check[1].length !== 1 || check[2].length !== migratedLegs.length) throw new Error("The migrated data could not be read back");
+    await DatabaseManager.setMeta("legacyMigration", { status: "done", at: nowISO(), legs: migratedLegs.length, tripId: trip.id });
+    await loadAll();
+    return true;   // the original localStorage data is deliberately left in place
+  } catch (e) {
+    console.error("[Tara Gala] migration failed; the original data was kept", e);
+    await DatabaseManager.setMeta("legacyMigration", { status: "failed", at: nowISO(), error: String(e.message || e) }).catch(() => {});
+    toast("Couldn't move your older trip into the new storage. Your original data is untouched.");
+    return false;
+  }
 }
-function save() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(legs)); }
-  catch (e) { toast("Could not save: browser storage is unavailable"); }
-}
-let legs = load();
 
-/* Settings: editable trip title */
-/* A title only counts once the user has named the trip ("named" is set when they save it).
-   Until then, the default "San Tayo?" and its prompt are shown. */
-function cleanSettings(s) {
-  const t = String(s?.title ?? "").trim().slice(0, 80);
-  const named = Boolean(s?.named) && t !== "" && t !== DEFAULT_TITLE;
-  return { title: named ? t : DEFAULT_TITLE, named };
+/* =====================================================================
+   Backups, merging, Google sign-in (AuthManager), Drive storage and the sync engine
+   ===================================================================== */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+class SyncError extends Error {
+  constructor(kind, message, extra) { super(message); this.kind = kind; Object.assign(this, extra || {}); }
 }
-function loadSettings() {
-  try { return cleanSettings(JSON.parse(localStorage.getItem(SETTINGS_KEY))); }
-  catch (e) { return cleanSettings(null); }
-}
-function saveSettings() {
-  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }
-  catch (e) { toast("Could not save settings: browser storage is unavailable"); }
-}
-let settings = loadSettings();
 
-function sortedActive() {
-  return legs.filter(isActive).sort((a, b) => {
+/* ----- state helpers ----- */
+function snapshotOf() { const m = { groups: {}, trips: {}, legs: {} }; KINDS.forEach(k => ST[k].forEach(r => { m[k][r.id] = r; })); return m; }
+const anyLive = state => KINDS.some(k => Object.values(state[k]).some(r => !r.deleted));
+function hashMap(state) { const h = {}; KINDS.forEach(k => { h[k] = {}; Object.values(state[k]).forEach(r => { h[k][r.id] = recHash(r); }); }); return h; }
+function sameState(a, b) {
+  return KINDS.every(k => {
+    const ids = new Set([...Object.keys(a[k]), ...Object.keys(b[k])]);
+    return [...ids].every(id => a[k][id] && b[k][id] && recHash(a[k][id]) === recHash(b[k][id]));
+  });
+}
+const deviceLabel = () => /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? "Phone or tablet browser" : "Computer browser";
+
+/* ----- BackupManager: the versioned backup format ----- */
+function stateToBackup(state, { includeDeleted = false, lastSyncedAt = "" } = {}) {
+  const keep = r => includeDeleted || !r.deleted;
+  let groups = Object.values(state.groups).filter(keep);
+  let trips = Object.values(state.trips).filter(keep);
+  let legsList = Object.values(state.legs).filter(keep);
+  if (!includeDeleted) {   // a manual backup holds only live data, and every record must have its parent
+    const tripIds = new Set(trips.map(t => t.id));
+    legsList = legsList.filter(l => tripIds.has(l.tripId));
+    const gids = new Set(groups.map(g => g.id));
+    if (trips.some(t => !gids.has(t.groupId))) {
+      let target = groups[0];
+      if (!target) { target = normalizeGroup({ id: newId("group"), name: "My Trips" }); groups.push(target); gids.add(target.id); }
+      trips = trips.map(t => gids.has(t.groupId) ? t : { ...t, groupId: target.id });
+    }
+  }
+  const stamps = [...groups, ...trips, ...legsList].map(r => r.updatedAt).sort();
+  return {
+    app: APP_NAME, schemaVersion: SCHEMA_VERSION, appVersion: APP_VERSION,
+    lastUpdated: stamps[stamps.length - 1] || nowISO(),
+    groups: groups.map(clone), trips: trips.map(clone), legs: legsList.map(clone),
+    settings: {},   // reserved; preferences (theme, font) and the Maps key stay on each device
+    syncMetadata: { lastSyncedAt: lastSyncedAt || null, lastDevice: deviceLabel(), deviceId: Sync.s.deviceId || null },
+  };
+}
+/* Checks a backup before anything is restored. A damaged or incomplete file is rejected as a whole. */
+function validateBackup(obj) {
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return { ok: false, errors: ["This file isn't a Tara Gala backup."] };
+  if (obj.schemaVersion === undefined && Array.isArray(obj.legs) && !Array.isArray(obj.trips)) {   // the old single-trip format
+    return { ok: true, kind: "legacy", legacy: { title: typeof obj.title === "string" ? obj.title : "", legs: obj.legs.filter(x => x && typeof x === "object") } };
+  }
+  const errors = [];
+  if (typeof obj.schemaVersion !== "number" || obj.schemaVersion < 1) errors.push("It has no valid schema version.");
+  else if (obj.schemaVersion > SCHEMA_VERSION) errors.push("It was made by a newer version of Tara Gala. Update the app, then try again.");
+  KINDS.forEach(k => { if (!Array.isArray(obj[k])) errors.push(`It is missing its list of ${k}.`); });
+  if (errors.length) return { ok: false, errors };
+  const state = { groups: {}, trips: {}, legs: {} };
+  KINDS.forEach(k => {
+    for (const raw of obj[k]) {
+      if (!raw || typeof raw !== "object" || typeof raw.id !== "string" || !raw.id) { errors.push(`A ${ID_PREFIX[k]} record is damaged.`); break; }
+      const rec = NORMALIZE[k](raw);
+      if (state[k][rec.id]) { errors.push(`A ${ID_PREFIX[k]} appears twice.`); break; }
+      state[k][rec.id] = rec;
+    }
+  });
+  if (!errors.length) {
+    if (Object.values(state.trips).some(t => !state.groups[t.groupId])) errors.push("A trip belongs to a group that isn't in the file.");
+    if (Object.values(state.legs).some(l => !state.trips[l.tripId])) errors.push("A leg belongs to a trip that isn't in the file.");
+  }
+  return errors.length ? { ok: false, errors } : { ok: true, kind: "current", state };
+}
+function parseBackupText(text) {
+  let obj;
+  try { obj = JSON.parse(text); } catch (e) { return { ok: false, errors: ["The file isn't valid JSON, so it may be damaged."] }; }
+  return validateBackup(obj);
+}
+
+/* ----- three-way merge: local vs cloud vs the state both agreed on at the last sync ----- */
+function mergeStates(local, remote, base) {
+  const merged = { groups: {}, trips: {}, legs: {} }, conflicts = [];
+  KINDS.forEach(kind => {
+    const ids = new Set([...Object.keys(local[kind]), ...Object.keys(remote[kind])]);
+    ids.forEach(id => {
+      const L = local[kind][id], R = remote[kind][id], B = base?.[kind]?.[id];
+      if (L && !R) { merged[kind][id] = L; return; }       // only here: keep it, nothing is ever deleted without a tombstone
+      if (!L && R) { merged[kind][id] = R; return; }       // only in the cloud: bring it here
+      if (L.deleted && R.deleted) { merged[kind][id] = L; return; }
+      const hl = recHash(L), hr = recHash(R);
+      if (hl === hr) { merged[kind][id] = L; return; }
+      if (B === hl) { merged[kind][id] = R; return; }      // only the cloud changed it
+      if (B === hr) { merged[kind][id] = L; return; }      // only this device changed it
+      conflicts.push({ kind, id, local: clone(L), remote: clone(R) });   // both changed it differently
+      merged[kind][id] = L;                                // keep this device's version until the user decides
+    });
+  });
+  return { merged, conflicts };
+}
+/* Puts a merged state into the working copy, keeping object identity where nothing changed */
+function applyState(merged) {
+  const changed = { groups: [], trips: [], legs: [] };
+  let n = 0;
+  KINDS.forEach(k => {
+    const byId = new Map(ST[k].map(r => [r.id, r]));
+    ST[k] = Object.values(merged[k]).map(rec => {
+      const cur = byId.get(rec.id);
+      if (cur && recHash(cur) === recHash(rec)) return cur;
+      const copy = structuredClone(rec);
+      changed[k].push(copy); n++;
+      return copy;
+    });
+  });
+  persistExternal(changed);
+  refreshLegs();
+  return n;
+}
+
+/* ----- AuthManager: Google Identity Services (the access token lives in memory only) ----- */
+const AuthManager = {
+  token: null, expiresAt: 0, scriptPromise: null, expiryTimer: null,
+  hasToken() { return Boolean(this.token) && Date.now() < this.expiresAt - 30000; },
+  clear() { this.token = null; this.expiresAt = 0; clearTimeout(this.expiryTimer); },
+  configError() {
+    if (!/^\d+-[\w-]+\.apps\.googleusercontent\.com$/.test(GOOGLE_CLIENT_ID)) return "The Google Client ID in this app's configuration isn't valid. Check GOOGLE_CLIENT_ID in index.html.";
+    if (location.protocol === "file:") return "Google sign-in only works when Tara Gala is opened from a web address (https:// or http://localhost), not from a file on your computer.";
+    return "";
+  },
+  loadScript() {
+    if (window.google?.accounts?.oauth2) return Promise.resolve();
+    if (!this.scriptPromise) {
+      this.scriptPromise = new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://accounts.google.com/gsi/client";
+        s.async = true; s.defer = true;
+        s.onload = () => resolve();
+        s.onerror = () => { this.scriptPromise = null; reject(new SyncError("network", "Couldn't load Google sign-in. Check your connection and try again.")); };
+        document.head.appendChild(s);
+      });
+    }
+    return this.scriptPromise;
+  },
+  requestToken({ hint = "", prompt } = {}) {
+    return this.loadScript().then(() => new Promise((resolve, reject) => {
+      const origin = location.origin;
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: GOOGLE_SCOPES.join(" "),
+        hint: hint || undefined,
+        callback: resp => {
+          if (resp.error) return reject(new SyncError("auth", resp.error === "access_denied" ? "Google sign-in was cancelled." : `Google sign-in failed (${resp.error}).`));
+          if (!google.accounts.oauth2.hasGrantedAllScopes(resp, DRIVE_SCOPE)) return reject(new SyncError("scope", "Tara Gala needs permission to use its private Google Drive storage. Sign in again and keep that box ticked."));
+          this.token = resp.access_token;
+          this.expiresAt = Date.now() + (Number(resp.expires_in) || 3600) * 1000;
+          clearTimeout(this.expiryTimer);
+          this.expiryTimer = setTimeout(() => Sync.render(), Math.max(1000, this.expiresAt - Date.now() - 20000));   // flips the status to "Reconnect" on time
+          resolve();
+        },
+        error_callback: err => reject(new SyncError("auth", err?.type === "popup_failed_to_open"
+          ? "Your browser blocked the Google sign-in window. Allow pop-ups for this site, then try again."
+          : `The Google sign-in window closed before finishing. If you saw an "origin_mismatch" error, add ${origin} to Authorized JavaScript origins for this OAuth client in Google Cloud.`)),
+      });
+      client.requestAccessToken(prompt === undefined ? {} : { prompt });
+    }));
+  },
+  async fetchProfile() {
+    let res;
+    try { res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", { headers: { Authorization: `Bearer ${this.token}` } }); }
+    catch (e) { throw new SyncError("network", "Couldn't reach Google to confirm your account."); }
+    if (!res.ok) throw new SyncError("auth", "Google didn't confirm which account signed in.");
+    const p = await res.json();
+    if (!p.email) throw new SyncError("auth", "Google didn't share an email address for this account.");
+    return { sub: p.sub || "", email: p.email, name: p.name || p.email, picture: p.picture || "" };
+  },
+};
+
+/* ----- DriveStorageManager: Google Drive API v3, private appDataFolder only ----- */
+const Drive = {
+  API: "https://www.googleapis.com/drive/v3",
+  UPLOAD: "https://www.googleapis.com/upload/drive/v3",
+  FIELDS: "id,name,version,modifiedTime,md5Checksum,size",
+  async call(url, opts = {}, retry = true) {
+    if (!AuthManager.hasToken()) throw new SyncError("auth", "Google authorization has expired.");
+    let res;
+    try { res = await fetch(url, { ...opts, headers: { Authorization: `Bearer ${AuthManager.token}`, ...(opts.headers || {}) } }); }
+    catch (e) { throw new SyncError("network", "Couldn't reach Google Drive."); }
+    if (res.ok) return res;
+    let reason = "", message = "";
+    try { const j = await res.clone().json(); reason = j?.error?.errors?.[0]?.reason || j?.error?.status || ""; message = j?.error?.message || ""; } catch (e) { /* not JSON */ }
+    if (res.status === 401) { AuthManager.clear(); throw new SyncError("auth", "Google authorization has expired.", { status: 401 }); }
+    if (res.status === 403) {
+      if (/insufficient/i.test(reason)) { AuthManager.clear(); throw new SyncError("scope", "Tara Gala doesn't have permission to use Google Drive storage. Sign in again.", { status: 403 }); }
+      if (/accessNotConfigured|SERVICE_DISABLED/i.test(reason + message)) throw new SyncError("config", "The Google Drive API isn't turned on for this Google Cloud project.", { status: 403 });
+      if (/rate|quota|storage/i.test(reason)) throw new SyncError("quota", "Google Drive is rate-limited or full right now. Tara Gala will try again later.", { status: 403 });
+      throw new SyncError("forbidden", message || "Google Drive refused the request.", { status: 403 });
+    }
+    if (res.status === 404) throw new SyncError("notfound", "That file isn't in Google Drive.", { status: 404 });
+    if ((res.status === 429 || res.status >= 500) && retry) { await sleep(1500); return this.call(url, opts, false); }
+    throw new SyncError(res.status === 429 ? "quota" : "server", message || `Google Drive returned an error (${res.status}).`, { status: res.status });
+  },
+  async find(name) {
+    const q = encodeURIComponent(`name='${name}' and trashed=false`);
+    const url = `${this.API}/files?spaces=appDataFolder&q=${q}&fields=${encodeURIComponent(`files(${this.FIELDS})`)}&orderBy=modifiedTime%20desc&pageSize=10`;
+    const j = await (await this.call(url)).json();
+    return (j.files || [])[0] || null;
+  },
+  async meta(id) { return (await this.call(`${this.API}/files/${encodeURIComponent(id)}?fields=${this.FIELDS}`)).json(); },
+  async read(id) { return (await this.call(`${this.API}/files/${encodeURIComponent(id)}?alt=media`)).text(); },
+  async create(name, content) {
+    const b = "taragala" + Math.random().toString(36).slice(2);
+    const body = `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify({ name, parents: ["appDataFolder"], mimeType: "application/json" })}\r\n--${b}\r\nContent-Type: application/json\r\n\r\n${content}\r\n--${b}--`;
+    const res = await this.call(`${this.UPLOAD}/files?uploadType=multipart&fields=${this.FIELDS}`, { method: "POST", headers: { "Content-Type": `multipart/related; boundary=${b}` }, body });
+    return res.json();
+  },
+  async update(id, content) {
+    const res = await this.call(`${this.UPLOAD}/files/${encodeURIComponent(id)}?uploadType=media&fields=${this.FIELDS}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: content });
+    return res.json();
+  },
+};
+
+/* ----- SyncManager: local-first, automatic, conflict-safe ----- */
+const Sync = {
+  s: {
+    deviceId: "", account: null, signedOut: false, autoSync: true,
+    cloudVersion: "", lastSyncedAt: "", dirty: false, seq: 0, firstSyncDone: false, uploadDeclined: false,
+    driveIds: { primary: "", previous: "" }, previousAt: 0, conflicts: [],
+  },
+  base: { groups: {}, trips: {}, legs: {} },   // hashes of what this device and the cloud last agreed on
+  cloudSnapshot: "",                           // the text of the cloud file as last seen
+  running: false, rerun: false, reconnecting: false, error: null,
+  timer: null, retryTimer: null, pollTimer: null, retryDelay: 30000,
+  online: () => navigator.onLine !== false,
+
+  async init() {
+    try {
+      const saved = await DatabaseManager.getMeta("sync");
+      if (saved) this.s = { ...this.s, ...saved, driveIds: { ...this.s.driveIds, ...(saved.driveIds || {}) }, conflicts: saved.conflicts || [] };
+      this.base = (await DatabaseManager.getMeta("syncBase")) || this.base;
+      this.cloudSnapshot = (await DatabaseManager.getMeta("cloudSnapshot")) || "";
+    } catch (e) { /* no database: the app still works, just without cloud sync state */ }
+    if (!this.s.deviceId) { this.s.deviceId = newId("device"); this.saveState(); }
+  },
+  start() {
+    window.addEventListener("online", () => { this.error = this.error?.kind === "network" ? null : this.error; this.render(); this.schedule(500); });
+    window.addEventListener("offline", () => this.render());
+    document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") this.poll(); });
+    this.pollTimer = setInterval(() => this.poll(), 90000);   // looks for changes made on another device
+    this.render();
+  },
+  poll() {
+    if (document.visibilityState !== "visible" || this.running || !this.canSync()) return;
+    this.run({ quiet: true });
+  },
+  saveState() { const copy = structuredClone(this.s); queueWrite(() => DatabaseManager.setMeta("sync", copy)); },
+  linked() { return Boolean(this.s.account) && !this.s.signedOut; },
+  canSync() { return this.linked() && this.online() && AuthManager.hasToken() && !this.s.conflicts.length; },
+
+  markDirty() {
+    this.s.dirty = true; this.s.seq++;
+    this.saveState();
+    this.render();
+    this.schedule(SYNC_DEBOUNCE_MS);   // rapid edits collapse into one upload
+  },
+  schedule(delay) {
+    clearTimeout(this.timer);
+    if (!this.s.autoSync || !this.canSync()) return;
+    this.timer = setTimeout(() => this.run(), delay);
+  },
+
+  status() {
+    const s = this.s;
+    if (!this.linked()) return "local";
+    if (s.conflicts.length) return "conflict";
+    if (!this.online()) return "offline";
+    if (this.reconnecting) return "reconnecting";
+    if (this.running) return "syncing";
+    if (!AuthManager.hasToken() || this.error?.kind === "auth" || this.error?.kind === "scope") return "auth";
+    if (this.error) return "failed";
+    if (s.dirty || !s.firstSyncDone) return "pending";
+    return "synced";
+  },
+  render() { try { renderSyncUI(); } catch (e) { console.error(e); } },
+
+  /* ----- signing in ----- */
+  async signIn() {
+    const cfg = AuthManager.configError();
+    if (cfg) { this.error = { kind: "config", message: cfg }; this.render(); toast(cfg); return; }
+    this.error = null; this.reconnecting = true; this.render();
+    let profile;
+    try {
+      await AuthManager.requestToken({ hint: this.s.account?.email || "", prompt: this.s.account ? "" : undefined });
+      profile = await AuthManager.fetchProfile();
+      const prev = this.s.account;
+      if (prev && prev.email.toLowerCase() !== profile.email.toLowerCase()) {
+        const r = await ask({ title: "A different Google account", lines: [`This device was connected to ${prev.email}, but you signed in as ${profile.email}.`, "If you continue, the trips on this device will be combined with the cloud backup of the new account. Nothing is deleted."], confirmLabel: "Use " + profile.email });
+        if (!r) { AuthManager.clear(); return; }
+        Object.assign(this.s, { cloudVersion: "", firstSyncDone: false, uploadDeclined: false, driveIds: { primary: "", previous: "" }, conflicts: [], previousAt: 0 });
+        this.base = { groups: {}, trips: {}, legs: {} }; this.cloudSnapshot = "";
+      }
+      this.s.account = profile; this.s.signedOut = false;
+      this.saveState();
+    } catch (e) {
+      this.handleError(e);
+      if (e.message) toast(e.message);
+      return;
+    } finally { this.reconnecting = false; this.render(); }
+    await this.run({ manual: true });
+  },
+  reconnect() { return this.signIn(); },
+  signOut() {
+    AuthManager.clear();
+    clearTimeout(this.timer);
+    this.s.signedOut = true; this.error = null;
+    this.saveState(); this.render();
+    toast("Signed out. Your trips are still saved on this device.");
+  },
+  forgetAccount() {
+    AuthManager.clear(); clearTimeout(this.timer);
+    Object.assign(this.s, { account: null, signedOut: false, cloudVersion: "", firstSyncDone: false, uploadDeclined: false, driveIds: { primary: "", previous: "" }, conflicts: [], previousAt: 0, dirty: false });
+    this.base = { groups: {}, trips: {}, legs: {} }; this.cloudSnapshot = ""; this.error = null;
+    this.saveState();
+    queueWrite(() => DatabaseManager.writeBatch({ meta: [{ key: "syncBase", value: this.base }, { key: "cloudSnapshot", value: "" }] }));
+    this.render();
+  },
+  setAuto(on) { this.s.autoSync = on; this.saveState(); this.render(); if (on) this.schedule(300); },
+
+  /* ----- one sync run ----- */
+  async run({ manual = false, quiet = false } = {}) {
+    if (this.running) { this.rerun = true; return; }
+    if (!this.linked() || !this.online() || !AuthManager.hasToken()) { this.render(); return; }
+    if (this.s.conflicts.length && !manual) return;
+    this.running = true; if (!quiet || this.s.dirty) this.error = null;
+    this.render();
+    try {
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const again = await this.cycle({ manual });
+        if (!again) break;
+      }
+      this.retryDelay = 30000;
+    } catch (e) {
+      this.handleError(e);
+    } finally {
+      this.running = false; this.render();
+      if (this.rerun) { this.rerun = false; this.schedule(300); }
+    }
+  },
+
+  async cycle({ manual = false } = {}) {
+    const s = this.s;
+    await writeChain;                       // local writes are finished before anything goes to the cloud
+    const seqAtStart = s.seq;
+    let file = null;
+    if (s.driveIds.primary) {
+      try { file = await Drive.meta(s.driveIds.primary); }
+      catch (e) { if (e.kind !== "notfound") throw e; s.driveIds.primary = ""; }
+    }
+    if (!file) { file = await Drive.find(DRIVE_FILES.primary); if (file) s.driveIds.primary = file.id; }
+    const hasLocal = anyLive(snapshotOf());
+
+    /* no cloud backup yet */
+    if (!file) {
+      if (!hasLocal) { await this.settle(seqAtStart, "", "", snapshotOf()); return false; }
+      if (!s.firstSyncDone || s.uploadDeclined) {
+        const r = await ask({ title: "Back up to Google Drive?", lines: [`There's no Tara Gala backup in ${s.account.email}'s Google Drive yet.`, "Upload the trips on this device so they're safe and available on your other devices? Only Tara Gala can see this private storage."], confirmLabel: "Upload my trips", cancelLabel: "Not now" });
+        if (!r) { s.uploadDeclined = true; this.saveState(); return false; }
+        s.uploadDeclined = false;
+      }
+      return this.upload(snapshotOf(), null, "", seqAtStart);
+    }
+
+    /* the cloud file is unchanged since the last sync */
+    if (file.version === s.cloudVersion) {
+      if (!s.dirty) return false;
+      return this.upload(snapshotOf(), file, "", seqAtStart);
+    }
+
+    /* the cloud file changed (another device, or first connection): download, check it, merge */
+    const text = await Drive.read(file.id);
+    const parsed = parseBackupText(text);
+    if (!parsed.ok || parsed.kind !== "current") {
+      if (manual) {   // only when the user pressed Sync now: offer to replace the unreadable backup
+        const r = await ask({ title: "The cloud backup can't be read", lines: ["The backup in Google Drive looks damaged, so Tara Gala has left it alone.", "Replace it with the trips on this device? The previous cloud backup is kept as it is, and you can still restore it from Settings."], confirmLabel: "Replace cloud backup", danger: true });
+        if (r) return this.upload(snapshotOf(), file, "", seqAtStart, true);
+      }
+      throw new SyncError("invalid", "The backup in Google Drive couldn't be read, so Tara Gala left it alone. Press Sync now to replace it with this device's trips, or restore the previous cloud backup from Settings.", { details: parsed.errors });
+    }
+    if (!s.firstSyncDone && hasLocal && anyLive(parsed.state)) {
+      const lc = Object.values(snapshotOf().trips).filter(t => !t.deleted).length, rc = Object.values(parsed.state.trips).filter(t => !t.deleted).length;
+      const r = await ask({ title: "Combine your trips?", lines: [`This device has ${lc} trip${lc === 1 ? "" : "s"} and your Google Drive backup has ${rc}.`, "Tara Gala will combine them. Nothing is deleted, and anything that clashes will be shown to you first."], confirmLabel: "Combine" });
+      if (!r) throw new SyncError("declined", "Sync was not started.");
+    }
+    const { merged, conflicts } = mergeStates(snapshotOf(), parsed.state, this.base);
+    const changes = applyState(merged);
+    if (changes) afterRemoteApply(changes);
+    if (conflicts.length) {
+      s.conflicts = conflicts;
+      const nb = hashMap(merged);
+      conflicts.forEach(c => { nb[c.kind][c.id] = this.base[c.kind]?.[c.id]; });   // undecided records keep their old agreement
+      this.base = nb; s.cloudVersion = file.version; this.cloudSnapshot = text;
+      this.saveState();
+      queueWrite(() => DatabaseManager.writeBatch({ meta: [{ key: "syncBase", value: structuredClone(nb) }, { key: "cloudSnapshot", value: text }] }));
+      return false;
+    }
+    if (!sameState(merged, parsed.state)) return this.upload(merged, file, text, seqAtStart);
+    await this.settle(seqAtStart, file.version, text, merged);
+    return false;
+  },
+
+  /* Uploads a state. The cloud file must still be the version this merge was based on; otherwise nothing is overwritten. */
+  async upload(state, file, remoteText, seqAtStart, replaceInvalid = false) {
+    const s = this.s;
+    if (file) {
+      const now = await Drive.meta(file.id);
+      if (now.version !== file.version) return true;   // someone else wrote first: run the cycle again and merge
+      if (!replaceInvalid) await this.rotatePrevious(remoteText || this.cloudSnapshot);   // never copy a damaged file over the previous backup
+    }
+    const content = JSON.stringify(stateToBackup(state, { includeDeleted: true, lastSyncedAt: nowISO() }));
+    const res = file ? await Drive.update(file.id, content) : await Drive.create(DRIVE_FILES.primary, content);
+    s.driveIds.primary = res.id;
+    await this.settle(seqAtStart, res.version, content, state);
+    return false;
+  },
+  async rotatePrevious(text) {
+    const s = this.s;
+    if (!text) return;
+    if (s.driveIds.previous && Date.now() - s.previousAt < 15 * 60 * 1000) return;   // at most every 15 minutes
+    let prev = null;
+    if (s.driveIds.previous) { try { prev = await Drive.meta(s.driveIds.previous); } catch (e) { if (e.kind !== "notfound") throw e; } }
+    if (!prev) prev = await Drive.find(DRIVE_FILES.previous);
+    const res = prev ? await Drive.update(prev.id, text) : await Drive.create(DRIVE_FILES.previous, text);
+    s.driveIds.previous = res.id; s.previousAt = Date.now();
+  },
+  /* Records that this device and the cloud now agree */
+  async settle(seqAtStart, version, text, state) {
+    const s = this.s;
+    s.cloudVersion = version; s.lastSyncedAt = nowISO(); s.firstSyncDone = true; this.error = null;
+    if (s.seq === seqAtStart) s.dirty = false;   // edits made during the sync keep the data marked as changed
+    this.base = hashMap(state); this.cloudSnapshot = text;
+    this.saveState();
+    const nb = structuredClone(this.base);
+    queueWrite(() => DatabaseManager.writeBatch({ meta: [{ key: "syncBase", value: nb }, { key: "cloudSnapshot", value: text }] }));
+  },
+
+  handleError(e) {
+    console.warn("[Tara Gala] sync:", e);
+    if (e.kind === "declined") { this.error = null; return; }
+    this.error = { kind: e.kind || "failed", message: e.message || "Sync failed.", details: e.details };
+    if (e.kind === "auth" || e.kind === "scope") AuthManager.clear();
+    if (this.online() && ["network", "server", "quota"].includes(e.kind) && this.s.autoSync && AuthManager.hasToken()) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = setTimeout(() => this.run({ quiet: true }), this.retryDelay);
+      this.retryDelay = Math.min(this.retryDelay * 2, 300000);
+    }
+  },
+
+  /* ----- conflicts ----- */
+  resolveConflicts(choices) {
+    const s = this.s;
+    s.conflicts.forEach((c, i) => {
+      const choice = choices[i] || "both";
+      const arr = ST[c.kind];
+      const idx = arr.findIndex(r => r.id === c.id);
+      if (choice === "cloud") { if (idx >= 0) arr[idx] = structuredClone(c.remote); else arr.push(structuredClone(c.remote)); persistExternal({ [c.kind]: [arr.find(r => r.id === c.id)] }); }
+      else {
+        if (idx >= 0 && choice === "local") { arr[idx].updatedAt = nowISO(); }
+        if (choice === "both" && c.kind !== "trips" && !c.remote.deleted && !c.local.deleted) {
+          const copy = structuredClone(c.remote);
+          copy.id = newId(ID_PREFIX[c.kind]);
+          if (c.kind === "groups") copy.name = (copy.name + " (Google Drive copy)").slice(0, 60);
+          if (c.kind === "legs") copy.routeName = ((copy.routeName || "Leg") + " (Google Drive copy)").slice(0, 80);
+          copy.active = false;
+          arr.push(copy);
+        }
+        this.base[c.kind][c.id] = recHash(c.remote);   // the cloud's version has been seen; this device's choice now wins
+      }
+    });
+    s.conflicts = [];
+    refreshLegs();
+    const n = flushChanges();
+    s.dirty = true; s.seq++;   // the resolved data must go to the cloud
+    this.saveState();
+    const nb = structuredClone(this.base);
+    queueWrite(() => DatabaseManager.writeBatch({ meta: [{ key: "syncBase", value: nb }] }));
+    afterRemoteApply(n || 1, true);
+    this.render();
+    this.run({ manual: true });
+  },
+
+  /* ----- manual cloud restore (replaces the data on this device after the user confirms) ----- */
+  async fetchBackup(which) {
+    const name = which === "previous" ? DRIVE_FILES.previous : DRIVE_FILES.primary;
+    const file = await Drive.find(name);
+    if (!file) throw new SyncError("notfound", which === "previous" ? "There's no previous backup in Google Drive yet." : "There's no backup in Google Drive yet.");
+    const parsed = parseBackupText(await Drive.read(file.id));
+    if (!parsed.ok || parsed.kind !== "current") throw new SyncError("invalid", `That cloud backup couldn't be read: ${(parsed.errors || []).join(" ")}`);
+    return { state: parsed.state, modified: file.modifiedTime };
+  },
+};
+
+/* =====================================================================
+   Screens: ask dialog, home, groups, trips, sync panel, conflicts, restore
+   ===================================================================== */
+const UI_KEY = "galanelos-overland-2026-ui";   // layout preference and the last trip you opened (this device only)
+const uiPrefs = (() => { try { return { view: "grid", lastTripId: "", welcomed: false, ...JSON.parse(localStorage.getItem(UI_KEY)) }; } catch (e) { return { view: "grid", lastTripId: "", welcomed: false }; } })();
+function saveUiPrefs() { try { localStorage.setItem(UI_KEY, JSON.stringify(uiPrefs)); } catch (e) { /* ignore */ } }
+const fmtWhen = iso => iso ? ampm(new Date(iso).toLocaleString("en-PH", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true })) : "";
+
+/* ----- a small question dialog used for naming, confirming and choosing ----- */
+const askDialog = $("askDialog");
+let askResolve = null;
+function ask({ title, lines = [], input = null, select = null, confirmLabel = "OK", cancelLabel = "Cancel", danger = false, hideCancel = false } = {}) {
+  return new Promise(resolve => {
+    if (askResolve) askResolve(null);   // a new question replaces an unanswered one
+    askResolve = resolve;
+    $("askTitle").textContent = title;
+    $("askLines").innerHTML = lines.map(l => `<p>${esc(l)}</p>`).join("");
+    $("askInputWrap").hidden = !input;
+    if (input) { $("askInputLabel").textContent = input.label; $("askInput").value = input.value || ""; $("askInput").placeholder = input.placeholder || ""; }
+    $("askSelectWrap").hidden = !select;
+    if (select) {
+      $("askSelectLabel").textContent = select.label;
+      $("askSelect").innerHTML = select.options.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");
+    }
+    const ok = $("askOk");
+    ok.textContent = confirmLabel;
+    ok.classList.toggle("dangerous", danger);
+    $("askCancel").textContent = cancelLabel;
+    $("askCancel").hidden = hideCancel;
+    askDialog.showModal();
+    if (input) setTimeout(() => $("askInput").focus(), 60);
+  });
+}
+function finishAsk(result) {
+  const r = askResolve; askResolve = null;
+  if (askDialog.open) askDialog.close();
+  if (r) r(result);
+}
+$("askForm").addEventListener("submit", e => {
+  e.preventDefault();
+  if (!$("askInputWrap").hidden && !$("askInput").value.trim()) { $("askInput").focus(); return; }
+  finishAsk({ ok: true, input: $("askInput").value.trim(), select: $("askSelect").value });
+});
+askDialog.addEventListener("cancel", e => { e.preventDefault(); finishAsk(null); });
+
+/* ----- navigation ----- */
+function parseHash() {
+  const h = location.hash.replace(/^#/, "");
+  if (h === "settings") return { view: "settings" };
+  if (h === "login") return { view: "login" };
+  const m = /^(group|trip)\/(.+)$/.exec(h);
+  if (m) return { view: m[1], id: decodeURIComponent(m[2]) };
+  return { view: "home" };
+}
+const crumbs = items => items.map(it => it.href ? `<a href="${it.href}">${esc(it.label)}</a>` : `<span aria-current="page">${esc(it.label)}</span>`).join(`<span class="sep" aria-hidden="true">/</span>`);
+
+/* ----- login page: shown on a first visit, and once per browser session to reconnect a Google account ----- */
+let pendingHash = "";      // where to go once the login page is done
+let viewReady = false;     // the first screen appears at once; later ones cross-fade
+let loginMessage = "";
+const entered = () => { try { return sessionStorage.getItem("tg-entered") === "1"; } catch (e) { return false; } };   // a harmless flag, never a token
+function needLogin() {
+  if (entered()) return false;
+  if (!uiPrefs.welcomed) return true;                       // a first visit
+  return Sync.linked() && !AuthManager.hasToken();          // a linked account needs one tap to reconnect
+}
+function enterApp() {
+  uiPrefs.welcomed = true; saveUiPrefs();
+  try { sessionStorage.setItem("tg-entered", "1"); } catch (e) { /* ignore */ }
+  const target = pendingHash && !/^#login/.test(pendingHash) ? pendingHash : "#home";
+  pendingHash = "";
+  if (location.hash === target) showView(); else location.hash = target;
+}
+function renderLogin() {
+  document.title = APP_NAME;
+  const s = Sync.s, a = s.account, returning = Boolean(a) && !s.signedOut;
+  const offline = !navigator.onLine, cfg = AuthManager.configError();
+  const dis = offline || cfg ? "disabled" : "";
+  let h = "";
+  if (returning) {
+    const first = (a.name || a.email).split(/\s+/)[0];
+    h += `<div class="login-who"><span class="avatar">${a.picture ? `<img src="${esc(a.picture)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : esc((a.name || a.email).trim().slice(0, 1).toUpperCase())}</span>
+      <div><div class="acct-name">Welcome back, ${esc(first)}</div><div class="acct-email">${esc(a.email)}</div></div></div>`;
+    h += `<button type="button" class="gbtn gbtn-lg" data-action="loginGoogle" ${dis}>${GOOGLE_G}Continue as ${esc(a.email)}</button>`;
+    h += `<p class="login-sub">Reconnect to sync your trips with Google Drive. The trips saved on this device are already here.</p>`;
+  } else {
+    h += `<p class="login-lead">Plan your road trips and island hops, then keep them safe and in sync.</p>`;
+    h += `<button type="button" class="gbtn gbtn-lg" data-action="loginGoogle" ${dis}>${GOOGLE_G}Continue with Google</button>`;
+    h += `<p class="login-sub">Backs up your trips to a private folder in your Google Drive and syncs your devices. Tara Gala can't see anything else in your Drive.</p>`;
+  }
+  h += `<div class="login-or"><span>or</span></div>
+    <button type="button" class="btn login-local" data-action="loginLocal">Continue with local data</button>
+    <p class="login-sub">${returning ? "Use the trips saved on this device. You can reconnect Google any time in Settings." : "Your trips stay on this device. You can sign in with Google later in Settings."}</p>`;
+  if (returning) h += `<p class="login-switch"><button type="button" class="linkbtn" data-action="loginSwitch" style="margin:0">Use a different Google account</button></p>`;
+  if (offline) h += `<p class="login-note">You're offline, so Google sign-in isn't available right now. You can continue with local data.</p>`;
+  if (cfg) h += `<p class="login-note">${esc(cfg)}</p>`;
+  if (loginMessage) h += `<p class="login-msg" role="alert">${esc(loginMessage)}</p>`;
+  $("loginBody").innerHTML = h;
+}
+async function loginGoogle() {
+  $("loginView").classList.add("busy"); loginMessage = "";
+  try { await Sync.signIn(); } finally { $("loginView").classList.remove("busy"); }
+  if (Sync.linked() && AuthManager.hasToken()) { enterApp(); return; }
+  loginMessage = Sync.error?.message || "Google sign-in didn't finish. Try again, or continue with local data.";
+  renderLogin();
+}
+window.addEventListener("online", () => { if (!$("loginView").hidden) renderLogin(); });
+window.addEventListener("offline", () => { if (!$("loginView").hidden) renderLogin(); });
+
+/* Screens cross-fade; lists and cards rise in one after another */
+function swapView(update) {
+  if (!viewReady) { update(); viewReady = true; return; }
+  if (document.startViewTransition && !prefersReducedMotion() && document.visibilityState === "visible") { document.startViewTransition(update); return; }
+  update();
+}
+let staggerListTimer;
+function showView() {
+  let r = parseHash();
+  if (r.view !== "login" && needLogin()) { pendingHash = location.hash; history.replaceState(null, "", "#login"); r = { view: "login" }; }
+  let view = r.view;
+  if (view === "trip") {
+    const t = getTrip(r.id);
+    if (t && getGroup(t.groupId)) { currentTripId = t.id; currentGroupId = t.groupId; uiPrefs.lastTripId = t.id; saveUiPrefs(); }
+    else { view = "home"; history.replaceState(null, "", "#home"); }
+  } else if (view === "group") {
+    if (getGroup(r.id)) currentGroupId = r.id;
+    else { view = "home"; history.replaceState(null, "", "#home"); }
+  }
+  swapView(() => {
+    ["login", "home", "group", "trip", "settings"].forEach(v => { $(v + "View").hidden = v !== view; });
+    document.body.dataset.view = view;
+    $("booting").hidden = true;
+    $("addTop").hidden = view !== "trip";
+    $("settingsLink").setAttribute("aria-current", view === "settings" ? "page" : "false");
+    if (view === "settings") {
+      window.loadFontPreviews();   // so each font sample shows in its own typeface
+      const last = getTrip(uiPrefs.lastTripId);   // "Back" returns to the trip you were in, or the home screen
+      $("backLink").href = last ? "#trip/" + encodeURIComponent(last.id) : "#home";
+      $("backLink").lastElementChild.textContent = last ? "Back to trip" : "Back to home";
+    }
+    renderCurrent(view);
+    window.scrollTo(0, 0);
+    if (!document.startViewTransition) { const el = $(view + "View"); el.classList.remove("view-enter"); void el.offsetWidth; el.classList.add("view-enter"); }
+    const list = { home: "groupList", group: "tripList", trip: "legsTable" }[view];
+    clearTimeout(staggerListTimer);
+    document.querySelectorAll(".stagger").forEach(e => { if (e.classList.contains("cards") || e.id === "legsTable") e.classList.remove("stagger"); });
+    if (list && !prefersReducedMotion()) { $(list).classList.add("stagger"); staggerListTimer = setTimeout(() => $(list).classList.remove("stagger"), 1500); }
+  });
+}
+function renderCurrent(view = parseHash().view) {
+  if (view === "home") renderHome();
+  else if (view === "group") renderGroup();
+  else if (view === "trip") { refreshLegs(); renderTitle(); render(); }
+  else if (view === "login") renderLogin();
+  else { document.title = `Settings | ${APP_NAME}`; renderSyncUI(); }
+}
+window.addEventListener("hashchange", showView);
+
+/* ----- home: Trip Groups ----- */
+const byName = (a, b) => a.name.localeCompare(b.name);
+function groupSummary(g) {
+  const trips = liveTrips(g.id);
+  let cost = 0;
+  trips.forEach(t => legsOf(t.id).forEach(l => { cost += legCost(l); }));
+  return { trips: trips.length, cost };
+}
+function viewToggle() {
+  document.querySelectorAll('[data-action="setView"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.id === uiPrefs.view)));
+}
+function renderHome() {
+  document.title = APP_NAME;
+  const groups = liveGroups().sort(byName);
+  $("groupList").className = "cards " + uiPrefs.view;
+  $("groupList").innerHTML = groups.map((g, idx) => {
+    const sm = groupSummary(g);
+    return `<article class="gcard" data-open="group" data-id="${esc(g.id)}" style="--i:${idx}">
+      <span class="gc-icon">${icon("folder")}</span>
+      <div class="gc-main">
+        <h3><a href="#group/${encodeURIComponent(g.id)}">${esc(g.name)}</a></h3>
+        <p>${sm.trips} ${sm.trips === 1 ? "trip" : "trips"}${sm.cost ? " • " + peso(sm.cost) : ""}</p>
+      </div>
+      <div class="gc-actions">
+        <button class="icon-btn" type="button" data-action="renameGroup" data-id="${esc(g.id)}" aria-label="Rename ${esc(g.name)}" title="Rename">${icon("edit")}</button>
+        <button class="icon-btn danger" type="button" data-action="deleteGroup" data-id="${esc(g.id)}" aria-label="Delete ${esc(g.name)}" title="Delete">${icon("trash")}</button>
+      </div>
+    </article>`;
+  }).join("");
+  $("homeEmpty").hidden = groups.length > 0;
+  $("storageWarn").hidden = storageOk;
+  viewToggle();
+}
+
+/* ----- a group's trips ----- */
+function tripCardInfo(t) {
+  const ls = legsOf(t.id), active = sortedActive(ls);
+  const cost = ls.reduce((s, l) => s + legCost(l), 0);
+  return { summary: active.length ? tripSummary(active) : "No legs yet", cost, live: ls.some(l => l.active) };
+}
+function renderGroup() {
+  const g = getGroup(currentGroupId);
+  if (!g) return;
+  document.title = `${g.name} | ${APP_NAME}`;
+  $("groupCrumbs").innerHTML = crumbs([{ label: "Home", href: "#home" }, { label: g.name }]);
+  $("groupName").textContent = g.name;
+  const trips = liveTrips(g.id).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  $("groupSub").textContent = `${trips.length} ${trips.length === 1 ? "trip" : "trips"} in this group`;
+  $("tripList").className = "cards " + uiPrefs.view;
+  $("tripList").innerHTML = trips.map((t, idx) => {
+    const info = tripCardInfo(t);
+    return `<article class="gcard" data-open="trip" data-id="${esc(t.id)}" style="--i:${idx}">
+      <span class="gc-icon">${icon("rig")}</span>
+      <div class="gc-main">
+        <h3><a href="#trip/${encodeURIComponent(t.id)}">${esc(t.title)}</a></h3>
+        <p>${esc(info.summary)}${info.cost ? " • " + peso(info.cost) : ""}</p>
+        ${info.live ? `<span class="live-chip on" style="margin-top:6px"><i class="live-dot"></i>In progress</span>` : ""}
+      </div>
+      <div class="gc-actions">
+        <button class="icon-btn" type="button" data-action="moveTrip" data-id="${esc(t.id)}" aria-label="Move ${esc(t.title)} to another group" title="Move to another group">${icon("folder")}</button>
+        <button class="icon-btn danger" type="button" data-action="deleteTrip" data-id="${esc(t.id)}" aria-label="Delete ${esc(t.title)}" title="Delete">${icon("trash")}</button>
+      </div>
+    </article>`;
+  }).join("");
+  $("groupEmpty").hidden = trips.length > 0;
+  viewToggle();
+}
+
+/* ----- creating, renaming, moving and deleting (always safe, always undoable) ----- */
+async function newGroup() {
+  const r = await ask({ title: "New Trip Group", lines: ["Group your trips by region, season or barkada."], input: { label: "Group name", placeholder: "e.g. Visayas Loop 2027" }, confirmLabel: "Create group" });
+  if (!r) return;
+  const g = normalizeGroup({ id: newId("group"), name: r.input });
+  flipRender(() => { ST.groups.push(g); save(); renderHome(); });
+  toast(`“${g.name}” created`);
+}
+async function renameGroup(id) {
+  const g = getGroup(id);
+  if (!g) return;
+  const r = await ask({ title: "Rename group", input: { label: "Group name", value: g.name }, confirmLabel: "Save" });
+  if (!r) return;
+  g.name = normalizeGroup({ name: r.input }).name;
+  save(); renderCurrent(); toast("Group renamed");
+}
+async function deleteGroup(id) {
+  const g = getGroup(id);
+  if (!g) return;
+  const trips = liveTrips(id), others = liveGroups().filter(x => x.id !== id).sort(byName);
+  let target = "";
+  if (trips.length && !others.length) {
+    await ask({ title: "This group still has trips", lines: [`“${g.name}” has ${trips.length} trip${trips.length === 1 ? "" : "s"}. Create another group first so they have somewhere to go, or delete the trips one by one.`], confirmLabel: "OK", hideCancel: true });
+    return;
+  }
+  if (trips.length) {
+    const r = await ask({ title: `Delete “${g.name}”?`, lines: [`Its ${trips.length} trip${trips.length === 1 ? "" : "s"} won't be deleted. Choose a group to move ${trips.length === 1 ? "it" : "them"} to.`], select: { label: "Move trips to", options: others.map(o => ({ value: o.id, label: o.name })) }, confirmLabel: "Move trips and delete group", danger: true });
+    if (!r) return;
+    target = r.select;
+  } else {
+    const r = await ask({ title: `Delete “${g.name}”?`, lines: ["This group is empty."], confirmLabel: "Delete group", danger: true });
+    if (!r) return;
+  }
+  const stamp = nowISO(), moved = trips.map(t => t.id);
+  await animateOut(cardEl("#groupList", id));
+  flipRender(() => {
+    trips.forEach(t => { t.groupId = target; });
+    g.deleted = true; g.deletedAt = stamp;
+    save(); renderCurrent();
+  });
+  toast(`“${g.name}” deleted`, { label: "Undo", run: () => flipRender(() => {
+    g.deleted = false; g.deletedAt = "";
+    moved.forEach(tid => { const t = ST.trips.find(x => x.id === tid); if (t) t.groupId = id; });
+    save(); renderCurrent();
+  }) });
+}
+function newTrip() {
+  const g = getGroup(currentGroupId);
+  if (!g) return;
+  const t = normalizeTrip({ id: newId("trip"), groupId: g.id, title: DEFAULT_TITLE, named: false });
+  ST.trips.push(t);
+  save();
+  location.hash = "#trip/" + encodeURIComponent(t.id);   // opens with the "San Tayo?" naming prompt
+}
+async function moveTrip(id) {
+  const t = getTrip(id);
+  if (!t) return;
+  const others = liveGroups().filter(g => g.id !== t.groupId).sort(byName);
+  if (!others.length) { await ask({ title: "No other group yet", lines: ["Create another Trip Group first, then you can move this trip."], confirmLabel: "OK", hideCancel: true }); return; }
+  const r = await ask({ title: "Move trip", lines: [`Move “${t.title}” to another group.`], select: { label: "Move to", options: others.map(o => ({ value: o.id, label: o.name })) }, confirmLabel: "Move trip" });
+  if (!r) return;
+  await animateOut(cardEl("#tripList", id));
+  flipRender(() => { t.groupId = r.select; save(); renderCurrent(); });
+  toast("Trip moved");
+}
+async function deleteTrip(id) {
+  const t = getTrip(id);
+  if (!t) return;
+  const ls = legsOf(id);
+  const r = await ask({ title: `Delete “${t.title}”?`, lines: [`This removes the trip and its ${ls.length} leg${ls.length === 1 ? "" : "s"}. You can undo it right after.`], confirmLabel: "Delete trip", danger: true });
+  if (!r) return;
+  const stamp = nowISO();
+  const remove = () => {
+    t.deleted = true; t.deletedAt = stamp;
+    ls.forEach(l => { l.deleted = true; l.deletedAt = stamp; l.active = false; });
+    save();
+    if (currentTripId === id && parseHash().view === "trip") location.hash = "#group/" + encodeURIComponent(t.groupId); else renderCurrent();
+  };
+  await animateOut(cardEl("#tripList", id));
+  flipRender(remove);
+  toast("Trip deleted", { label: "Undo", run: () => flipRender(() => {
+    t.deleted = false; t.deletedAt = "";
+    ST.legs.filter(l => l.tripId === id && l.deletedAt === stamp).forEach(l => { l.deleted = false; l.deletedAt = ""; });
+    save(); renderCurrent();
+  }) });
+}
+
+/* ----- the trip title ----- */
+function renderTitle() {
+  const t = curTrip();
+  const title = t ? t.title : DEFAULT_TITLE;
+  $("tripTitle").textContent = title;
+  $("titleHint").hidden = Boolean(t?.named);   // disappears once the user names the trip
+  document.title = `${title} | ${APP_NAME}`;
+  const g = t ? getGroup(t.groupId) : null;
+  $("tripCrumbs").innerHTML = crumbs([{ label: "Home", href: "#home" }, ...(g ? [{ label: g.name, href: "#group/" + encodeURIComponent(g.id) }] : []), { label: title }]);
+}
+function startTitleEdit() {
+  const t = curTrip();
+  if (!t) return;
+  $("titleRow").hidden = true;
+  $("titleForm").hidden = false;
+  $("titleInput").value = t.title;
+  $("titleInput").focus();
+  $("titleInput").select();
+}
+function endTitleEdit() { $("titleForm").hidden = true; $("titleRow").hidden = false; }
+$("titleForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const t = curTrip();
+  if (!t) return;
+  const clean = normalizeTrip({ title: $("titleInput").value, named: true });
+  t.title = clean.title; t.named = clean.named;
+  save(); renderTitle(); endTitleEdit(); toast("Trip title updated");
+});
+$("titleInput").addEventListener("keydown", e => { if (e.key === "Escape") endTitleEdit(); });
+
+/* ----- applying changes that arrived from the cloud or a restore ----- */
+function afterRemoteApply(n, quiet) {
+  refreshLegs();
+  const r = parseHash();
+  if (r.view === "trip" && !getTrip(r.id)) { toast("That trip was removed on another device."); location.hash = "#home"; }
+  else if (r.view === "group" && !getGroup(r.id)) location.hash = "#home";
+  else renderCurrent();
+  if (!quiet && n) toast("Updated from Google Drive");
+}
+
+/* ----- the sync status chip, banner and Settings panel ----- */
+const SYNC_LABEL = { local: "Not synced", synced: "Synced", syncing: "Syncing…", pending: "Pending changes", offline: "Offline", reconnecting: "Reconnecting…", auth: "Reconnect", failed: "Sync failed", conflict: "Conflict" };
+const SYNC_HELP = {
+  local: "Sign in with Google to back up and sync your trips.",
+  synced: "Everything is saved on this device and in your Google Drive.",
+  syncing: "Syncing with Google Drive…",
+  pending: "Changes are saved on this device and waiting to sync.",
+  offline: "You're offline. Changes are saved on this device and will sync when you're back online.",
+  reconnecting: "Reconnecting to Google…",
+  auth: "Google needs you to reconnect before syncing can continue. Your changes are safe on this device.",
+  failed: "The last sync didn't finish. Your changes are safe on this device.",
+  conflict: "Some changes clash between this device and Google Drive. Review them to continue syncing.",
+};
+let bannerDismissed = "";
+function renderSyncUI() {
+  const st = Sync.status();
+  const chip = $("syncChip");
+  chip.dataset.state = st;
+  $("syncChipLabel").textContent = SYNC_LABEL[st];
+  chip.setAttribute("aria-label", `Sync status: ${SYNC_LABEL[st]}. ${SYNC_HELP[st]}`);
+  chip.title = SYNC_HELP[st];
+  const banner = $("syncBanner");
+  const show = (st === "conflict" || st === "auth" || (st === "failed" && Sync.error?.kind === "config")) && bannerDismissed !== st;
+  banner.classList.toggle("open", show);   // slides open and closed
+  banner.inert = !show;
+  if (show) {
+    $("syncBannerText").textContent = st === "failed" ? Sync.error.message : SYNC_HELP[st];
+    $("syncBannerBtn").textContent = st === "conflict" ? "Review changes" : "Reconnect Google";
+    $("syncBannerBtn").dataset.state = st;
+  }
+  if (!$("settingsView").hidden) renderSyncPanel();
+}
+const GOOGLE_G = `<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>`;
+function renderSyncPanel() {
+  const s = Sync.s, st = Sync.status(), a = s.account, cfg = AuthManager.configError();
+  const initials = a ? (a.name || a.email).trim().slice(0, 1).toUpperCase() : "";
+  let h = `<p class="help" style="margin-top:6px">Back up your trips and use them on every device. Tara Gala saves to a private folder in your Google Drive that only this app can open. It never sees your other files.</p>`;
+  if (!a || s.signedOut) {
+    h += `<div class="sync-actions"><button type="button" class="gbtn" data-action="signIn">${GOOGLE_G}${a ? `Sign in as ${esc(a.email)}` : "Sign in with Google"}</button>
+      ${a ? `<button type="button" class="btn ghost small" data-action="forgetAccount">Use a different account</button>` : ""}</div>`;
+    h += `<p class="status-line" data-state="local">${a ? "You're signed out. Your trips are still saved on this device." : SYNC_HELP.local}</p>`;
+  } else {
+    h += `<div class="acct"><span class="avatar">${a.picture ? `<img src="${esc(a.picture)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : esc(initials)}</span>
+      <div><div class="acct-name">${esc(a.name)}</div><div class="acct-email">${esc(a.email)}</div></div></div>`;
+    h += `<p class="status-line" data-state="${st}"><span class="sync-dot"></span><span><strong>${SYNC_LABEL[st]}.</strong> ${esc(Sync.error && st === "failed" ? Sync.error.message : SYNC_HELP[st])}</span></p>`;
+    h += `<p class="sub" style="margin:6px 0 0">${s.lastSyncedAt ? `Last synced ${esc(fmtWhen(s.lastSyncedAt))}.` : "Not synced yet."}${s.dirty ? " Changes are waiting to upload." : ""}</p>`;
+    h += `<div class="sync-actions">
+      <button type="button" class="btn primary" data-action="syncNow" ${Sync.running ? "disabled" : ""}>${Sync.running ? "Syncing…" : "Sync now"}</button>
+      ${st === "auth" ? `<button type="button" class="btn" data-action="reconnect">Reconnect Google</button>` : ""}
+      ${s.conflicts.length ? `<button type="button" class="btn" data-action="reviewConflicts">Review ${s.conflicts.length} change${s.conflicts.length === 1 ? "" : "s"}</button>` : ""}
+      <button type="button" class="btn ghost" data-action="signOut">Sign out</button></div>`;
+    h += `<div class="toggle-row"><span id="autoLbl">Automatic sync<br><small class="sub">Uploads shortly after each change while the app is open.</small></span>
+      <button type="button" class="switch" role="switch" aria-checked="${s.autoSync}" aria-labelledby="autoLbl" data-action="toggleAuto"><span></span></button></div>`;
+    h += `<h3 class="subhead">Cloud backups</h3><div class="sync-actions">
+      <button type="button" class="btn small" data-action="cloudRestore" data-id="primary">Restore from Google Drive</button>
+      <button type="button" class="btn small" data-action="cloudRestore" data-id="previous">Restore previous backup</button></div>`;
+  }
+  if (cfg) h += `<p class="sync-warn">${esc(cfg)}</p>`;
+  else if (Sync.error && ["config", "scope"].includes(Sync.error.kind) && (!a || s.signedOut)) h += `<p class="sync-warn">${esc(Sync.error.message)}</p>`;
+  h += `<details class="setup"><summary>Google setup details</summary>
+    <p>Sign-in needs this site's address (<code>${esc(location.origin)}</code>) listed under <strong>Authorized JavaScript origins</strong> for the OAuth client, and the <strong>Google Drive API</strong> turned on in the same Google Cloud project. Tara Gala asks only for your basic profile and its own private app storage (<code>drive.appdata</code>).</p>
+    <p>Your sign-in stays in this tab's memory. After about an hour, or when you reopen the app, tap <strong>Reconnect</strong> to keep syncing.</p></details>`;
+  $("syncBody").innerHTML = h;
+}
+
+/* ----- conflicts: nothing is lost, the user decides ----- */
+const conflictDialog = $("conflictDialog");
+const FIELD_LABELS = { name: "Name", title: "Title", groupId: "Group", routeName: "Route name", mode: "Travel mode", date: "Date", from: "Starting point", to: "Destination", departureTime: "Departure time", stay: "Accommodation", checkIn: "Check-in", checkOut: "Check-out", notes: "Notes", duration: "Travel time", distance: "Distance", fuelPrice: "Fuel price", kmPerL: "km/L", fuel: "Fuel", food: "Food & dining", accommodation: "Accommodation price", roro: "RORO ferry", misc: "Miscellaneous", done: "Completed", active: "In progress", deleted: "Deleted" };
+function describeRec(kind, r) {
+  if (kind === "groups") return r.name;
+  if (kind === "trips") return r.title;
+  return r.routeName || `${r.from || "?"} → ${r.to || "?"}`;
+}
+function diffKeys(a, b) {
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+  return [...keys].filter(k => FIELD_LABELS[k] && canon(a[k]) !== canon(b[k]));
+}
+const diffFields = (a, b) => diffKeys(a, b).map(k => FIELD_LABELS[k]);
+const showValue = v => v === true ? "Yes" : v === false ? "No" : (v === "" || v == null) ? "(empty)" : clip(String(v), 70);
+function openConflicts() {
+  const list = Sync.s.conflicts;
+  if (!list.length) return;
+  const kindName = { groups: "Group", trips: "Trip", legs: "Leg" };
+  $("conflictList").innerHTML = list.map((c, i) => {
+    const delConflict = c.local.deleted || c.remote.deleted;
+    const canBoth = c.kind !== "trips" && !delConflict;
+    const keys = diffKeys(c.local, c.remote).filter(k => k !== "deleted").slice(0, 4);
+    const side = (label, r) => `<div class="cf-side"><h4>${label}</h4><p>${r.deleted ? "<em>Deleted</em>" : esc(describeRec(c.kind, r))}</p>
+      ${r.deleted ? "" : keys.map(k => `<p class="cf-field"><b>${esc(FIELD_LABELS[k])}:</b> ${esc(showValue(r[k]))}</p>`).join("")}<small>Edited ${esc(fmtWhen(r.updatedAt))}</small></div>`;
+    const def = delConflict ? (c.local.deleted ? "cloud" : "local") : (canBoth ? "both" : "local");
+    const opt = (v, t) => `<label class="cf-opt"><input type="radio" name="cf${i}" value="${v}" ${def === v ? "checked" : ""}><span>${t}</span></label>`;
+    const diff = diffFields(c.local, c.remote);
+    return `<fieldset class="conflict"><legend>${kindName[c.kind]}: ${esc(describeRec(c.kind, c.local.deleted ? c.remote : c.local))}</legend>
+      ${diff.length ? `<p class="sub" style="margin:0 0 8px">Different: ${esc(diff.join(", "))}</p>` : ""}
+      <div class="cf-cols">${side("This device", c.local)}${side("Google Drive", c.remote)}</div>
+      <div class="cf-choices">${opt("local", "Keep this device's version")}${opt("cloud", "Keep Google Drive's version")}${canBoth ? opt("both", "Keep both") : ""}</div></fieldset>`;
+  }).join("");
+  conflictDialog.showModal();
+}
+$("conflictForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const choices = Sync.s.conflicts.map((c, i) => (new FormData($("conflictForm")).get("cf" + i)) || "both");
+  conflictDialog.close();
+  Sync.resolveConflicts(choices);
+  toast("Choices applied");
+});
+
+/* ----- replacing local data (restore): always confirmed, always undoable ----- */
+function replaceWith(incoming, label) {
+  const snapshot = stateToBackup(snapshotOf(), { includeDeleted: true });
+  queueWrite(() => DatabaseManager.setMeta("lastRestoreSnapshot", { at: nowISO(), label, data: snapshot }));
+  const stamp = nowISO();
+  KINDS.forEach(k => {
+    const inc = incoming[k];
+    ST[k].forEach(r => { if (!inc[r.id] && !r.deleted) { r.deleted = true; r.deletedAt = stamp; if (k === "legs") r.active = false; } });
+    Object.values(inc).forEach(rec => {
+      const copy = structuredClone(rec);
+      const i = ST[k].findIndex(r => r.id === rec.id);
+      if (i >= 0) ST[k][i] = copy; else ST[k].push(copy);
+    });
+  });
+  refreshLegs();
+  save();
+  afterRemoteApply(0, true);
+  return snapshot;
+}
+function offerUndoRestore(snapshot, message) {
+  const prev = validateBackup(snapshot);
+  toast(message, prev.ok && prev.state ? { label: "Undo", run: () => { replaceWith(prev.state, "undo"); toast("Restore undone"); } } : undefined);
+}
+const liveCounts = state => ({ g: Object.values(state.groups).filter(x => !x.deleted).length, t: Object.values(state.trips).filter(x => !x.deleted).length, l: Object.values(state.legs).filter(x => !x.deleted).length });
+
+async function importBackupFile(file) {
+  let text;
+  try { text = await file.text(); } catch (e) { await ask({ title: "Can't read that file", lines: ["Tara Gala couldn't open the file you chose."], confirmLabel: "OK", hideCancel: true }); return; }
+  const parsed = parseBackupText(text);
+  if (!parsed.ok) { await ask({ title: "Can't restore this file", lines: ["Nothing was changed.", ...parsed.errors], confirmLabel: "OK", hideCancel: true }); return; }
+  if (parsed.kind === "legacy") {   // an older single-trip backup is added as a new trip; nothing is replaced
+    const groups = liveGroups().sort(byName);
+    const r = await ask({ title: "Import an older backup", lines: [`This backup has ${parsed.legacy.legs.length} leg${parsed.legacy.legs.length === 1 ? "" : "s"} from an earlier version of Tara Gala. It will be added as a new trip. Nothing you have now is replaced.`], select: groups.length ? { label: "Add it to", options: groups.map(g => ({ value: g.id, label: g.name })) } : null, confirmLabel: "Import as a new trip" });
+    if (!r) return;
+    let gid = r.select;
+    if (!groups.length) { const g = normalizeGroup({ id: newId("group"), name: "My Trips" }); ST.groups.push(g); gid = g.id; }
+    const t = normalizeTrip({ id: newId("trip"), groupId: gid, title: parsed.legacy.title, named: Boolean(parsed.legacy.title) });
+    ST.trips.push(t);
+    parsed.legacy.legs.forEach(x => ST.legs.push(normalize({ ...x, id: newId("leg"), tripId: t.id, createdAt: nowISO(), updatedAt: nowISO() })));
+    save();
+    toast("Older backup imported");
+    location.hash = "#trip/" + encodeURIComponent(t.id);
+    return;
+  }
+  const c = liveCounts(parsed.state);
+  const r = await ask({ title: "Replace the trips on this device?", lines: [`This backup has ${c.g} group${c.g === 1 ? "" : "s"}, ${c.t} trip${c.t === 1 ? "" : "s"} and ${c.l} leg${c.l === 1 ? "" : "s"}.`, "Restoring replaces what's on this device with the backup. You can undo it right after."], confirmLabel: "Replace with backup", danger: true });
+  if (!r) return;
+  offerUndoRestore(replaceWith(parsed.state, "file"), "Backup restored");
+}
+async function cloudRestore(which) {
+  if (!Sync.linked()) { toast("Sign in with Google first."); return; }
+  if (!AuthManager.hasToken()) { await Sync.reconnect(); if (!AuthManager.hasToken()) return; }
+  try {
+    const { state, modified } = await Sync.fetchBackup(which);
+    const c = liveCounts(state);
+    const r = await ask({ title: which === "previous" ? "Restore the previous cloud backup?" : "Restore from Google Drive?", lines: [`That backup was saved ${fmtWhen(modified)} and has ${c.g} group${c.g === 1 ? "" : "s"}, ${c.t} trip${c.t === 1 ? "" : "s"} and ${c.l} leg${c.l === 1 ? "" : "s"}.`, "Restoring replaces what's on this device with it, and the result syncs back to Google Drive. You can undo it right after."], confirmLabel: "Restore", danger: true });
+    if (!r) return;
+    offerUndoRestore(replaceWith(state, "cloud"), "Restored from Google Drive");
+    Sync.run({ manual: true });
+  } catch (e) { Sync.handleError(e); Sync.render(); await ask({ title: "Couldn't restore", lines: [e.message], confirmLabel: "OK", hideCancel: true }); }
+}
+
+/* ----- clearing this device (never touches Google Drive) ----- */
+async function clearDevice() {
+  const r = await ask({ title: "Clear data on this device?", lines: ["This removes every group, trip and leg saved in this browser. Your Google Drive backup isn't touched, so if you stay signed in your trips will download again.", "If you aren't backed up to Google Drive, export a backup first."], confirmLabel: "Clear this device", danger: true });
+  if (!r) return;
+  await writeChain;
+  try {
+    await DatabaseManager.clearAll();
+    await DatabaseManager.setMeta("legacyMigration", { status: "cleared", at: nowISO() });   // so the old localStorage copy isn't brought back
+  } catch (e) { console.error(e); }
+  ST.groups = []; ST.trips = []; ST.legs = []; legs = []; persistedHash.clear();
+  const keep = Sync.s.account, dev = Sync.s.deviceId;
+  Sync.s = { ...Sync.s, dirty: false, seq: 0, cloudVersion: "", firstSyncDone: false, conflicts: [], account: keep, deviceId: dev };
+  Sync.base = { groups: {}, trips: {}, legs: {} }; Sync.cloudSnapshot = "";
+  Sync.saveState();
+  queueWrite(() => DatabaseManager.writeBatch({ meta: [{ key: "syncBase", value: Sync.base }, { key: "cloudSnapshot", value: "" }] }));
+  location.hash = "#home";
+  renderCurrent();
+  toast("This device was cleared");
+}
+
+function sortedActive(list = legs) {
+  return list.filter(isActive).sort((a, b) => {
     const da = startOf(a), db = startOf(b);
     if (da && db) return da - db;
     return da ? -1 : db ? 1 : 0;   // dated legs first, undated keep their order
@@ -1170,12 +2638,6 @@ function sortedActive() {
 }
 
 /* ---------- Rendering ---------- */
-function renderTitle() {
-  $("tripTitle").textContent = settings.title;
-  $("titleHint").hidden = settings.named;   // disappears once the user names the trip
-  document.title = `${settings.title} | ${APP_NAME}`;
-}
-
 function renderStats(active) {
   const total = legs.reduce((s, l) => s + legCost(l), 0);
   const hours = legs.reduce((s, l) => s + num(l.duration), 0);
@@ -1352,10 +2814,16 @@ function setDone(id, done, isUndo) {
   else toast(done ? `Leg ${n} marked as complete` : `Leg ${n} is back in your itinerary`, { label: "Undo", run: () => moveLeg(id, !done, true) });
 }
 /* Fluid moves: the card slides away, then everything else glides into its new place (FLIP) */
-const FLIP_SELECTOR = "#legsTable tbody.leg, #doneList .done-item, [data-flip]";
+const FLIP_SELECTOR = "#legsTable tbody.leg, #doneList .done-item, .gcard, [data-flip]";
 const FLIP_EASE = "cubic-bezier(.2,.8,.2,1)";
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const flipKey = el => el.dataset.flip || `leg:${el.dataset.id}:${el.classList.contains("done-item") ? "done" : "plan"}`;
+const flipKey = el => el.dataset.flip || (el.classList.contains("gcard") ? `card:${el.dataset.open}:${el.dataset.id}` : `leg:${el.dataset.id}:${el.classList.contains("done-item") ? "done" : "plan"}`);
+async function animateOut(el) {   // a card slides away before it is removed
+  if (!el || prefersReducedMotion() || !el.getClientRects().length) return;
+  try { await el.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(8px) scale(.96)" }], { duration: 260, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" }).finished; }
+  catch (e) { /* interrupted: carry on */ }
+}
+const cardEl = (list, id) => [...document.querySelectorAll(list + " .gcard")].find(e => e.dataset.id === id);
 function flipRender(mutate) {
   const reduce = prefersReducedMotion();
   const before = new Map();
@@ -1404,33 +2872,6 @@ function render() {
   renderExpenses(total);
 }
 
-/* ---------- Views (trip / settings) ---------- */
-function showView() {
-  const onSettings = location.hash === "#settings";
-  $("tripView").hidden = onSettings;
-  $("settingsView").hidden = !onSettings;
-  $("addTop").hidden = onSettings;
-  $("settingsLink").setAttribute("aria-current", onSettings ? "page" : "false");
-  if (onSettings) window.loadFontPreviews();   // so each font sample shows in its own typeface
-  window.scrollTo(0, 0);
-}
-window.addEventListener("hashchange", showView);
-
-/* ---------- Trip title ---------- */
-function startTitleEdit() {
-  $("titleRow").hidden = true;
-  $("titleForm").hidden = false;
-  $("titleInput").value = settings.title;
-  $("titleInput").focus();
-  $("titleInput").select();
-}
-function endTitleEdit() { $("titleForm").hidden = true; $("titleRow").hidden = false; }
-$("titleForm").addEventListener("submit", e => {
-  e.preventDefault();
-  settings = cleanSettings({ title: $("titleInput").value, named: true });
-  saveSettings(); renderTitle(); endTitleEdit(); toast("Trip title updated");
-});
-$("titleInput").addEventListener("keydown", e => { if (e.key === "Escape") endTitleEdit(); });
 
 /* ---------- Dialog ---------- */
 const dialog = $("legDialog"), form = $("legForm"), mapDialog = $("mapDialog");
@@ -1524,7 +2965,7 @@ function defaultStartFromPrevious() {
   };
 }
 
-const autoGrow = el => { el.style.height = "auto"; el.style.height = el.scrollHeight + 2 + "px"; };
+const autoGrow = el => { el.style.height = "auto"; el.style.height = el.scrollHeight + 2 + "px"; };   // the notes box grows with its text
 function openDialog(leg) {
   form.reset();
   $("editId").value = leg?.id || "";
@@ -1556,7 +2997,9 @@ function openDialog(leg) {
   inherit.fuelPrice = !(num(leg?.fuelPrice) > 0);   // blank values follow the previous leg
   inherit.kmPerL = !(num(leg?.kmPerL) > 0);
   applyInherited(false);
-  routeMsg = getKey()
+  routeMsg = !navigator.onLine
+    ? "You're offline, so place search and automatic distance aren't available. Type the places, distance and travel time by hand. Everything still saves on this device."
+    : getKey()
     ? "Pick both places from the suggestions or on the map to fill in distance and driving time."
     : "Add a Google Maps key in Settings to get place suggestions, map pins, and automatic distance and travel time. You can still type everything by hand.";
   updateFormTotal();
@@ -1590,19 +3033,25 @@ form.addEventListener("input", e => {
 });
 form.addEventListener("submit", e => {
   e.preventDefault();
-  const id = $("editId").value || "leg-" + Date.now();
+  const id = $("editId").value || newId("leg");
   const raw = { id };
   [...TEXT_FIELDS, ...NUM_FIELDS].forEach(k => raw[k] = $(k).value);
   raw.fromLoc = route.fromLoc;
   raw.toLoc = route.toLoc;
-  const before = legs.find(l => l.id === id);   // editing keeps the completed state
+  const before = ST.legs.find(l => l.id === id);   // editing keeps the completed state
+  raw.tripId = before?.tripId || currentTripId;
+  raw.createdAt = before?.createdAt;
   raw.done = before?.done;
   raw.completedAt = before?.completedAt;
   raw.active = before?.active;
   const leg = normalize(raw);
-  const idx = legs.findIndex(l => l.id === id);
-  idx >= 0 ? legs[idx] = leg : legs.push(leg);
-  save(); render(); closeDialog(); toast("Trip leg saved");
+  flipRender(() => {   // the new or changed card eases in and its neighbours glide into place
+    const idx = ST.legs.findIndex(l => l.id === id);
+    idx >= 0 ? ST.legs[idx] = leg : ST.legs.push(leg);
+    refreshLegs();
+    save(); render();
+  });
+  closeDialog(); toast("Trip leg saved");
 });
 /* Clicking outside the form (or pressing Esc) asks to save or discard instead of closing it */
 let downOnBackdrop = false;
@@ -2016,34 +3465,57 @@ function download(blob, name) {
 }
 /* File names follow the trip title the user chose; before they name the trip, the app name is used */
 const slugify = t => t.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
-const fileSlug = () => slugify(settings.named ? settings.title : APP_NAME) || "tara-gala";
+const fileSlug = trip => slugify(trip?.named ? trip.title : APP_NAME) || "tara-gala";
+
+/* CSV of one trip, and a JSON backup of everything */
+function exportCsv() {
+  const t = curTrip() || getTrip(uiPrefs.lastTripId) || liveTrips()[0];
+  if (!t) { toast("Open a trip first, then export it."); return; }
+  const list = sortedActive(legsOf(t.id));
+  const headers = ["Leg #", "Route Name", "Travel Mode", "Status", "Date", "Starting Point", "Destination", "Staying At", "Check-in", "Check-out", "Notes", "Departure Time", "Travel Time (hrs)", "Distance (km)",
+    "Estimated Arrival", "Fuel Price (PHP/L)", "Vehicle Consumption (km/L)", ...COSTS.map(c => c.label.replace(" (auto)", "")), "Total Leg Cost"];
+  const rows = list.map((l, i) => [i + 1, l.routeName, modeLabel(l), l.done ? "Completed" : "Planned", l.date, l.from, l.to, l.stay, l.checkIn, l.checkOut, l.notes, l.departureTime, l.duration, l.distance,
+    arrival(l), l.fuelPrice, l.kmPerL, ...COSTS.map(c => l[c.key]), legCost(l)]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
+  download(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }), `${fileSlug(t)}.csv`);
+  toast("CSV exported");
+}
+function exportBackup() {
+  const data = stateToBackup(snapshotOf(), { includeDeleted: false, lastSyncedAt: Sync.s.lastSyncedAt });
+  const one = data.trips.length === 1 && data.trips[0].named ? slugify(data.trips[0].title) : "";
+  const name = one ? `${one}-backup.json` : `tara-gala-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  download(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }), name);
+  toast("Backup downloaded");
+}
 
 /* ---------- Itinerary card layout (horizontal row or vertical stack on phones) ---------- */
 const LEGVIEW_KEY = "galanellos-overland-2026-legview";
 const legCards = () => [...$("legsTable").querySelectorAll("tbody.leg")];
 const legStep = () => { const c = legCards()[0]; return c ? c.offsetWidth + 12 : 1; };   // card width plus the gap
-const legIndex = () => Math.max(0, Math.min(legCards().length - 1, Math.round($("legsTable").scrollLeft / legStep())));
+const legPerView = () => Math.max(1, Math.round(($("legsTable").clientWidth - 6 + 12) / legStep()));   // cards visible at once
+const legMax = () => Math.max(0, legCards().length - legPerView());   // furthest first-visible card
+const legIndex = () => Math.max(0, Math.min(legMax(), Math.round($("legsTable").scrollLeft / legStep())));
 function updateLegNav() {
   const t = $("legsTable"), nav = $("cardNav"), cards = legCards(), n = cards.length;
   const row = getComputedStyle(t).flexDirection === "row";
-  nav.hidden = !(row && n > 1);
+  const per = legPerView(), max = legMax();
+  nav.hidden = !(row && max > 0);
   if (!row) { cards.forEach(c => c.classList.remove("is-away")); return; }
   const i = legIndex();
-  cards.forEach((c, k) => c.classList.toggle("is-away", n > 1 && k !== i));
-  $("navCount").textContent = `${n ? i + 1 : 0} / ${n}`;
+  cards.forEach((c, k) => c.classList.toggle("is-away", max > 0 && (k < i || k >= i + per)));
+  $("navCount").textContent = n ? (per > 1 ? `${i + 1}–${Math.min(n, i + per)} / ${n}` : `${i + 1} / ${n}`) : "0 / 0";
   const sl = $("navSlider");
-  sl.max = Math.max(0, n - 1); sl.value = i; sl.hidden = n < 3;
+  sl.max = max; sl.value = i; sl.hidden = max < 2;
   const b = id => nav.querySelector(`[data-id="${id}"]`);
   b("first").disabled = b("prev").disabled = i <= 0;
-  b("next").disabled = b("last").disabled = i >= n - 1;
+  b("next").disabled = b("last").disabled = i >= max;
 }
 function goLeg(i, instant) {
-  const n = legCards().length;
-  $("legsTable").scrollTo({ left: Math.max(0, Math.min(n - 1, i)) * legStep(), behavior: instant || prefersReducedMotion() ? "instant" : "smooth" });
+  $("legsTable").scrollTo({ left: Math.max(0, Math.min(legMax(), i)) * legStep(), behavior: instant || prefersReducedMotion() ? "instant" : "smooth" });
 }
 function legNav(which) {
-  const i = legIndex();
-  goLeg(which === "first" ? 0 : which === "last" ? 1e9 : which === "prev" ? i - 1 : i + 1);
+  const i = legIndex(), per = legPerView();
+  goLeg(which === "first" ? 0 : which === "last" ? 1e9 : which === "prev" ? i - per : i + per);   // prev and next turn a whole page
 }
 function applyLegView(v, persist) {
   v = v === "h" ? "h" : "v";
@@ -2071,9 +3543,37 @@ window.addEventListener("resize", updateLegNav);
 })();
 
 const actions = {
-  toggleLegView: () => applyLegView(document.documentElement.dataset.legview === "h" ? "v" : "h", true),
+  loginGoogle,
+  loginLocal: enterApp,
+  loginSwitch: () => { Sync.forgetAccount(); loginMessage = ""; renderLogin(); },
+  toggleLegView: () => flipRender(() => applyLegView(document.documentElement.dataset.legview === "h" ? "v" : "h", true)),
   legNav,
   add:   () => openDialog(),
+  newGroup, renameGroup, deleteGroup, newTrip, moveTrip, deleteTrip,
+  renameCurrentGroup: () => renameGroup(currentGroupId),
+  setView: id => { uiPrefs.view = id; saveUiPrefs(); renderCurrent(); },
+  askCancel: () => finishAsk(null),
+  signIn: () => Sync.signIn(),
+  reconnect: () => Sync.reconnect(),
+  syncNow: async () => {
+    if (!Sync.linked()) { await Sync.signIn(); return; }
+    if (!navigator.onLine) { toast("You're offline. Your changes are saved on this device."); return; }
+    if (!AuthManager.hasToken()) { await Sync.reconnect(); return; }
+    await Sync.run({ manual: true });
+    if (Sync.status() === "synced") toast("Everything is synced");
+  },
+  signOut: () => Sync.signOut(),
+  forgetAccount: () => { Sync.forgetAccount(); toast("Account forgotten on this device"); },
+  toggleAuto: () => Sync.setAuto(!Sync.s.autoSync),
+  reviewConflicts: openConflicts,
+  closeConflicts: () => conflictDialog.close(),
+  cloudRestore,
+  syncChip: () => {
+    const st = Sync.status();
+    if (st === "auth") Sync.reconnect(); else if (st === "conflict") openConflicts(); else location.hash = "#settings";
+  },
+  bannerAction: () => { if (Sync.status() === "conflict") openConflicts(); else Sync.reconnect(); },
+  bannerDismiss: () => { bannerDismissed = Sync.status(); renderSyncUI(); },
   close: () => requestClose(false),
   edit:  id => { const l = legs.find(x => x.id === id); if (l) openDialog(l); },
   view:  openView,
@@ -2102,10 +3602,15 @@ const actions = {
   setMode: id => { window.applyTheme(id, "default", true); renderThemeUI(); },
   setPalette: id => { window.applyTheme(document.documentElement.dataset.mode, id, true); renderThemeUI(); },
   resetTheme: () => { window.applyTheme("dark", "default", true); renderThemeUI(); toast("Back to the default colors"); },
-  delete: id => {
-    if (!confirm("Delete this trip leg?")) return;
-    legs = legs.filter(l => l.id !== id);
-    save(); render(); toast("Trip leg deleted");
+  delete: async id => {
+    const l = legs.find(x => x.id === id);
+    if (!l || !confirm("Delete this trip leg?")) return;
+    await animateOut(legCards().find(x => x.dataset.id === id));
+    flipRender(() => {
+      l.deleted = true; l.deletedAt = nowISO(); l.active = false;   // a tombstone, so the deletion syncs to your other devices
+      refreshLegs(); save(); render();
+    });
+    toast("Trip leg deleted", { label: "Undo", run: () => flipRender(() => { l.deleted = false; l.deletedAt = ""; refreshLegs(); save(); render(); }) });
   },
   editTitle: startTitleEdit,
   cancelTitle: endTitleEdit,
@@ -2116,26 +3621,10 @@ const actions = {
   confirmPin,
   pickerLocate,
   recalc: calcRoute,
-  export: () => {
-    const headers = ["Leg #", "Route Name", "Travel Mode", "Status", "Date", "Starting Point", "Destination", "Staying At", "Check-in", "Check-out", "Notes", "Departure Time", "Travel Time (hrs)", "Distance (km)",
-      "Estimated Arrival", "Fuel Price (PHP/L)", "Vehicle Consumption (km/L)", ...COSTS.map(c => c.label.replace(" (auto)", "")), "Total Leg Cost"];
-    const rows = sortedActive().map((l, i) => [i + 1, l.routeName, modeLabel(l), l.done ? "Completed" : "Planned", l.date, l.from, l.to, l.stay, l.checkIn, l.checkOut, l.notes, l.departureTime, l.duration, l.distance,
-      arrival(l), l.fuelPrice, l.kmPerL, ...COSTS.map(c => l[c.key]), legCost(l)]);
-    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\r\n");
-    download(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }), `${fileSlug()}.csv`);
-    toast("CSV exported");
-  },
-  backup: () => {
-    const data = { app: APP_NAME, appVersion: APP_VERSION, version: 2, title: settings.title, legs };
-    download(new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }), `${fileSlug()}-backup.json`);
-    toast("Backup downloaded");
-  },
+  export: exportCsv,
+  backup: exportBackup,
   restore: () => $("backupFile").click(),
-  reset: () => {
-    if (!confirm("Reset all trip legs and restore the original sample data?")) return;
-    legs = clone(INITIAL_DATA).map(normalize);
-    save(); render(); toast("Original data restored");
-  },
+  reset: clearDevice,
   clearKey: () => {
     try { localStorage.removeItem(MAPS_KEY_STORAGE); } catch (e) { /* ignore */ }
     toast("Key removed. Reloading…");
@@ -2147,23 +3636,25 @@ document.addEventListener("click", e => {
   if (el) { actions[el.dataset.action]?.(el.dataset.id); return; }
   // clicking or tapping a table row or a card opens the same view as the eye button
   const leg = e.target.closest("#legsTable tbody.leg, .done-item");
-  if (leg && !e.target.closest("a, button") && !window.getSelection().toString()) openView(leg.dataset.id);
+  if (leg && !e.target.closest("a, button") && !window.getSelection().toString()) { openView(leg.dataset.id); return; }
+  const card = e.target.closest(".gcard[data-open]");   // a Trip Group or trip card on the home screens
+  if (card && !e.target.closest("a, button") && !window.getSelection().toString()) location.hash = `#${card.dataset.open}/${encodeURIComponent(card.dataset.id)}`;
 });
 
-$("backupFile").addEventListener("change", async e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  try {
-    const data = JSON.parse(await file.text());
-    if (!Array.isArray(data.legs)) throw new Error("Invalid backup");
-    legs = data.legs.map(normalize);
-    if (typeof data.title === "string") settings = cleanSettings({ title: data.title, named: true });
-    saveSettings(); save(); renderTitle(); render(); toast("Backup restored");
-  } catch (err) {
-    alert("Could not restore this file. Please choose a backup saved from this app.");
+/* Floating "Add trip leg" button: appears once you scroll down a trip (hidden on phones by CSS) */
+(function () {
+  const fab = $("addFab");
+  function sync() {
+    const on = parseHash().view === "trip" && window.scrollY > 160;
+    fab.classList.toggle("show", on);
+    fab.inert = !on;
   }
-  e.target.value = "";
-});
+  window.addEventListener("scroll", sync, { passive: true });
+  window.addEventListener("hashchange", sync);
+  sync();
+})();
+
+$("backupFile").addEventListener("change", e => { const f = e.target.files[0]; e.target.value = ""; if (f) importBackupFile(f); });
 
 /* ---------- Toast ---------- */
 let toastTimer;
@@ -2207,15 +3698,24 @@ function renderThemeUI() {
 }
 
 /* ---------- Start ---------- */
-document.querySelectorAll("[data-version]").forEach(el => el.textContent = "v" + APP_VERSION);
-renderTitle();
-renderThemeUI();
-renderFontUI();
-renderMapsStatus();
-{ let v = null; try { v = localStorage.getItem(LEGVIEW_KEY); } catch (e) { /* ignore */ } applyLegView(v, false); }
-render();
-showView();
-requestAnimationFrame(() => requestAnimationFrame(() => $("completedReveal").classList.remove("no-anim")));
+async function boot() {
+  document.querySelectorAll("[data-version]").forEach(el => el.textContent = "v" + APP_VERSION);
+  renderThemeUI();
+  renderFontUI();
+  renderMapsStatus();
+  { let v = null; try { v = localStorage.getItem(LEGVIEW_KEY); } catch (e) { /* ignore */ } applyLegView(v, false); }
+  try { await DatabaseManager.open(); storageOk = true; }
+  catch (e) { storageOk = false; console.error("[Tara Gala] IndexedDB unavailable", e); }
+  if (storageOk) {
+    try { await loadAll(); await migrateLegacy(); }
+    catch (e) { console.error("[Tara Gala] could not load the saved data", e); toast("Couldn't read the data saved on this device."); }
+  }
+  await Sync.init();
+  showView();
+  requestAnimationFrame(() => requestAnimationFrame(() => $("completedReveal").classList.remove("no-anim")));
+  Sync.start();
+}
+boot();
 </script>
 </body>
 </html>
